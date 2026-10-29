@@ -29,7 +29,9 @@ body{margin:0;background:#FFFFFF}
 </style>
 <style>
 /* loading screen: a slim stepped progress bar, the current step, and a shimmer of the page to come */
-.ld{max-width:880px;padding:40px 40px 80px}
+.ld{box-sizing:border-box;width:100%;padding:40px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 80px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px))}
+.ld > *{max-width:880px}
+.ld.boot{max-width:880px;margin:22vh auto 0;padding:0 24px}
 .ld-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-family:Inter,system-ui,sans-serif}
 .ld-step{font-size:15px;color:#111111;font-weight:500}
 .ld-count{font-size:12px;color:#6B6B6B;font-variant-numeric:tabular-nums}
@@ -243,7 +245,7 @@ body{margin:0;background:#FFFFFF}
     start: function () {
       window.addEventListener('hashchange', route);
       // while the sign-in is restored, show the loader rather than a blank page
-      document.getElementById('app').innerHTML = '<div class="ld" role="status" aria-live="polite"><div class="ld-top"><span class="ld-step">Opening Arete…</span></div>' +
+      document.getElementById('app').innerHTML = '<div class="ld boot" role="status" aria-live="polite"><div class="ld-top"><span class="ld-step">Opening Arete…</span></div>' +
         '<div class="ld-track"><span class="ld-fill" style="width: 30%"></span></div><div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 90%"></span><span style="width: 80%"></span><span style="width: 86%"></span></div></div>';
       ARETE.db.restore().then(route);
     },
