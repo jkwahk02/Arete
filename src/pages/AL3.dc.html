@@ -117,13 +117,13 @@ button{font-family:inherit;cursor:pointer}
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </sc-if>
 <sc-if value="{{ready}}">
-<div style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
+<div class="pad" style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
 <span class="lbl">AL3 · Program</span>
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em">{{prog.name}}</h1>
 <span style="margin-left: auto; padding: 3px 10px; font-size: 12px; box-shadow: inset 0 0 0 1px #CFCFCF; color: #444444">{{prog.mode}}</span>
 </div>
-<div style="display: flex; flex-wrap: wrap; align-items: stretch">
-<aside aria-label="Students of the program" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
+<div class="lay2" style="display: flex; flex-wrap: wrap; align-items: stretch">
+<aside aria-label="Students of the program" class="pop-col" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
 <div style="padding: 0 24px 4px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; color: #6B6B6B">· {{pop.total}} declared</span></div>
 <p class="lbl" style="margin: 0 24px 10px; line-height: 1.5">enrolled, each counted once</p>
 <sc-for list="{{pop.groups}}" as="g">
@@ -132,7 +132,7 @@ button{font-family:inherit;cursor:pointer}
 <sc-if value="{{g.note}}"><div style="padding: 0 24px 6px 36px; font-size: 12px; color: #6B6B6B">{{g.note}}</div></sc-if>
 </sc-for>
 </aside>
-<div style="flex: 999 1 640px; min-width: 0; padding: 24px 40px 100px">
+<div class="lay2-main" style="flex: 999 1 640px; min-width: 0; padding: 24px 40px 100px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
 <span class="lbl">Reading</span>
 <span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{readings}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></sc-for></span>
@@ -144,7 +144,7 @@ button{font-family:inherit;cursor:pointer}
 </div></div>
 </sc-if>
 
-<section aria-labelledby="res-h" style="margin-top: 22px">
+<section aria-labelledby="res-h" style="margin-top: 28px">
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
 <span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">Program PLO results · majors</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>

@@ -98,7 +98,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </header>
 
-<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<main class="lay" style="display: flex; flex-wrap: wrap; align-items: stretch">
 
 <sc-if value="{{notInst}}">
 <aside aria-label="Courses" class="crs">
@@ -113,12 +113,18 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </aside>
 
-<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<div class="lay-main" style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<sc-if value="{{notInst}}">
+<div class="dd-bar"><label class="dd-l" for="dd-crs">Course</label><select id="dd-crs" class="dd" onChange="{{pickCourseDd}}">
+<option value="" disabled selected="{{noOff}}">Choose a course</option>
+<sc-for list="{{rail}}" as="g"><optgroup label="{{g.ddl}}"><sc-for list="{{g.items}}" as="c"><option value="{{c.id}}" selected="{{c.sel}}">{{c.code}} {{c.title}}</option></sc-for></optgroup></sc-for>
+</select></div>
+</sc-if>
 <sc-if value="{{msg}}">
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </sc-if>
 <sc-if value="{{ready}}">
-<section aria-labelledby="co-h" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
+<section aria-labelledby="co-h" class="pad" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
 <div class="lbl">AL0 Assessment · course</div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
 <h1 id="co-h" style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
@@ -188,16 +194,19 @@ button{font-family:inherit;cursor:pointer}
 </sc-if>
 </section>
 
-<div style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
-<aside aria-label="Students" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{studentCount}}</span></div>
+<div class="lay2" style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
+<aside aria-label="Students" class="stu-col" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; border-right: 1px solid #E6E6E6">
+<div class="stu-in" style="padding: 24px 0 40px">
+<div class="stu-h" style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{studentCount}}</span></div>
 <sc-for list="{{students}}" as="s">
-<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span style="font-size: 14px; font-weight: 500">{{s.name}}</span><span style="font-size: 12px; color: #6B6B6B">{{s.no}}</span></button>
+<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span class="stu-nm" style="font-size: 14px; font-weight: 500">{{s.name}}</span><span class="stu-no" style="font-size: 12px; color: #6B6B6B">{{s.no}}</span><span class="stu-sh" style="display: none; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{s.short}}</span></button>
 </sc-for>
-<sc-if value="{{rosterNote}}"><p class="lbl" style="margin: 12px 24px 0; line-height: 1.5">{{rosterNote}}</p></sc-if>
+<sc-if value="{{rosterNote}}"><p class="lbl stu-note" style="margin: 12px 24px 0; line-height: 1.5">{{rosterNote}}</p></sc-if>
+</div>
 </aside>
 
-<div style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<div class="lay2-main" style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<div class="dd-bar dd-in"><label class="dd-l" for="dd-stu">Student</label><select id="dd-stu" class="dd" onChange="{{pickStuDd}}"><sc-for list="{{students}}" as="s"><option value="{{s.key}}" selected="{{s.cur}}">{{s.name}} {{s.no}}</option></sc-for></select></div>
 <section aria-labelledby="st-h" style="display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
 <div>
@@ -376,7 +385,7 @@ class Component extends DCLogic {
     const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
     const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
       sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
-      cur: c.offering_id === this.state.off ? 'page' : false,
+      cur: c.offering_id === this.state.off ? 'page' : false, id: c.offering_id, sel: c.offering_id === this.state.off,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
       pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }); } });
@@ -384,10 +393,12 @@ class Component extends DCLogic {
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
     base.rail = order.map((t) => {
-      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      const isCur = t === curTerm, g = { ddl: isCur ? t + " (this term)" : t, title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
       if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
       return g;
     });
+    base.noOff = this.state.off == null;
+    base.pickCourseDd = (e) => { base.rail.forEach((g) => g.items.forEach((it) => { if (String(it.id) === e.target.value) it.pick(); })); };
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
     if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }
@@ -507,10 +518,12 @@ class Component extends DCLogic {
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: nStu + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
       wb: wb, studentCount: nStu ? '· ' + nStu : '',
-      imp: this.importVals(S), pickFile: () => this.pickFile(), importFile: (e) => this.importFile(e), rc: this.recentVals(S),
+      imp: this.importVals(S), pickFile: () => this.pickFile(),
+      pickStuDd: (e) => { const s = S.students.find((x) => String(x.no) === e.target.value); if (s) { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } }, importFile: (e) => this.importFile(e), rc: this.recentVals(S),
       exportWb: () => this.exportWorkbook(S), exportTip: Object.keys(S.R).length ? 'Download the course workbook with the ratings stored so far' : 'Download an empty template for this course',
       rosterNote: S.rosterOk ? '' : 'The class list could not be read, so students are shown by number.',
       students: S.students.map((s) => ({ name: ARETE.who(s.no, s.name), no: ARETE.sno(s.no), cur: s.no === stuNo ? 'true' : false,
+        key: String(s.no), short: String(ARETE.who(s.no, s.name) || '').split(' ')[0],
         s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: { name: ARETE.who(stu.no, stu.name), no: ARETE.sno(stu.no) }, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),

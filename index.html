@@ -51,6 +51,40 @@ body{margin:0;background:#FFFFFF}
 @keyframes ld-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 @media (prefers-reduced-motion:reduce){.ld-fill,.ld-fill::after,.ld-sk span,.ld-steps li.now .ld-dot{animation:none;transition:none}}
 </style>
+<style>
+/* page columns stay side by side above phone width (nothing wraps under the course column).
+   Narrower screens: the course and student columns shrink to codes / first names and open over
+   the page on hover or focus. Phones: both become dropdowns at the top. */
+.lay,.lay2{flex-wrap:nowrap !important}
+.lay-main,.lay2-main{flex:1 1 0 !important;min-width:0}
+.dd-bar{display:none;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #E6E6E6;background:#FAFAF8}
+.dd-bar.dd-in{padding:0 0 24px;border:none;background:none}
+.dd-l{flex:none;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+.dd{flex:1 1 auto;min-width:0;min-height:40px;padding:0 10px;border:1px solid #CFCFCF;border-radius:0;background:#FFFFFF;font-family:inherit;font-size:14px;color:#111111}
+.dd:focus-visible{outline:2px solid #502579;outline-offset:1px}
+@media (max-width:1279px){
+  .nav{gap:10px 18px !important;font-size:13px !important}
+}
+@media (max-width:1099px){
+  .anon-t{display:none}
+  .stu-col{flex:0 0 92px !important;width:92px;max-width:92px !important;position:relative;border-right:none !important}
+  .stu-in{position:absolute;top:0;left:0;bottom:0;width:92px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;z-index:5;background:#FFFFFF;box-shadow:inset -1px 0 0 #E6E6E6;transition:width .15s ease,box-shadow .15s ease}
+  .stu-col:hover .stu-in,.stu-col:focus-within .stu-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .stu-col:not(:hover):not(:focus-within) .stu-nm,.stu-col:not(:hover):not(:focus-within) .stu-no,.stu-col:not(:hover):not(:focus-within) .stu-note{display:none !important}
+  .stu-col:not(:hover):not(:focus-within) .stu-sh{display:block !important}
+  .stu-col:not(:hover):not(:focus-within) .stu{padding:9px 14px !important}
+  .stu-col:not(:hover):not(:focus-within) .stu-h{padding:0 14px 10px !important;font-size:13px !important}
+  .pop-col{flex:0 0 220px !important}
+  .lay2-main,.pad{padding-left:24px !important;padding-right:24px !important}
+}
+@media (max-width:859px){
+  .lay,.lay2{flex-direction:column !important}
+  .crs,.stu-col{display:none !important}
+  .dd-bar{display:flex}
+  .pop-col{flex:none !important;border-right:none !important;border-bottom:1px solid #E6E6E6;max-height:260px;overflow-y:auto}
+  .lay2-main,.pad{padding-left:16px !important;padding-right:16px !important}
+}
+</style>
 <style id="page-css"></style>
 </head>
 <body>
@@ -243,7 +277,7 @@ body{margin:0;background:#FFFFFF}
 </div>
 </header>
 
-<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<main class="lay" style="display: flex; flex-wrap: wrap; align-items: stretch">
 
 <template data-if="notInst">
 <aside aria-label="Courses" class="crs">
@@ -258,12 +292,18 @@ body{margin:0;background:#FFFFFF}
 </div>
 </aside>
 
-<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<div class="lay-main" style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<template data-if="notInst">
+<div class="dd-bar"><label class="dd-l" for="dd-crs">Course</label><select id="dd-crs" class="dd" onChange="{{pickCourseDd}}">
+<option value="" disabled selected="{{noOff}}">Choose a course</option>
+<template data-for="rail" data-as="g"><optgroup label="{{g.ddl}}"><template data-for="g.items" data-as="c"><option value="{{c.id}}" selected="{{c.sel}}">{{c.code}} {{c.title}}</option></template></optgroup></template>
+</select></div>
+</template>
 <template data-if="msg">
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </template>
 <template data-if="ready">
-<section aria-labelledby="co-h" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
+<section aria-labelledby="co-h" class="pad" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
 <div class="lbl">AL0 Assessment · course</div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
 <h1 id="co-h" style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
@@ -333,16 +373,19 @@ body{margin:0;background:#FFFFFF}
 </template>
 </section>
 
-<div style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
-<aside aria-label="Students" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{studentCount}}</span></div>
+<div class="lay2" style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
+<aside aria-label="Students" class="stu-col" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; border-right: 1px solid #E6E6E6">
+<div class="stu-in" style="padding: 24px 0 40px">
+<div class="stu-h" style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{studentCount}}</span></div>
 <template data-for="students" data-as="s">
-<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span style="font-size: 14px; font-weight: 500">{{s.name}}</span><span style="font-size: 12px; color: #6B6B6B">{{s.no}}</span></button>
+<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span class="stu-nm" style="font-size: 14px; font-weight: 500">{{s.name}}</span><span class="stu-no" style="font-size: 12px; color: #6B6B6B">{{s.no}}</span><span class="stu-sh" style="display: none; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{s.short}}</span></button>
 </template>
-<template data-if="rosterNote"><p class="lbl" style="margin: 12px 24px 0; line-height: 1.5">{{rosterNote}}</p></template>
+<template data-if="rosterNote"><p class="lbl stu-note" style="margin: 12px 24px 0; line-height: 1.5">{{rosterNote}}</p></template>
+</div>
 </aside>
 
-<div style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<div class="lay2-main" style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<div class="dd-bar dd-in"><label class="dd-l" for="dd-stu">Student</label><select id="dd-stu" class="dd" onChange="{{pickStuDd}}"><template data-for="students" data-as="s"><option value="{{s.key}}" selected="{{s.cur}}">{{s.name}} {{s.no}}</option></template></select></div>
 <section aria-labelledby="st-h" style="display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
 <div>
@@ -688,7 +731,7 @@ body{margin:0;background:#FFFFFF}
 </div>
 </header>
 
-<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<main class="lay" style="display: flex; flex-wrap: wrap; align-items: stretch">
 
 <template data-if="notInst">
 <aside aria-label="Courses" class="crs">
@@ -703,12 +746,18 @@ body{margin:0;background:#FFFFFF}
 </div>
 </aside>
 
-<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<div class="lay-main" style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<template data-if="notInst">
+<div class="dd-bar"><label class="dd-l" for="dd-crs">Course</label><select id="dd-crs" class="dd" onChange="{{pickCourseDd}}">
+<option value="" disabled selected="{{noOff}}">Choose a course</option>
+<template data-for="rail" data-as="g"><optgroup label="{{g.ddl}}"><template data-for="g.items" data-as="c"><option value="{{c.id}}" selected="{{c.sel}}">{{c.code}} {{c.title}}</option></template></optgroup></template>
+</select></div>
+</template>
 <template data-if="msg">
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </template>
 <template data-if="ready">
-<div style="padding: 28px 40px 100px">
+<div class="pad" style="padding: 28px 40px 100px">
 <div class="lbl">AL2 Course · everyone enrolled</div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
@@ -728,7 +777,7 @@ body{margin:0;background:#FFFFFF}
 </div></div>
 </template>
 
-<section aria-labelledby="res-h" class="sec">
+<section aria-labelledby="res-h" class="sec" style="margin-top: 28px">
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
 <span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">{{resTitle}}</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>
@@ -864,13 +913,13 @@ body{margin:0;background:#FFFFFF}
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </template>
 <template data-if="ready">
-<div style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
+<div class="pad" style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
 <span class="lbl">AL3 · Program</span>
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em">{{prog.name}}</h1>
 <span style="margin-left: auto; padding: 3px 10px; font-size: 12px; box-shadow: inset 0 0 0 1px #CFCFCF; color: #444444">{{prog.mode}}</span>
 </div>
-<div style="display: flex; flex-wrap: wrap; align-items: stretch">
-<aside aria-label="Students of the program" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
+<div class="lay2" style="display: flex; flex-wrap: wrap; align-items: stretch">
+<aside aria-label="Students of the program" class="pop-col" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
 <div style="padding: 0 24px 4px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; color: #6B6B6B">· {{pop.total}} declared</span></div>
 <p class="lbl" style="margin: 0 24px 10px; line-height: 1.5">enrolled, each counted once</p>
 <template data-for="pop.groups" data-as="g">
@@ -879,7 +928,7 @@ body{margin:0;background:#FFFFFF}
 <template data-if="g.note"><div style="padding: 0 24px 6px 36px; font-size: 12px; color: #6B6B6B">{{g.note}}</div></template>
 </template>
 </aside>
-<div style="flex: 999 1 640px; min-width: 0; padding: 24px 40px 100px">
+<div class="lay2-main" style="flex: 999 1 640px; min-width: 0; padding: 24px 40px 100px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
 <span class="lbl">Reading</span>
 <span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="readings" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></template></span>
@@ -891,7 +940,7 @@ body{margin:0;background:#FFFFFF}
 </div></div>
 </template>
 
-<section aria-labelledby="res-h" style="margin-top: 22px">
+<section aria-labelledby="res-h" style="margin-top: 28px">
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
 <span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">Program PLO results · majors</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>
@@ -1989,7 +2038,7 @@ class Component extends DCLogic {
     const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
     const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
       sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
-      cur: c.offering_id === this.state.off ? 'page' : false,
+      cur: c.offering_id === this.state.off ? 'page' : false, id: c.offering_id, sel: c.offering_id === this.state.off,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
       pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }); } });
@@ -1997,10 +2046,12 @@ class Component extends DCLogic {
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
     base.rail = order.map((t) => {
-      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      const isCur = t === curTerm, g = { ddl: isCur ? t + " (this term)" : t, title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
       if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
       return g;
     });
+    base.noOff = this.state.off == null;
+    base.pickCourseDd = (e) => { base.rail.forEach((g) => g.items.forEach((it) => { if (String(it.id) === e.target.value) it.pick(); })); };
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
     if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }
@@ -2120,10 +2171,12 @@ class Component extends DCLogic {
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: nStu + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
       wb: wb, studentCount: nStu ? '· ' + nStu : '',
-      imp: this.importVals(S), pickFile: () => this.pickFile(), importFile: (e) => this.importFile(e), rc: this.recentVals(S),
+      imp: this.importVals(S), pickFile: () => this.pickFile(),
+      pickStuDd: (e) => { const s = S.students.find((x) => String(x.no) === e.target.value); if (s) { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } }, importFile: (e) => this.importFile(e), rc: this.recentVals(S),
       exportWb: () => this.exportWorkbook(S), exportTip: Object.keys(S.R).length ? 'Download the course workbook with the ratings stored so far' : 'Download an empty template for this course',
       rosterNote: S.rosterOk ? '' : 'The class list could not be read, so students are shown by number.',
       students: S.students.map((s) => ({ name: ARETE.who(s.no, s.name), no: ARETE.sno(s.no), cur: s.no === stuNo ? 'true' : false,
+        key: String(s.no), short: String(ARETE.who(s.no, s.name) || '').split(' ')[0],
         s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: { name: ARETE.who(stu.no, stu.name), no: ARETE.sno(stu.no) }, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
@@ -2784,7 +2837,7 @@ class Component extends DCLogic {
     const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
     const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
       sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
-      cur: c.offering_id === this.state.off ? 'page' : false,
+      cur: c.offering_id === this.state.off ? 'page' : false, id: c.offering_id, sel: c.offering_id === this.state.off,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
       pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, reading: null }); } });
@@ -2792,10 +2845,12 @@ class Component extends DCLogic {
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
     base.rail = order.map((t) => {
-      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      const isCur = t === curTerm, g = { ddl: isCur ? t + " (this term)" : t, title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
       if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
       return g;
     });
+    base.noOff = this.state.off == null;
+    base.pickCourseDd = (e) => { base.rail.forEach((g) => g.items.forEach((it) => { if (String(it.id) === e.target.value) it.pick(); })); };
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
     if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }

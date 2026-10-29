@@ -102,7 +102,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </header>
 
-<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<main class="lay" style="display: flex; flex-wrap: wrap; align-items: stretch">
 
 <sc-if value="{{notInst}}">
 <aside aria-label="Courses" class="crs">
@@ -117,12 +117,18 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </aside>
 
-<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<div class="lay-main" style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<sc-if value="{{notInst}}">
+<div class="dd-bar"><label class="dd-l" for="dd-crs">Course</label><select id="dd-crs" class="dd" onChange="{{pickCourseDd}}">
+<option value="" disabled selected="{{noOff}}">Choose a course</option>
+<sc-for list="{{rail}}" as="g"><optgroup label="{{g.ddl}}"><sc-for list="{{g.items}}" as="c"><option value="{{c.id}}" selected="{{c.sel}}">{{c.code}} {{c.title}}</option></sc-for></optgroup></sc-for>
+</select></div>
+</sc-if>
 <sc-if value="{{msg}}">
 <div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
 </sc-if>
 <sc-if value="{{ready}}">
-<div style="padding: 28px 40px 100px">
+<div class="pad" style="padding: 28px 40px 100px">
 <div class="lbl">AL2 Course · everyone enrolled</div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
@@ -142,7 +148,7 @@ button{font-family:inherit;cursor:pointer}
 </div></div>
 </sc-if>
 
-<section aria-labelledby="res-h" class="sec">
+<section aria-labelledby="res-h" class="sec" style="margin-top: 28px">
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
 <span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">{{resTitle}}</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>
@@ -290,7 +296,7 @@ class Component extends DCLogic {
     const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
     const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
       sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
-      cur: c.offering_id === this.state.off ? 'page' : false,
+      cur: c.offering_id === this.state.off ? 'page' : false, id: c.offering_id, sel: c.offering_id === this.state.off,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
       pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, reading: null }); } });
@@ -298,10 +304,12 @@ class Component extends DCLogic {
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
     base.rail = order.map((t) => {
-      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      const isCur = t === curTerm, g = { ddl: isCur ? t + " (this term)" : t, title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
       if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
       return g;
     });
+    base.noOff = this.state.off == null;
+    base.pickCourseDd = (e) => { base.rail.forEach((g) => g.items.forEach((it) => { if (String(it.id) === e.target.value) it.pick(); })); };
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
     if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }

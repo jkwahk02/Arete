@@ -51,6 +51,40 @@ body{margin:0;background:#FFFFFF}
 @keyframes ld-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 @media (prefers-reduced-motion:reduce){.ld-fill,.ld-fill::after,.ld-sk span,.ld-steps li.now .ld-dot{animation:none;transition:none}}
 </style>
+<style>
+/* page columns stay side by side above phone width (nothing wraps under the course column).
+   Narrower screens: the course and student columns shrink to codes / first names and open over
+   the page on hover or focus. Phones: both become dropdowns at the top. */
+.lay,.lay2{flex-wrap:nowrap !important}
+.lay-main,.lay2-main{flex:1 1 0 !important;min-width:0}
+.dd-bar{display:none;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #E6E6E6;background:#FAFAF8}
+.dd-bar.dd-in{padding:0 0 24px;border:none;background:none}
+.dd-l{flex:none;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+.dd{flex:1 1 auto;min-width:0;min-height:40px;padding:0 10px;border:1px solid #CFCFCF;border-radius:0;background:#FFFFFF;font-family:inherit;font-size:14px;color:#111111}
+.dd:focus-visible{outline:2px solid #502579;outline-offset:1px}
+@media (max-width:1279px){
+  .nav{gap:10px 18px !important;font-size:13px !important}
+}
+@media (max-width:1099px){
+  .anon-t{display:none}
+  .stu-col{flex:0 0 92px !important;width:92px;max-width:92px !important;position:relative;border-right:none !important}
+  .stu-in{position:absolute;top:0;left:0;bottom:0;width:92px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;z-index:5;background:#FFFFFF;box-shadow:inset -1px 0 0 #E6E6E6;transition:width .15s ease,box-shadow .15s ease}
+  .stu-col:hover .stu-in,.stu-col:focus-within .stu-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .stu-col:not(:hover):not(:focus-within) .stu-nm,.stu-col:not(:hover):not(:focus-within) .stu-no,.stu-col:not(:hover):not(:focus-within) .stu-note{display:none !important}
+  .stu-col:not(:hover):not(:focus-within) .stu-sh{display:block !important}
+  .stu-col:not(:hover):not(:focus-within) .stu{padding:9px 14px !important}
+  .stu-col:not(:hover):not(:focus-within) .stu-h{padding:0 14px 10px !important;font-size:13px !important}
+  .pop-col{flex:0 0 220px !important}
+  .lay2-main,.pad{padding-left:24px !important;padding-right:24px !important}
+}
+@media (max-width:859px){
+  .lay,.lay2{flex-direction:column !important}
+  .crs,.stu-col{display:none !important}
+  .dd-bar{display:flex}
+  .pop-col{flex:none !important;border-right:none !important;border-bottom:1px solid #E6E6E6;max-height:260px;overflow-y:auto}
+  .lay2-main,.pad{padding-left:16px !important;padding-right:16px !important}
+}
+</style>
 <style id="page-css"></style>
 </head>
 <body>
