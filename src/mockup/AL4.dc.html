@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arete Pro · AL4 Institution</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:inherit;text-decoration:none}
+button,textarea{font-family:inherit}
+button{cursor:pointer}
+.lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid #111111}
+.sh h2{margin:0;font-weight:500;font-size:15px}
+.nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
+/* suite header (same as Telos, TaeSylla, Ergon, Paideia) */
+.top{padding:22px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 22px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;border-bottom:1px solid #E6E6E6}
+.nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:12px 26px;font-size:14px}
+.nav a{display:inline-block;transition:transform .15s ease,color .15s ease;transform-origin:center bottom}
+.nav a:hover,.nav a[aria-current="page"]{transform:scale(1.08);color:#502579}
+.me-name{font-size:14px;color:#111111}
+.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#F3EFF7;color:#502579;padding:2px 7px;border-radius:20px}
+@media (max-width:759px){
+  .top{gap:10px 16px;padding-top:12px;padding-bottom:0}
+  .top > a:first-child{margin-right:auto}
+  .nav{order:3;width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px}
+  .nav::-webkit-scrollbar{display:none}
+  .me-name,.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{display:none}
+}
+.nav a:hover{color:#502579}
+.seg{display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;font-weight:600;color:#FFFFFF;overflow:hidden}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px;cursor:pointer}
+.step{padding:18px;box-shadow:inset 0 0 0 1px #E0E0E0;display:flex;flex-direction:column;gap:8px;min-height:150px}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #111111; background: #FFFFFF">
+
+<header class="top">
+<a href="Overview.dc.html" aria-label="Arete Pro, home" style="display: flex; align-items: center; gap: 12px">
+<svg role="img" aria-label="Arete logo: Corona Borealis" width="34" height="34" viewBox="0 0 76 76" style="flex: none"><rect width="76" height="76" rx="18" fill="#502579"></rect><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"></polyline><g fill="#fff"><circle cx="19" cy="30" r="3.6"></circle><circle cx="26" cy="46" r="3.6"></circle><circle cx="38" cy="52" r="5"></circle><circle cx="50" cy="46" r="3.6"></circle><circle cx="57" cy="30" r="3.6"></circle></g></svg>
+<span style="font-family: Marcellus, Georgia, serif; font-weight: 400; font-size: 25px; letter-spacing: 0.06em; color: #111111">Arete Pro</span>
+</a>
+<nav class="nav" aria-label="Main">
+<a href="Overview.dc.html">Home</a>
+<a href="AL0.dc.html">AL0 Assessment</a>
+<a href="AL1.dc.html">AL1 Student</a>
+<a href="AL2.dc.html">AL2 Course</a>
+<a href="AL3.dc.html">AL3 Program</a>
+<a href="AL4.dc.html" aria-current="page" style="border-bottom-color: #502579; color: #502579; font-weight: 500">AL4 Institution</a>
+<a href="#">About</a>
+<a href="#">Settings</a>
+</nav>
+<button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
+<div style="position: relative">
+<button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span><span class="me-name">Jiyoung Kwahk</span><span class="pill">Faculty</span>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">Jiyoung Kwahk</div><div style="margin-top: 2px; font-size: 12px; color: #444444">Professor · Program Chair · Data Science &amp; AI</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
+<sc-for list="{{roleItems}}" as="ri" hint-placeholder-count="3">
+<button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
+</sc-for>
+<div style="padding: 10px 16px; border-top: 1px solid #EEEEEE; display: flex; gap: 16px; font-size: 13px"><a href="#">Change password</a><a href="SignIn.dc.html">Sign out</a></div>
+</div>
+</sc-if>
+</div>
+</header>
+
+<main>
+<div style="padding: 28px 40px 24px; border-bottom: 1px solid #E6E6E6">
+<div class="lbl">AL4 · Institution</div>
+<h1 style="margin: 6px 0 0; font-weight: 300; font-size: clamp(32px, 3.4vw, 48px); line-height: 1.05; letter-spacing: -0.02em">Taejae University</h1>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: stretch">
+<aside aria-label="Institution students" style="flex: 1 1 240px; max-width: 290px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<div style="margin: 0 0 0 24px; border-left: 2px solid #2E1648">
+<div style="padding: 0 24px 0 14px; font-size: 14px; font-weight: 500">Students <span class="lbl">· Oct 2026</span></div>
+<div style="padding: 10px 24px 12px 14px; display: flex; align-items: baseline; gap: 10px"><span style="font-weight: 300; font-size: 44px; line-height: 1">174</span><span style="font-size: 13px; color: #444444">enrolled</span></div>
+<sc-for list="{{tree}}" as="t" hint-placeholder-count="8">
+<sc-if value="{{t.isSec}}" hint-placeholder-val="{{ false }}"><div style="margin: 14px 24px 4px 14px; padding-top: 10px; border-top: 1px solid #111111; font-size: 13px; font-weight: 600">{{t.label}}</div></sc-if>
+<sc-if value="{{t.isGroup}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{t.toggle}}" aria-expanded="{{t.open}}" style="{{t.rowStyle}}">
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#111111" stroke-width="2" style="{{t.chev}}"><path d="M6 3l5 5-5 5"></path></svg>
+<span style="{{t.labStyle}}">{{t.label}}</span>
+<span style="margin-left: auto; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">{{t.n}}</span>
+</button>
+</sc-if>
+<sc-if value="{{t.isStudent}}" hint-placeholder-val="{{ false }}">
+<a href="AL1.dc.html" style="{{t.rowStyle}}"><span style="font-size: 13px">{{t.label}}</span><span style="margin-left: auto; font-size: 11px; color: #6B6B6B">{{t.meta}}</span></a>
+</sc-if>
+</sc-for>
+</div>
+<p class="lbl" style="margin: 20px 24px 0; line-height: 1.5">Enrolled only, from the students table. Year counts are real; cohort counts and names are illustrative. Grey text next to a name = declared major.</p>
+</aside>
+<div style="flex: 999 1 720px; min-width: 0; padding: 32px 40px 100px; display: flex; flex-direction: column; gap: 48px">
+
+<div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div>
+<div class="lbl">AL4 · read each year, record at graduation</div>
+<h2 style="margin: 8px 0 0; font-weight: 300; font-size: 28px; line-height: 1.1; letter-spacing: -0.01em">Yearly reading <span style="color: #6B6B6B">· 2026–27 to date</span></h2>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<sc-if value="{{readOnly}}" hint-placeholder-val="{{ false }}"><span style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF">Read only</span></sc-if>
+<button type="button" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}" style="{{defsBtn}}">{{defsLabel}}</button>
+</div>
+</div>
+<sc-if value="{{defsOpen}}" hint-placeholder-val="{{ false }}">
+<div style="box-shadow: inset 0 0 0 1px #2E1648; margin-top: 16px">
+<div style="display: grid; grid-template-columns: 70px 260px 1fr">
+<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">ILO · core competency</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
+<sc-for list="{{defs}}" as="d" hint-placeholder-count="6">
+<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+
+<section aria-labelledby="all-h">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 14px; background: #2E1648; color: #FFFFFF">
+<span style="font-size: 12px; opacity: 0.8">Result</span>
+<span id="all-h" style="font-size: 16px; font-weight: 600">Institutional ILO results</span>
+<span style="font-size: 13px; opacity: 0.85">{{scopeNote}}</span>
+</div>
+<div style="background: #F3EFF7; padding: 14px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6B6B6B">Declared major<select onChange="{{setProg}}" style="min-height: 36px; padding: 0 8px; border: 1px solid #CFCFCF; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #111111"><sc-for list="{{progOpts}}" as="o" hint-placeholder-count="6"><option value="{{o.v}}" selected="{{o.sel}}">{{o.t}}</option></sc-for></select></label>
+<div style="display: flex; align-items: center; gap: 8px"><span class="lbl">Group by</span><div role="group" aria-label="Group by" style="display: flex"><button type="button" class="tg" onClick="{{byCohort}}" aria-pressed="{{isCohort}}" style="{{tgCohort2}}">Cohort</button><button type="button" class="tg" onClick="{{byYear}}" aria-pressed="{{isYear}}" style="{{tgYear2}}">Year of study</button></div></div>
+<div style="flex-basis: 100%; height: 0"></div>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span class="lbl">Show</span><sc-for list="{{chips}}" as="c" hint-placeholder-count="5"><button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="{{c.style}}">{{c.t}}</button></sc-for></div>
+<sc-if value="{{isCohort}}" hint-placeholder-val="{{ true }}"><label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6B6B6B">Graduated cohorts<select disabled style="min-height: 36px; padding: 0 8px; border: 1px solid #DDDDDD; background: #F7F7F7; font-family: inherit; font-size: 13px; color: #8A8A8A"><option>None yet · first in Aug 2027</option></select></label></sc-if>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; margin-top: 14px; box-shadow: inset 0 0 0 1px #DCD3E8; background: #FFFFFF">
+<sc-for list="{{stats}}" as="t" hint-placeholder-count="4"><div style="padding: 14px 16px; box-shadow: inset -1px 0 0 #EEEEEE"><div class="lbl">{{t.k}}</div><div style="margin-top: 6px; font-weight: 300; font-size: 28px; line-height: 1; {{t.style}}">{{t.v}}</div></div></sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 14px 0 2px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #E4E4E4"></span>no ILO judgement yet</span></div>
+</div>
+<div style="overflow-x: auto; background: #F3EFF7">
+<div style="{{resGrid}}">
+<span class="lbl" style="padding: 10px 0">ILO</span><span class="lbl" style="padding: 10px 0">{{scopeLabel}}</span><span class="lbl" style="padding: 10px 0">% P or above</span>
+<sc-for list="{{groupHeads}}" as="h" hint-placeholder-count="4"><span style="{{h.style}}">{{h.t}}</span></sc-for>
+<span class="lbl" style="padding: 10px 0">Check</span>
+<sc-for list="{{fRows}}" as="r" hint-placeholder-count="6">
+<button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" title="{{r.tip}}" style="{{r.btn}}"><span style="display: block; font-size: 15px; font-weight: 600">{{r.code}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{r.name}}</span></button>
+<span style="{{r.cell}}"><span style="display: flex; height: 26px"><sc-for list="{{r.segs}}" as="g" hint-placeholder-count="5"><span class="seg" style="{{g.style}}">{{g.t}}</span></sc-for></span></span>
+<span style="{{r.cell}}"><span style="display: block; font-size: 15px; font-weight: 700; color: #2E1648; font-variant-numeric: tabular-nums">{{r.pct}}</span><span style="display: block; font-size: 12px; color: #6B6B6B">{{r.frac}}</span></span>
+<sc-for list="{{r.groups}}" as="x" hint-placeholder-count="4"><span style="{{x.style}}">{{x.t}}</span></sc-for>
+<span style="{{r.cell}}"><span style="{{r.checkStyle}}">{{r.check}}</span></span>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{hasPick}}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: 16px; box-shadow: inset 0 0 0 1px #2E1648; padding: 16px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-size: 15px; font-weight: 600">{{pickTitle}}</span><button type="button" onClick="{{clearPick}}" style="border: none; background: transparent; font-size: 13px; min-height: 36px; cursor: pointer"><span style="border-bottom: 1px solid #111111">Close</span></button></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin-top: 10px">
+<sc-for list="{{pickList}}" as="q" hint-placeholder-count="6"><a href="AL1.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; box-shadow: inset 0 0 0 1px #E0E0E0"><span style="font-size: 13px; font-weight: 500">{{q.name}}</span><span style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6B6B6B">{{q.meta}}<span style="{{q.chip}}">{{q.lv}}</span></span></a></sc-for>
+</div>
+</div>
+</sc-if>
+<p class="lbl" style="margin: 10px 0 0">Click an ILO to list the students below Proficient in this scope · a cohort is the same students over time; year groups are a snapshot of different cohorts.</p>
+</section>
+
+<section aria-labelledby="cov-h">
+<div class="sh"><h2 id="cov-h">Evidence behind each ILO · programs</h2></div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px 24px; margin: 12px 0 4px; font-size: 12px; color: #444444">
+<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; background: #2E1648"></span>aligned · reporting</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; box-sizing: border-box; border: 1.5px dashed #111111"></span>alignment not loaded</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; background: #ECECEC"></span>PLOs to define</span>
+</div>
+<div style="overflow-x: auto">
+<div style="{{covGrid}}">
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">ILO</span>
+<sc-for list="{{progs}}" as="p" hint-placeholder-count="8"><span style="padding: 10px 4px; border-bottom: 1px solid #111111; font-size: 12px; font-weight: 600; text-align: center; line-height: 1.3">{{p}}</span></sc-for>
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111; text-align: right">Reporting</span>
+<sc-for list="{{cov}}" as="c" hint-placeholder-count="6">
+<span title="{{c.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; font-weight: 600">{{c.code}}</span>
+<sc-for list="{{c.cells}}" as="x" hint-placeholder-count="8"><span style="padding: 12px 4px; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.style}}">{{x.t}}</span></span></sc-for>
+<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; text-align: right; color: #8A3A0A; font-weight: 600">{{c.n}}</span>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="grad-h">
+<div class="sh"><h2 id="grad-h">Graduating class · August 2027</h2></div>
+<div style="display: grid; grid-template-columns: 240px minmax(300px, 1fr) 220px; gap: 0 20px; align-items: center">
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">ILO</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">22 graduating students</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Before graduation</span>
+<sc-for list="{{grad}}" as="g" hint-placeholder-count="6">
+<span title="{{g.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px"><span style="font-weight: 600">{{g.code}}</span> <span style="color: #6B6B6B">{{g.name}}</span></span>
+<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE"><span style="display: flex; height: 22px"><sc-for list="{{g.segs}}" as="s" hint-placeholder-count="3"><span class="seg" style="{{s.style}}">{{s.t}}</span></sc-for></span></span>
+<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444">{{g.ahead}}</span>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px 24px; margin-top: 12px; font-size: 12px; color: #444444">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #55555F"></span>at Proficient or above (E or P)</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #D4D4D9"></span>below Proficient (D or NI)</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #EFEFF1"></span>no program A-point result yet</span>
+</div>
+</section>
+
+<section aria-labelledby="loop-h">
+<div class="sh"><h2 id="loop-h">Closing the loop</h2></div>
+<div style="margin-top: 16px">
+<div class="lbl" style="margin-bottom: 10px">ILOs on watch · requests go to aligned programs at the yearly reading only</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px">
+<sc-for list="{{asks}}" as="a" hint-placeholder-count="4">
+<a href="AL3.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; box-shadow: inset 0 0 0 1px #E0E0E0">
+<span><span style="display: block; font-size: 14px; font-weight: 600">{{a.prog}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{a.why}}</span></span>
+<span style="{{a.stateStyle}}">{{a.state}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 28px">
+<div class="step"><span class="lbl">1 · Last year’s decision · 2025–26</span><span style="font-size: 15px">[Institutional decision recorded for 2025–26]</span></div>
+<div class="step"><span class="lbl">2 · Carried out</span><span style="font-size: 15px">[Changes to ILOs, policies or support]</span></div>
+<div class="step" style="background: #F3EFF7"><span class="lbl">3 · This year’s evidence</span><span style="font-size: 15px">ILO5 and ILO6 barely move from Year 1 to Year 4; 1 of 8 programs reporting</span></div>
+<div class="step" style="box-shadow: inset 0 0 0 2px #2E1648">
+<span class="lbl">4 · Decision 2026–27 · institutional report (WSCUC)</span>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}"><label for="dec" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #6B6B6B">ILOs, policies, support<textarea id="dec" rows="3" placeholder="Recorded once a year" style="padding: 10px; border: 1px solid #CFCFCF; font-size: 14px; color: #111111; resize: vertical"></textarea></label></sc-if>
+<sc-if value="{{readOnly}}" hint-placeholder-val="{{ false }}"><span style="font-size: 15px">Not recorded yet · the institution (IR / Dean of OAA) records it</span></sc-if>
+</div>
+</div>
+</section>
+
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">Head counts: students table, October 2026 (enrolled only). Shares, the graduating-class split and request states are illustrative; the institution sets its own standard. DS &amp; AI PLOs align one to one with ILOs; other programs’ alignments are not loaded yet.</p>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  roleMenu(role) {
+    const R = [['Course faculty', 'DA321, DA200 this term'], ['Program chair', 'Data Science and AI'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
+      isFac: role === 'Course faculty', isChairR: role === 'Program chair', isInst: role === 'Institution · IR / Dean of OAA', notInst: role !== 'Institution · IR / Dean of OAA',
+      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
+        style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
+  }
+  constructor(props) { super(props); this.state = { role: null, menu: false, defsOpen: false, editing: false }; }
+  renderVals() {
+    const role = this.state.role ?? 'Institution · IR / Dean of OAA', RM = this.roleMenu(role);
+    const canEdit = role === 'Institution · IR / Dean of OAA';
+    const ILOT = ['Critical Thinking', 'Creative Thinking', 'Self-directed Learning', 'Communication & Collaboration', 'Diversity & Empathy', 'Global Harmony & Sustainability'];
+    const DEFN = '[Taejae definition, not in outcome_ilos yet]';
+    const tip = (i) => 'ILO' + (i + 1) + ' · ' + ILOT[i] + ': ' + DEFN;
+    // deck slide f4-institution (illustrative shares)
+    const S = [[61, 70, 76, 82], [55, 64, 71, 77], [58, 66, 72, 80], [63, 72, 79, 86], [50, 57, 60, 61], [48, 54, 57, 58]];
+    const rows = S.map((v, i) => { const d = v[3] - v[0], watch = d < 15;
+      return { code: 'ILO' + (i + 1), name: ILOT[i], tip: tip(i), cells: v.map((x) => ({ t: x + '%', bar: 'position: absolute; left: 0; top: 0; bottom: 0; width: ' + x + '%; background: #55555F' })),
+        delta: '+' + d + ' pts', check: watch ? '▼ Watch' : 'Steady', checkStyle: 'font-weight: 700; color: ' + (watch ? '#8A3A0A' : '#111111') }; });
+    // programs whose PLOs reach the ILOs
+    const P = ['Innovation Foundations', 'Data Science and AI', 'Business Innovation', 'Natural Sciences', 'Humanities and Social Sciences', 'Global field practice', 'Capstone', 'AIR Projects'];
+    const stOf = (pi) => pi === 1 ? 'rep' : pi >= 5 ? 'def' : 'nl';
+    const cellS = (st) => ({ rep: { t: 'PLO', style: 'display: inline-flex; align-items: center; justify-content: center; min-width: 52px; height: 26px; font-size: 12px; font-weight: 600; background: #2E1648; color: #FFFFFF' },
+      nl: { t: '?', style: 'display: inline-flex; align-items: center; justify-content: center; min-width: 52px; height: 26px; box-sizing: border-box; font-size: 12px; border: 1.5px dashed #111111; color: #111111' },
+      def: { t: '', style: 'display: inline-block; width: 52px; height: 26px; background: #ECECEC' } })[st];
+    const cov = ILOT.map((t, i) => {
+      const cells = P.map((p, pi) => { const c = Object.assign({}, cellS(stOf(pi))); if (pi === 1) c.t = 'PLO' + (i + 1); return c; });
+      return { code: 'ILO' + (i + 1), tip: tip(i), cells: cells, n: P.filter((p, pi) => stOf(pi) === 'rep').length + ' of ' + P.length };
+    });
+    // graduating class (illustrative split of the 22 Year-4 students)
+    const GS = [[15, 3, 4], [13, 3, 6], [14, 2, 6], [16, 2, 4], [9, 5, 8], [8, 5, 9]];
+    const COL = { P: '#55555F', D: '#D4D4D9', G: '#EFEFF1' };
+    const grad = GS.map((g, i) => ({ code: 'ILO' + (i + 1), name: ILOT[i], tip: tip(i),
+      ahead: g[2] + ' wait for Spring 2027 A-points and Capstone',
+      segs: [['P', g[0]], ['D', g[1]], ['G', g[2]]].filter((x) => x[1]).map((x) => ({ t: String(x[1]), style: 'width: ' + (x[1] / 22 * 100) + '%; background: ' + COL[x[0]] + (x[0] !== 'P' ? '; color: #333333' : '') })) }));
+    // requests to the programs aligned to the watched ILOs
+    const asks = [];
+    rows.forEach((r, i) => { if (r.check === 'Steady') return;
+      asks.push({ prog: 'Data Science and AI', why: r.code + ' · review PLO' + (i + 1) + ' A-points', state: 'At yearly reading', stateStyle: 'padding: 3px 9px; font-size: 12px; font-weight: 600; color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF' });
+      asks.push({ prog: 'Other aligned programs', why: r.code + ' · alignment not loaded', state: 'Alignment needed first', stateStyle: 'padding: 3px 9px; font-size: 12px; font-weight: 600; color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF' }); });
+    // left rail: every enrolled student once, by year of study or by cohort (year counts real; cohort split and names illustrative)
+    const FAM = ['Kim', 'Lee', 'Park', 'Choi', 'Jung', 'Kang', 'Cho', 'Yoon', 'Jang', 'Lim', 'Han', 'Oh', 'Seo', 'Shin', 'Kwon', 'Hwang', 'Ahn', 'Song', 'Yoo', 'Hong'];
+    const GIV = ['Minjun', 'Seoyeon', 'Jiwoo', 'Haeun', 'Dohyun', 'Yuna', 'Junho', 'Sumin', 'Taeyang', 'Nari', 'Yejin', 'Siwoo', 'Dain', 'Eunbi', 'Hayoung', 'Gun', 'Jaehyun', 'Chaewon', 'Hyunwoo', 'Minseo', 'Jiho', 'Subin', 'Yerin', 'Doyoon'];
+    const PROGS = ['DS & AI', 'Business Innovation', 'Natural Sciences', 'Humanities & Social Sciences'];
+    const YC = { 1: 73, 2: 58, 3: 21, 4: 22 };
+    const studs = [];
+    [1, 2, 3, 4].forEach((y) => { for (let k = 0; k < YC[y]; k++) { const i = studs.length;
+      const cohort = y === 1 ? 4 : y === 2 ? (k < 56 ? 3 : 2) : y === 3 ? (k < 20 ? 2 : 1) : 1;
+      studs.push({ name: FAM[(i * 7) % 20] + ' ' + GIV[(i * 11 + 3) % 24], year: y, cohort: cohort, major: y === 1 ? 'not declared' : PROGS[(i * 5) % 4] }); } });
+    const byC = this.state.byCohort ?? true;
+    const ro = this.state.rail || {};
+    const tree = [];
+    [['By cohort', true, [4, 3, 2, 1]], ['By year of study', false, [1, 2, 3, 4]]].forEach((sec) => {
+      tree.push({ isSec: true, label: sec[0] });
+      const C = sec[1];
+      sec[2].forEach((g) => {
+        const list = studs.filter((x) => (C ? x.cohort : x.year) === g), k = (C ? 'c' : 'y') + g, open = !!ro[k];
+        const label = C ? 'Cohort ' + g + ' (' + (2022 + g) + ')' : 'Year ' + g;
+        tree.push({ isGroup: true, label: label, n: String(list.length), open: open,
+          toggle: () => { const o = Object.assign({}, ro); o[k] = !open; this.setState({ rail: o }); },
+          rowStyle: 'display: flex; align-items: center; gap: 8px; width: 100%; min-height: 34px; padding: 4px 24px 4px 14px; border: none; background: ' + (open ? '#F7F7F5' : 'transparent') + '; text-align: left; cursor: pointer',
+          chev: 'flex: none; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg)',
+          labStyle: 'font-size: 14px; font-weight: 500; color: #111111' });
+        if (open) list.forEach((x) => tree.push({ isStudent: true, label: x.name, meta: C ? 'Y' + x.year + ' · ' + x.major : 'Cohort ' + x.cohort + ' · ' + x.major,
+          rowStyle: 'display: flex; align-items: center; gap: 8px; padding: 5px 24px 5px 34px' }));
+      });
+    });
+    const onT = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
+    const LVC = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D', G: '#E4E4E4' };
+    // interactive result: every student's ILO result (illustrative, seeded from the year-level shares), filtered like Telos insights
+    const SH = [[61, 70, 76, 82], [55, 64, 71, 77], [58, 66, 72, 80], [63, 72, 79, 86], [50, 57, 60, 61], [48, 54, 57, 58]];
+    const rnd = (a, b) => { const x = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return x - Math.floor(x); };
+    studs.forEach((st, si) => { st.lv = SH.map((sh, i) => {
+      if (st.year === 1 && rnd(si, i + 50) > 0.6) return 'G';
+      const r = rnd(si, i), p = sh[st.year - 1] / 100;
+      return r < p * 0.28 ? 'E' : r < p ? 'P' : r < p + (1 - p) * 0.85 ? 'D' : 'N'; }); });
+    const groupKey = (x) => byC ? x.cohort : x.year;
+    const gKeys = byC ? [4, 3, 2, 1] : [1, 2, 3, 4];
+    const gName = (g) => byC ? 'Cohort ' + g + ' (' + (2022 + g) + ')' : 'Year ' + g;
+    const sel = this.state.sel ?? 'all', prog = this.state.prog ?? 'all';
+    const inProg = (x) => prog === 'all' || x.major === prog;
+    const base = studs.filter(inProg), scope = base.filter((x) => sel === 'all' || groupKey(x) === sel);
+    const chips = [{ t: 'All', v: 'all' }].concat(gKeys.map((g) => ({ t: gName(g), v: g }))).map((c) => ({ t: c.t, on: sel === c.v, pick: () => this.setState({ sel: c.v, pick: null }),
+      style: 'min-height: 34px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (sel === c.v ? 'background: #111111; color: #FFFFFF' : 'background: #FFFFFF; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF') }));
+    const progOpts = [['all', 'All students'], ['DS & AI', 'Data Science and AI'], ['Business Innovation', 'Business Innovation'], ['Natural Sciences', 'Natural Sciences'], ['Humanities & Social Sciences', 'Humanities and Social Sciences'], ['not declared', 'Not declared yet']]
+      .map((o) => ({ v: o[0], t: o[1], sel: prog === o[0] }));
+    const share = (list, i) => { const j = list.filter((x) => x.lv[i] !== 'G'); const pp = j.filter((x) => x.lv[i] === 'E' || x.lv[i] === 'P').length; return { j: j.length, pp: pp, pct: j.length ? Math.round(pp / j.length * 100) : null }; };
+    const pickI = this.state.pick;
+    const fRows = ILOT.map((t, i) => {
+      const cnt = { E: 0, P: 0, D: 0, N: 0, G: 0 }; scope.forEach((x) => cnt[x.lv[i]]++);
+      const sh = share(scope, i), watch = rows[i].check !== 'Steady', on = pickI === i;
+      const cellBg = on ? 'background: #E6DEF0; ' : '';
+      return { code: 'ILO' + (i + 1), name: t, tip: tip(i), on: on, pick: () => this.setState({ pick: on ? null : i }),
+        btn: 'padding: 14px 8px 14px 0; border: none; border-top: 1px solid #DCD3E8; text-align: left; color: #111111; min-height: 44px; cursor: pointer; font-family: inherit; ' + (on ? 'background: #E6DEF0; box-shadow: inset 3px 0 0 #2E1648' : 'background: transparent'),
+        cell: 'padding: 14px 0; border-top: 1px solid #DCD3E8; align-self: stretch; display: flex; flex-direction: column; justify-content: center; ' + cellBg,
+        segs: ['E', 'P', 'D', 'N', 'G'].filter((k) => cnt[k]).map((k) => ({ t: cnt[k] / Math.max(scope.length, 1) >= 0.05 ? String(cnt[k]) : '', style: 'width: ' + (cnt[k] / scope.length * 100) + '%; background: ' + LVC[k] + (k === 'G' ? '; color: #555555' : '') })),
+        pct: sh.pct === null ? '—' : sh.pct + '%', frac: sh.pp + ' of ' + sh.j + ' judged',
+        groups: gKeys.map((g) => { const r = share(base.filter((x) => groupKey(x) === g), i);
+          return { t: r.pct === null ? '—' : r.pct + '%', style: 'padding: 14px 0; border-top: 1px solid #DCD3E8; align-self: stretch; display: flex; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums; ' + cellBg + (sel === g ? 'font-weight: 700; color: #111111' : 'color: #6B6B6B') }; }),
+        check: watch ? '▼ Watch' : 'Steady', checkStyle: 'font-weight: 700; color: ' + (watch ? '#8A3A0A' : '#111111') };
+    });
+    const judgedAny = scope.filter((x) => x.lv.some((l) => l !== 'G')).length;
+    const avg = Math.round(fRows.reduce((a2, r) => a2 + (parseInt(r.pct, 10) || 0), 0) / 6);
+    const stats = [{ k: 'Students in scope', v: String(scope.length), style: '' }, { k: 'With an ILO judgement', v: String(judgedAny), style: '' },
+      { k: 'Average % P or above', v: avg + '%', style: '' }, { k: 'ILOs on watch', v: String(fRows.filter((r) => r.check !== 'Steady').length), style: 'color: #8A3A0A' }];
+    const LVN = { E: 'E', P: 'P', D: 'D', N: 'NI' };
+    const pickList = pickI == null ? [] : scope.filter((x) => x.lv[pickI] === 'D' || x.lv[pickI] === 'N').map((x) => ({ name: x.name, meta: 'Y' + x.year + ' · ' + x.major, lv: LVN[x.lv[pickI]],
+      chip: 'padding: 2px 6px; font-size: 11px; font-weight: 600; color: #FFFFFF; background: ' + LVC[x.lv[pickI]] }));
+    const groupHeads = gKeys.map((g) => ({ t: gName(g), style: 'padding: 10px 0; font-size: 12px; letter-spacing: 0.04em; ' + (sel === g ? 'font-weight: 700; color: #111111' : 'color: #6B6B6B') }));
+
+    const dOpen = !!this.state.defsOpen;
+    return Object.assign(RM, {
+      tree: tree, chips: chips, progOpts: progOpts, fRows: fRows, stats: stats, groupHeads: groupHeads, pickList: pickList, hasPick: pickI != null,
+      pickTitle: pickI == null ? '' : 'ILO' + (pickI + 1) + ' · below Proficient in this scope · ' + pickList.length + ' students', clearPick: () => this.setState({ pick: null }),
+      setProg: (e) => this.setState({ prog: e && e.target ? e.target.value : 'all', pick: null }),
+      tgYear2: byC ? '' : onT, tgCohort2: byC ? onT : '',
+      scopeLabel: (sel === 'all' ? (prog === 'all' ? 'All students' : progOpts.find((o) => o.v === prog).t) : gName(sel)) + ' · ' + scope.length,
+      scopeNote: 'from each student’s ILO judgement to date' + (prog === 'all' ? '' : ' · declared ' + progOpts.find((o) => o.v === prog).t),
+      resGrid: 'display: grid; grid-template-columns: 220px minmax(240px, 1fr) 110px repeat(' + gKeys.length + ', ' + (byC ? 96 : 74) + 'px) 90px; gap: 0 14px; align-items: center; min-width: 1060px; padding: 0 14px', isYear: !byC, isCohort: byC, tgYear: byC ? 'flex: 1' : 'flex: 1; ' + onT, tgCohort: byC ? 'flex: 1; ' + onT : 'flex: 1',
+      byYear: () => this.setState({ byCohort: false, sel: 'all', pick: null }), byCohort: () => this.setState({ byCohort: true, sel: 'all', pick: null }),
+      role: role, canEdit: canEdit, readOnly: !canEdit, editing: canEdit && this.state.editing, notEditing: !(canEdit && this.state.editing), showEdit: canEdit && !this.state.editing,
+      startEdit: () => this.setState({ editing: true }), stopEdit: () => this.setState({ editing: false }), rows: rows, progs: P, cov: cov, grad: grad, asks: asks,
+      covGrid: 'display: grid; grid-template-columns: 110px repeat(' + P.length + ', minmax(84px, 1fr)) 90px; align-items: center; min-width: 1000px',
+      mode: canEdit ? 'You can record institutional decisions' : 'Read only',
+      modeStyle: 'padding: 6px 12px; font-size: 12px; font-weight: 600; ' + (canEdit ? 'color: #FFFFFF; background: #502579' : 'color: #502579; box-shadow: inset 0 0 0 1px #502579'),
+      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide' : 'Show') + ' ILO Definitions', defs: ILOT.map((t, i) => ({ code: 'ILO' + (i + 1), title: t, def: DEFN })),
+      toggleDefs: () => this.setState({ defsOpen: !dOpen }),
+      defsBtn: 'min-height: 40px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #2E1648; color: #FFFFFF' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF')
+    });
+  }
+}
+</script>
+</body>
+</html>

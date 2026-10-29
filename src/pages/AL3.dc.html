@@ -170,7 +170,6 @@ button{font-family:inherit;cursor:pointer}
 <span class="cell" style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{e.courses}}" as="c"><span title="{{c.tip}}" style="{{c.s}}">{{c.t}}</span></sc-for></span>
 </sc-for>
 </div></div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12px; color: #444444"><sc-for list="{{evKey}}" as="k"><span style="display: flex; align-items: center; gap: 6px"><span style="{{k.s}}">{{k.c}}</span>{{k.t}}</span></sc-for></div>
 </section>
 
 <section aria-labelledby="gr-h" class="sec">
@@ -347,7 +346,7 @@ class Component extends DCLogic {
     const dOpen = !!this.state.defsOpen;
     const nCourses = P.S.length;
     return {
-      ready: true,
+      ready: true, legend: [ARETE.LEG.levels('no result yet'), { t: 'A-point courses this term', items: evKey.map((k) => ({ s: k.s.replace('width: 18px', 'width: 18px; flex: none'), t: k.t })) }],
       prog: { name: P.prog.name, mode: role === 'Program chair' && P.prog.is_chair ? 'Program chair · read only for now' : 'Read only' },
       pop: { total: P.students.length, groups: groups },
       readings: readings, judgeHead: record ? 'Judgement' : 'Reading (formative)',

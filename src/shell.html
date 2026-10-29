@@ -85,6 +85,14 @@ body{margin:0;background:#FFFFFF}
   .lay2-main,.pad{padding-left:16px !important;padding-right:16px !important}
 }
 </style>
+<style>
+/* legend: the same place on every page, at the bottom */
+.legend{display:flex;flex-wrap:wrap;gap:14px 40px;padding:18px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 28px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));border-top:1px solid #E6E6E6;background:#FAFAF8;font-family:Inter,system-ui,sans-serif;font-size:12px;color:#444444}
+.legend-g{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.legend-t{flex-basis:100%;font-size:11px;letter-spacing:.04em;color:#6B6B6B}
+.legend-i{display:flex;align-items:center;gap:6px}
+.legend-s{flex:none;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:14px;height:14px;font-size:9px;font-weight:700}
+</style>
 <style id="page-css"></style>
 </head>
 <body>
@@ -181,18 +189,34 @@ body{margin:0;background:#FFFFFF}
     }
   }
 
+  // the page's legend groups ({t, items: [{s, c, t}]}) drawn as one footer
+  function legend(groups) {
+    var f = document.createElement('footer'); f.className = 'legend'; f.setAttribute('aria-label', 'Legend');
+    groups.forEach(function (g) {
+      var d = document.createElement('div'); d.className = 'legend-g';
+      if (g.t) { var h = document.createElement('span'); h.className = 'legend-t'; h.textContent = g.t; d.appendChild(h); }
+      g.items.forEach(function (it) {
+        var i = document.createElement('span'); i.className = 'legend-i';
+        var sw = document.createElement('span'); sw.className = 'legend-s'; sw.setAttribute('aria-hidden', 'true'); sw.setAttribute('style', it.s || ''); sw.textContent = it.c || '';
+        i.appendChild(sw); i.appendChild(document.createTextNode(it.t)); d.appendChild(i);
+      });
+      f.appendChild(d);
+    });
+    return f;
+  }
+
   function draw() {
     var app = document.getElementById('app'), tpl = document.getElementById('tpl-' + current);
     var frag = document.createDocumentFragment();
     if (current === 'signin') { frag.appendChild(document.importNode(tpl.content, true)); app.replaceChildren(frag); return; }
-    else render(tpl.content.childNodes, [ARETE.globals(), pages[current].inst.renderVals()], frag);
+    else { var vals = pages[current].inst.renderVals(); render(tpl.content.childNodes, [ARETE.globals(), vals], frag); if (vals && vals.legend) frag.appendChild(legend(vals.legend)); }
     var y = window.scrollY, ae = document.activeElement, fid = ae && ae.id && ae.tagName === 'INPUT' ? ae.id : null, s0 = fid ? ae.selectionStart : null, s1 = fid ? ae.selectionEnd : null;
     app.replaceChildren(frag);
     window.scrollTo(0, y);
     if (fid) { var n = document.getElementById(fid); if (n) { n.focus(); try { n.setSelectionRange(s0, s1); } catch (e) {} } }
   }
 
-  var LIVE = { al0: true, al1: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al1: true, al2: true, al3: true, al4: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -528,6 +552,13 @@ ARETE.db = window.ARETE_DB;
     }
   };
   ARETE.course = C;
+  // legend pieces shared by the pages
+  ARETE.LEG = {
+    levels: function (extra) {
+      return { t: 'Levels', items: [['#0077B6', 'Exemplary'], ['#2EA043', 'Proficient'], ['#ED7D31', 'Developing'], ['#C0504D', 'Needs Improvement']]
+        .map(function (x) { return { s: 'background: ' + x[0], t: x[1] }; }).concat(extra ? [{ s: 'background: #E4E4E4', t: extra }] : []) };
+    }
+  };
 })();
 </script>
 <script>

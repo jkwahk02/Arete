@@ -163,7 +163,7 @@ button{font-family:inherit;cursor:pointer}
 <span class="cell" style="{{r.c5s}}">{{r.c5}}</span>
 </sc-for>
 </div></div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span>bar = students by result · % P+ = share of students with evidence at Proficient or above</span></div>
+<p class="lbl" style="margin: 10px 0 0; line-height: 1.6">bar = students by result · % P+ = share of students with evidence at Proficient or above</p>
 </section>
 
 <section aria-labelledby="cp-h" class="sec">
@@ -417,7 +417,7 @@ class Component extends DCLogic {
     const dOpen = !!this.state.defsOpen, curCp = typeof reading === 'number' ? cps.find((k) => k.checkpoint_id === reading) : null;
     const withEv = S.students.filter((s) => Object.keys(pools[s.no]).length).length;
     return {
-      ready: true,
+      ready: true, legend: [ARETE.LEG.levels('no evidence yet')],
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: S.students.length + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
       readings: readings, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
