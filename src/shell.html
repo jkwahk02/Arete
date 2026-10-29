@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arete Pro</title>
+<meta name="description" content="Arete Pro, Taejae Learning Suite: course, program and institution learning outcomes from confirmed rubric ratings.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="{{FONT_URL}}" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+/* sign-in screen (app shell, not an artboard) */
+.si{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 16px;box-sizing:border-box;background:#F3F2EF;font-family:Inter,system-ui,sans-serif;color:#111111}
+.si-card{width:100%;max-width:400px;background:#FFFFFF;box-shadow:0 0 0 1px #E6E6E6}
+.si-h{padding:32px 32px 20px;border-bottom:1px solid #E6E6E6}
+.si-brand{display:flex;align-items:center;gap:12px;font-family:Marcellus,Georgia,serif;font-size:25px;letter-spacing:.06em}
+.si-h h1{margin:18px 0 0;font-weight:300;font-size:28px;letter-spacing:-0.01em}
+.si-h p{margin:6px 0 0;color:#6B6B6B;font-size:14px;line-height:1.5}
+.si-f{padding:24px 32px 32px;display:flex;flex-direction:column;gap:16px}
+.si-f label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#6B6B6B}
+.si-f input{min-height:46px;padding:0 12px;border:1px solid #E6E6E6;background:#FFFFFF;font:inherit;font-size:16px;color:#111111;box-sizing:border-box}
+.si-f input:focus{outline:2px solid #502579;outline-offset:-1px}
+.si-f button{min-height:46px;border:none;background:#502579;color:#FFFFFF;font:inherit;font-size:15px;font-weight:500;cursor:pointer}
+.si-note{margin:0;font-size:12px;color:#6B6B6B}
+.si-err{margin:0;min-height:18px;font-size:13px;color:#B42318}
+.si-f button[disabled]{opacity:.6;cursor:default}
+</style>
+<style id="page-css"></style>
+</head>
+<body>
+<div id="app"></div>
+
+<template id="tpl-signin">
+<main class="si">
+<div class="si-card">
+<div class="si-h">
+<div class="si-brand"><svg aria-hidden="true" width="34" height="34" viewBox="0 0 76 76"><rect width="76" height="76" rx="18" fill="#502579"/><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"/><g fill="#fff"><circle cx="19" cy="30" r="3.6"/><circle cx="26" cy="46" r="3.6"/><circle cx="38" cy="52" r="5"/><circle cx="50" cy="46" r="3.6"/><circle cx="57" cy="30" r="3.6"/></g></svg>Arete Pro</div>
+<h1>Sign in</h1>
+<p>Use your Taejae email and password, the same account as Telos, TaeSylla and Ergon.</p>
+</div>
+<form class="si-f" id="si-form" onsubmit="ARETE.submitSignIn(event)">
+<label>Email<input id="si-email" type="email" autocomplete="username" placeholder="your@taejae.ac.kr" required></label>
+<label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
+<p class="si-err" id="si-err" role="alert"></p>
+<button type="submit" id="si-go">Sign in</button>
+<p class="si-note">AL0 Assessment reads live data. The other pages still show the design with sample data.</p>
+</form>
+</div>
+</main>
+</template>
+
+{{TEMPLATES}}
+
+{{PAGE_CSS}}
+
+<script>
+/* Arete runtime: renders the mockup pages.
+   Templates use {{path}} lookups, <template data-for/data-as> loops,
+   <template data-if> branches and onClick/onChange handlers; each page's
+   Component keeps its state across navigation. */
+(function () {
+  'use strict';
+  var pages = {}, current = null;
+  var BOOL_PROPS = { checked: 1, selected: 1, disabled: 1 };
+  var EVENTS = { onclick: 'click', onchange: 'change', oninput: 'input' };
+
+  function DCLogic(props) { this.props = props || {}; this.state = {}; }
+  DCLogic.prototype.setState = function (patch) {
+    var p = typeof patch === 'function' ? patch(this.state) : patch;
+    this.state = Object.assign({}, this.state, p);
+    if (current && pages[current].inst === this) draw();
+  };
+
+  function lookup(path, scope) {
+    var keys = path.split('.'), v;
+    for (var i = scope.length - 1; i >= 0; i--) {
+      if (scope[i] && Object.prototype.hasOwnProperty.call(scope[i], keys[0])) { v = scope[i][keys[0]]; break; }
+    }
+    for (var k = 1; k < keys.length && v != null; k++) v = v[keys[k]];
+    return v;
+  }
+  var HOLE = /\{\{\s*([\w.]+)\s*\}\}/g, WHOLE = /^\{\{\s*([\w.]+)\s*\}\}$/;
+  function fill(text, scope) {
+    return text.replace(HOLE, function (_, p) { var v = lookup(p, scope); return v == null ? '' : String(v); });
+  }
+
+  function render(nodes, scope, into) {
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      if (n.nodeType === 3) { into.appendChild(document.createTextNode(n.nodeValue.indexOf('{{') < 0 ? n.nodeValue : fill(n.nodeValue, scope))); continue; }
+      if (n.nodeType !== 1) continue;
+      if (n.tagName === 'TEMPLATE' && n.hasAttribute('data-for')) {
+        var list = lookup(n.getAttribute('data-for'), scope) || [], as = n.getAttribute('data-as');
+        for (var j = 0; j < list.length; j++) { var s = {}; s[as] = list[j]; render(n.content.childNodes, scope.concat([s]), into); }
+        continue;
+      }
+      if (n.tagName === 'TEMPLATE' && n.hasAttribute('data-if')) {
+        if (lookup(n.getAttribute('data-if'), scope)) render(n.content.childNodes, scope, into);
+        continue;
+      }
+      var el = document.importNode(n, false), attrs = Array.prototype.slice.call(n.attributes);
+      for (var a = 0; a < attrs.length; a++) {
+        var name = attrs[a].name, val = attrs[a].value, lname = name.toLowerCase();
+        if (EVENTS[lname]) {
+          el.removeAttribute(name);
+          var m = WHOLE.exec(val), fn = m && lookup(m[1], scope);
+          if (typeof fn === 'function') el.addEventListener(EVENTS[lname], fn);
+          continue;
+        }
+        if (val.indexOf('{{') < 0) continue;
+        var w = WHOLE.exec(val);
+        var v = w ? lookup(w[1], scope) : fill(val, scope);
+        if (BOOL_PROPS[lname]) { el.removeAttribute(name); el[lname] = !!v; }
+        else if (lname === 'value' && (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA')) { el.removeAttribute(name); el.value = v == null ? '' : v; }
+        else if (v === false && lname.indexOf('aria-') !== 0) el.removeAttribute(name);
+        else el.setAttribute(name, v == null ? '' : String(v));
+      }
+      if (n.tagName === 'TEMPLATE') { into.appendChild(el); continue; }
+      render(n.childNodes, scope, el);
+      into.appendChild(el);
+    }
+  }
+
+  function draw() {
+    var app = document.getElementById('app'), tpl = document.getElementById('tpl-' + current);
+    var frag = document.createDocumentFragment();
+    if (current === 'signin') { frag.appendChild(document.importNode(tpl.content, true)); app.replaceChildren(frag); return; }
+    else render(tpl.content.childNodes, [pages[current].inst.renderVals()], frag);
+    var y = window.scrollY;
+    app.replaceChildren(frag);
+    window.scrollTo(0, y);
+  }
+
+  var LIVE = { al0: true };   // pages that read Supabase and need a signed-in user
+  function route() {
+    var r = (location.hash || '#home').slice(1);
+    if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
+    if (r !== 'signin' && !pages[r]) r = 'home';
+    if (LIVE[r] && !ARETE.db.signedIn()) { ARETE.db.afterSignIn = r; r = 'signin'; }
+    var changed = r !== current;
+    current = r;
+    var p = pages[r];
+    if (p && !p.inst) { var C = p.make(DCLogic); p.inst = new C(Object.assign({}, p.props)); if (!p.inst.state) p.inst.state = {}; }
+    var css = document.querySelector('style[data-page="' + r + '"]');
+    document.getElementById('page-css').textContent = css ? css.textContent : '';
+    document.title = 'Arete Pro · ' + (p ? p.title : 'Sign in');
+    draw();
+    if (changed) window.scrollTo(0, 0);
+  }
+
+  window.ARETE = {
+    page: function (route, title, props, factory) {
+      pages[route] = { title: title, props: props, make: function (B) {
+        // each page's class extends the shared DCLogic base
+        return factory(B);
+      } };
+    },
+    start: function () {
+      window.addEventListener('hashchange', route);
+      ARETE.db.restore().then(route);
+    },
+    submitSignIn: function (e) {
+      e.preventDefault();
+      var email = document.getElementById('si-email').value.trim(), pw = document.getElementById('si-pw').value;
+      var err = document.getElementById('si-err'), btn = document.getElementById('si-go');
+      if (!/@taejae\.ac\.kr$/i.test(email)) { err.textContent = 'Please use your @taejae.ac.kr email.'; return; }
+      btn.disabled = true; btn.textContent = 'Signing in…'; err.textContent = '';
+      ARETE.db.signIn(email, pw).then(function () {
+        var to = ARETE.db.afterSignIn || 'home'; ARETE.db.afterSignIn = null;
+        if (location.hash === '#' + to) route(); else location.hash = '#' + to;
+      }, function (ex) { err.textContent = ex.message; btn.disabled = false; btn.textContent = 'Sign in'; });
+    }
+  };
+  // classes in page scripts are written as "class Component extends DCLogic"
+  window.DCLogic = DCLogic;
+})();
+</script>
+<script>
+/* Arete data layer: the shared Supabase project and the Paideia sign-in.
+   Same session handling as Telos, TaeSylla and Ergon: sessionStorage, plus one
+   shared key ('paideia_session') so signing in once carries over in the same tab. */
+(function () {
+  'use strict';
+  var URL = 'https://ecktuualyuvctixlkjve.supabase.co';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVja3R1dWFseXV2Y3RpeGxranZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTczOTgsImV4cCI6MjA5MDc3MzM5OH0.EauKNa2US2VQ4dTdCzx0DBZXlw4OR-CQnlMRuulYfB8';
+  var SESSION_KEY = 'arete_session', SUITE_KEY = 'paideia_session';
+  var SUITE_KEYS = ['paideia_session', 'telos_faculty_session', 'telos_student_session', 'taesylla_session', 'ergon_session', 'arete_session', 'paideia_gcal'];
+  var user = null, refreshing = null;
+
+  function save() { try { var v = JSON.stringify(user); sessionStorage.setItem(SESSION_KEY, v); sessionStorage.setItem(SUITE_KEY, v); } catch (e) {} }
+  function clear() { try { SUITE_KEYS.forEach(function (k) { sessionStorage.removeItem(k); }); } catch (e) {} }
+  function newest() {
+    return [SESSION_KEY, SUITE_KEY].map(function (k) { try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; } })
+      .filter(function (x) { return x && x.access_token; }).sort(function (a, b) { return (b.expires_at || 0) - (a.expires_at || 0); })[0] || null;
+  }
+  // access tokens last about an hour: renew with the refresh token when one is nearly out
+  function fresh() {
+    if (!user || !user.access_token) return Promise.resolve(false);
+    if (user.expires_at && user.expires_at * 1000 - Date.now() > 60000) return Promise.resolve(true);
+    if (!user.refresh_token) return Promise.resolve(false);
+    if (!refreshing) refreshing = fetch(URL + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: user.refresh_token }) })
+      .then(function (r) { if (!r.ok) throw new Error('refresh failed'); return r.json(); })
+      .then(function (j) { user = j; save(); return true; })
+      .catch(function () { return false; })
+      .then(function (ok) { refreshing = null; return ok; });
+    return refreshing;
+  }
+  function headers() { return { apikey: KEY, Authorization: 'Bearer ' + user.access_token, 'Content-Type': 'application/json' }; }
+  function rest(path) {
+    return fresh().then(function () { return fetch(URL + '/rest/v1/' + path, { headers: headers() }); })
+      .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
+  }
+  function loadProfile() {
+    var email = String(user.user && user.user.email || '').toLowerCase();
+    return rest('faculty_profiles?email=eq.' + encodeURIComponent(email) + '&select=name_en,email,program,is_chair').then(function (rows) {
+      var p = rows[0];
+      db.me = { email: email, name: (p && p.name_en) || email.split('@')[0], isFaculty: !!p, isChair: !!(p && p.is_chair), program: (p && p.program) || [] };
+    }, function () { db.me = { email: email, name: email.split('@')[0], isFaculty: false, isChair: false, program: [] }; });
+  }
+
+  var db = {
+    me: null, afterSignIn: null, cache: {},
+    signedIn: function () { return !!(user && user.access_token && db.me); },
+    restore: function () {
+      var s = newest();
+      if (!s) return Promise.resolve();
+      user = s; save();
+      return fresh().then(function (ok) { if (ok) return loadProfile(); user = null; clear(); });
+    },
+    signIn: function (email, password) {
+      return fetch(URL + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) })
+        .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error_description || d.msg || 'Sign-in failed'); return d; }); })
+        .then(function (d) { user = d; save(); return loadProfile(); });
+    },
+    signOut: function () { user = null; db.me = null; db.cache = {}; clear(); },
+    rest: rest,
+    // ids for an in.(...) filter; an empty list matches nothing
+    inList: function (ids) { return ids.length ? 'in.(' + ids.join(',') + ')' : 'in.(-1)'; }
+  };
+  window.ARETE_DB = db;
+})();
+</script>
+<script>
+ARETE.db = window.ARETE_DB;
+{{PAGE_SCRIPTS}}
+
+ARETE.start();
+</script>
+</body>
+</html>

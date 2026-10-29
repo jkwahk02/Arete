@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arete Pro · AL0 Assessment</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
+.sh h2{margin:0;font-weight:500;font-size:15px}
+.nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
+.nav a:hover{color:#502579}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.xb[aria-disabled="true"]{color:#9A9A9A;cursor:default}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
+.rail{display:block;width:100%;padding:12px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.rail:hover{background:#FAF8FC}
+.stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.stu:hover{background:#FAF8FC}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #111111; background: #FFFFFF">
+
+<header style="padding: 22px 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; border-bottom: 1px solid #E6E6E6">
+<a href="Overview.dc.html" aria-label="Arete Pro, home" style="display: flex; align-items: center; gap: 12px">
+<svg role="img" aria-label="Arete logo: Corona Borealis" width="34" height="34" viewBox="0 0 76 76" style="flex: none"><rect width="76" height="76" rx="18" fill="#502579"></rect><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"></polyline><g fill="#fff"><circle cx="19" cy="30" r="3.6"></circle><circle cx="26" cy="46" r="3.6"></circle><circle cx="38" cy="52" r="5"></circle><circle cx="50" cy="46" r="3.6"></circle><circle cx="57" cy="30" r="3.6"></circle></g></svg>
+<span style="font-family: Marcellus, Georgia, serif; font-weight: 400; font-size: 25px; letter-spacing: 0.06em; color: #111111">Arete Pro</span>
+</a>
+<nav class="nav" aria-label="Main" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px 26px; font-size: 14px">
+<a href="Overview.dc.html">Home</a>
+<a href="AL0.dc.html" aria-current="page" style="border-bottom-color: #502579; color: #502579; font-weight: 500">AL0 Assessment</a>
+<a href="AL1.dc.html">AL1 Student</a>
+<a href="AL2.dc.html">AL2 Course</a>
+<a href="AL3.dc.html">AL3 Program</a>
+<a href="AL4.dc.html">AL4 Institution</a>
+<a href="#">About</a>
+<a href="#">Settings</a>
+</nav>
+<div style="position: relative">
+<button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span>{{roleLabel}}
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}">
+<div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">{{meName}}</div><div class="lbl" style="margin-top: 2px">View Arete as</div></div>
+<sc-for list="{{roleItems}}" as="ri">
+<button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
+</sc-for>
+<div style="padding: 10px 16px; border-top: 1px solid #EEEEEE; display: flex; gap: 16px; font-size: 13px"><a href="#">Change password</a><a href="SignIn.dc.html">Sign out</a></div>
+</div>
+</sc-if>
+</div>
+</header>
+
+<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+
+<sc-if value="{{notInst}}">
+<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<sc-for list="{{rail}}" as="g">
+<div style="{{g.hs}}">{{g.title}} <span style="font-weight: 400; color: #6B6B6B">{{g.sub}}</span></div>
+<sc-for list="{{g.items}}" as="c">
+<button type="button" class="rail" onClick="{{c.pick}}" aria-current="{{c.cur}}" style="{{c.s}}"><span style="display: block; font-size: 14px; font-weight: 600">{{c.code}}</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">{{c.title}}</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">{{c.sub}}</span></button>
+</sc-for>
+</sc-for>
+<sc-if value="{{railEmpty}}"><p class="lbl" style="margin: 0 24px; line-height: 1.5">{{railEmpty}}</p></sc-if>
+</aside>
+
+<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<sc-if value="{{msg}}">
+<div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
+</sc-if>
+<sc-if value="{{ready}}">
+<section aria-labelledby="co-h" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
+<div class="lbl">AL0 Assessment · course</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
+<h1 id="co-h" style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
+<span style="font-size: 13px; color: #6B6B6B">{{course.meta}}</span>
+</div>
+<div aria-label="Course ratings workbook" style="margin-top: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px #D4D4D4">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 10px 8px 14px; background: #F5F5F3; border-bottom: 1px solid #D4D4D4">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" fill="#1D6F42"></rect><path d="M5 5l6 6M11 5l-6 6" stroke="#FFFFFF" stroke-width="1.6"></path></svg>
+<span style="font-size: 13px; font-weight: 600">{{wb.file}}</span>
+<span style="font-size: 12px; color: #6B6B6B">{{wb.note}}</span>
+<span style="margin-left: auto; display: flex; gap: 8px">
+<button type="button" class="xb" aria-disabled="true" title="Coming next" style="background: #FFFFFF"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="12"></rect><path d="M2 6h12M2 10h12M6 2v12"></path></svg>Export</button>
+<sc-if value="{{canImport}}"><button type="button" class="xb" aria-disabled="true" title="Coming next" style="background: #FFFFFF"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2v8M5 7l3 3 3-3M2 12v2h12v-2"></path></svg>Import</button></sc-if>
+</span>
+</div>
+<div style="overflow-x: auto">
+<div style="{{wb.grid}}">
+<sc-for list="{{wb.cells}}" as="x"><span title="{{x.tip}}" style="{{x.s}}">{{x.t}}</span></sc-for>
+</div>
+</div>
+<div role="tablist" aria-label="Workbook tabs" style="display: flex; overflow-x: auto; background: #F5F5F3; border-top: 1px solid #D4D4D4; padding: 0 6px">
+<sc-for list="{{wb.tabs}}" as="t"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.s}}">{{t.t}}</button></sc-for>
+</div>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
+<aside aria-label="Students" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{studentCount}}</span></div>
+<sc-for list="{{students}}" as="s">
+<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span style="font-size: 14px; font-weight: 500">{{s.name}}</span><span style="font-size: 12px; color: #6B6B6B">{{s.no}}</span></button>
+</sc-for>
+<sc-if value="{{rosterNote}}"><p class="lbl" style="margin: 12px 24px 0; line-height: 1.5">{{rosterNote}}</p></sc-if>
+</aside>
+
+<div style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<section aria-labelledby="st-h" style="display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div>
+<h2 id="st-h" style="margin: 0; font-weight: 300; font-size: 34px; letter-spacing: -0.01em">{{stu.name}} <span style="font-size: 16px; color: #6B6B6B">{{stu.no}}</span></h2>
+</div>
+<div role="group" aria-label="Outcome set" style="display: flex">
+<button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button>
+<button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
+</div>
+</div>
+
+<div>
+<div class="sh" style="margin-bottom: 0"><h2>Assessment methods with a rubric</h2></div>
+<div style="overflow-x: auto">
+<div style="{{gridStyle}}">
+
+<sc-for list="{{rows}}" as="r">
+<sc-if value="{{r.isMethod}}">
+<div style="{{r.bandStyle}}">
+<input type="checkbox" id="{{r.cid}}" checked="{{r.on}}" onChange="{{r.toggle}}" aria-label="{{r.incLabel}}" style="width: 20px; height: 20px; margin: 0; accent-color: #FFFFFF; flex: none">
+<label for="{{r.cid}}" style="cursor: pointer; flex: 1 1 320px"><span style="display: block; font-size: 15px; font-weight: 600">{{r.title}}</span><span style="display: block; margin-top: 2px; font-size: 13px; opacity: 0.85">{{r.meta}}</span></label>
+<button type="button" onClick="{{r.toggleDefs}}" aria-expanded="{{r.defsOpen}}" style="{{r.defsBtn}}">{{r.defsLabel}}</button>
+</div>
+</sc-if>
+<sc-if value="{{r.isDefs}}">
+<div style="grid-column: 1 / -1; margin: 4px 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
+<div style="{{defsGrid}}">
+<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">Title</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
+<sc-for list="{{defs}}" as="d">
+<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{r.isHead}}">
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Criterion</span>
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Rating</span>
+<span class="lbl" style="padding: 10px 12px 10px 0; border-bottom: 1px solid #111111; text-align: right">Weight</span>
+<sc-for list="{{cols}}" as="c"><span title="{{c.tip}}" style="padding: 10px 0; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center">{{c.code}}<span style="display: block; font-size: 11px; font-weight: 400; color: #6B6B6B">{{c.tag}}</span></span></sc-for>
+</sc-if>
+<sc-if value="{{r.isNote}}">
+<div style="grid-column: 1 / -1; padding: 10px 14px; font-size: 13px; color: #6B6B6B; border-bottom: 1px solid #EEEEEE">{{r.text}}</div>
+</sc-if>
+<sc-if value="{{r.isCp}}">
+<div style="{{r.rowStyle}}">
+<sc-if value="{{r.canFold}}"><button type="button" onClick="{{r.fold}}" aria-expanded="{{r.open}}" aria-label="{{r.foldLabel}}" style="width: 28px; height: 28px; margin: -4px 0 -4px -6px; padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; align-self: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#111111" stroke-width="1.8" style="{{r.chev}}"><path d="M6 3l5 5-5 5"></path></svg></button></sc-if>
+<span style="font-size: 12px; color: #6B6B6B">Checkpoint</span>
+<span style="font-weight: 600">{{r.title}}</span>
+<span style="color: #6B6B6B">{{r.meta}}</span>
+<span style="{{r.stateStyle}}">{{r.state}}</span>
+</div>
+</sc-if>
+<sc-if value="{{r.isCrit}}">
+<span style="{{r.nameStyle}}">{{r.name}}</span>
+<span style="padding: 9px 0; border-bottom: 1px solid #EEEEEE"><span class="chip" style="{{r.chip}}">{{r.lv}}</span></span>
+<span style="padding: 9px 12px 9px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444; text-align: right; font-variant-numeric: tabular-nums">{{r.w}}</span>
+<sc-for list="{{r.cells}}" as="x"><span style="padding: 9px 0; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.style}}">{{x.t}}</span></span></sc-for>
+</sc-if>
+</sc-for>
+
+<div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 32px; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
+<span style="font-size: 12px; opacity: 0.8">Result</span>
+<span style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
+<span role="group" aria-label="Reading" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{readings}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></sc-for>
+</span>
+</div>
+<div style="grid-column: 1 / -1; background: #F3EFF7; padding: 0 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0 4px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span>{{readNote}}</span></div>
+</div>
+<span style="padding: 10px 0 10px 14px; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span>
+<sc-for list="{{cols}}" as="c"><span title="{{c.tip}}" style="padding: 10px 0; background: #F3EFF7; font-size: 13px; font-weight: 600; text-align: center; color: #2E1648">{{c.code}}</span></sc-for>
+
+<span style="padding: 14px 0 14px 14px; background: #F3EFF7; font-size: 14px; font-weight: 600">Weighted median</span>
+<span style="padding: 14px 0; background: #F3EFF7; font-size: 12px; color: #444444; grid-column: span 2">50% of the weight</span>
+<sc-for list="{{res}}" as="m">
+<span style="padding: 14px 8px; background: #F3EFF7">
+<span style="position: relative; display: flex; height: 16px; background: #FFFFFF">
+<sc-for list="{{m.segs}}" as="g"><span class="seg" style="{{g.style}}"></span></sc-for>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: -5px; bottom: -5px; border-left: 2px solid #111111"></span>
+</span>
+</span>
+</sc-for>
+
+<span style="padding: 14px 0 16px 14px; background: #F3EFF7; font-size: 15px; font-weight: 600; border-top: 1px solid #DCD3E8">{{readLabel}}</span>
+<span style="padding: 14px 0 16px; background: #F3EFF7; font-size: 12px; color: #444444; border-top: 1px solid #DCD3E8; grid-column: span 2">{{readSub}}</span>
+<sc-for list="{{res}}" as="m">
+<span style="padding: 14px 0 16px; background: #F3EFF7; text-align: center; border-top: 1px solid #DCD3E8"><span style="{{m.big}}">{{m.lv}}</span><span style="display: block; margin-top: 6px; font-size: 13px; font-weight: 600; color: #2E1648; font-variant-numeric: tabular-nums">{{m.pp}}</span></span>
+</sc-for>
+
+<span style="padding: 14px 0 16px 14px; background: #F3EFF7; font-size: 15px; font-weight: 600; border-top: 1px solid #DCD3E8">Record</span>
+<span style="padding: 14px 0 16px; background: #F3EFF7; font-size: 12px; color: #444444; border-top: 1px solid #DCD3E8; grid-column: span 2">summative checkpoints only</span>
+<sc-for list="{{rec}}" as="m">
+<span style="padding: 14px 0 16px; background: #F3EFF7; text-align: center; border-top: 1px solid #DCD3E8"><span style="{{m.big}}">{{m.lv}}</span></span>
+</sc-for>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isInst}}">
+<div style="flex: 1 1 100%; padding: 64px 40px 120px">
+<div style="max-width: 640px; padding: 28px; box-shadow: inset 0 0 0 1px #E0E0E0">
+<div class="lbl">AL0 Assessment</div>
+<div style="margin-top: 8px; font-size: 22px; font-weight: 300">Opened on request</div>
+<p style="margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #444444">Student-level results are not part of the institutional view. Ask the program chair to open a student’s or a course’s results when a review needs them; the institution reads AL3 and AL4.</p>
+</div>
+</div>
+</sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { role: null, menu: false, set: 'CLO', off: null, stu: null, inc: {}, wbTab: null, reading: null, open: {}, defsOpen: false, defsM: {} };
+    this.courses = null; this.data = {}; this.err = null; this.busy = {};
+  }
+
+  // ---------- loading (Supabase, read only) ----------
+  loadCourses() {
+    const db = ARETE.db, me = db.me;
+    this.busy.courses = true;
+    db.rest('course_offerings?professor_email=eq.' + encodeURIComponent(me.email) +
+      '&select=offering_id,course_id,course_base_id,section,semester,year,title,status,courses(title)&order=year.desc,course_id.asc')
+      .then((rows) => {
+        this.courses = rows;
+        return db.rest('outcome_checkpoints?offering_id=' + db.inList(rows.map((r) => r.offering_id)) + '&select=offering_id').then((cps) => {
+          this.cpCount = {}; cps.forEach((c) => { this.cpCount[c.offering_id] = (this.cpCount[c.offering_id] || 0) + 1; });
+        });
+      })
+      .catch((e) => { this.err = 'Could not load your courses: ' + e.message; this.courses = []; })
+      .then(() => {
+        this.busy.courses = false;
+        const now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
+        const curKey = mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
+        const shown = this.courses.filter((c) => Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0) <= curKey);
+        const withCp = shown.find((c) => this.cpCount && this.cpCount[c.offering_id]);
+        const first = withCp || shown[0];
+        this.setState({ off: first ? first.offering_id : null });
+      });
+  }
+
+  loadOffering(off) {
+    const db = ARETE.db, I = db.inList, rest = (p) => db.rest(p).catch(() => null);
+    const o = this.courses.find((c) => c.offering_id === off);
+    this.busy[off] = true;
+    const D = { off: off, course: o };
+    Promise.all([
+      db.rest('outcome_rubrics?offering_id=eq.' + off + '&select=rubric_id,assessment_item,default_scope,uses_program_rubric_id&order=rubric_id.asc'),
+      rest('course_assessments?offering_id=eq.' + off + '&select=item,ratio_pct'),
+      db.rest('outcome_clos?offering_id=eq.' + off + '&is_active=eq.true&select=clo_id,sort_order,text&order=sort_order.asc,clo_id.asc'),
+      o.course_base_id ? rest('outcome_curriculum_map?course_base_id=eq.' + encodeURIComponent(o.course_base_id) + '&select=plo_id,levels') : [],
+      rest('ergon_v_class_roster?offering_id=eq.' + off + '&select=student_no,name_en&order=name_en.asc'),
+      db.rest('outcome_checkpoints?offering_id=eq.' + off + '&select=checkpoint_id,rubric_id,label,held_from,held_to,kind,reading,sort_order&order=sort_order.asc,held_from.asc')
+    ]).then(([rubrics, assess, clos, curr, roster, cps]) => {
+      Object.assign(D, { rubrics: rubrics, assess: assess || [], clos: clos, curr: curr || [], roster: roster, cps: cps });
+      const rids = rubrics.map((r) => r.uses_program_rubric_id || r.rubric_id), cids = cps.map((c) => c.checkpoint_id), cloIds = clos.map((c) => c.clo_id);
+      return Promise.all([
+        db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
+        db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
+        db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
+        db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
+        db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level')
+      ]);
+    }).then(([crits, pmap, cpc, items, ratings]) => {
+      Object.assign(D, { crits: crits, pmap: pmap, cpc: cpc, items: items, ratings: ratings });
+      return Promise.all([
+        db.rest('outcome_criterion_clo_map?criterion_id=' + I(crits.map((c) => c.criterion_id)) + '&select=criterion_id,clo_id'),
+        db.rest('outcome_plos?plo_id=' + I([...new Set(pmap.map((m) => m.plo_id))]) + '&select=plo_id,program_code,plo_code,title,definition')
+      ]);
+    }).then(([cmap, plos]) => {
+      Object.assign(D, { cmap: cmap, plos: plos });
+      this.data[off] = this.shape(D);
+    }).catch((e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
+      .then(() => { this.busy[off] = false; this.setState({}); });
+  }
+
+  // ---------- shaping: everything the screen needs, computed once per course ----------
+  shape(D) {
+    const byId = (arr, k) => { const m = {}; arr.forEach((x) => { m[x[k]] = x; }); return m; };
+    const o = D.course;
+    // criteria with codes (A1, A2 … within a group; 1, 2 … without groups) and weights
+    const ratio = {}; D.assess.forEach((a) => { ratio[a.item] = Number(a.ratio_pct); });
+    const methods = D.rubrics.map((r) => {
+      const rid = r.uses_program_rubric_id || r.rubric_id;
+      const cs = D.crits.filter((c) => c.rubric_id === rid).sort((a, b) => a.sort_order - b.sort_order);
+      const n = {}; cs.forEach((c, i) => { const g = c.group_key || ''; n[g] = (n[g] || 0) + 1; c.code = g ? g + n[g] : String(i + 1); });
+      const share = ratio[r.assessment_item];
+      cs.forEach((c) => { c.w = c.points != null ? Number(c.points) : (share ? share / cs.length : 1); });
+      return { rubric_id: r.rubric_id, name: r.assessment_item.replace(/\s*\((Team Work|Individual Work)\)\s*$/, ''), item: r.assessment_item,
+        scope: r.default_scope, share: share, crits: cs, cps: D.cps.filter((k) => k.rubric_id === r.rubric_id) };
+    });
+    const critById = byId(D.crits, 'criterion_id');
+    // outcome links: criterion -> CLOs (rubric map) -> PLOs (outcome map)
+    const cloNo = {}; D.clos.forEach((c, i) => { cloNo[c.clo_id] = i + 1; });
+    const crClo = {}, crPlo = {};
+    D.cmap.forEach((m) => { (crClo[m.criterion_id] = crClo[m.criterion_id] || []).push(m.clo_id); });
+    Object.keys(crClo).forEach((cid) => {
+      const s = new Set(); crClo[cid].forEach((clo) => D.pmap.filter((m) => m.clo_id === clo).forEach((m) => s.add(m.plo_id))); crPlo[cid] = [...s];
+    });
+    const plos = D.plos.slice().sort((a, b) => (a.program_code + a.plo_code).localeCompare(b.program_code + b.plo_code, undefined, { numeric: true }));
+    const aPoint = {}; D.curr.forEach((c) => { if (/A/.test(c.levels)) aPoint[c.plo_id] = true; });
+    // criteria in use at each checkpoint, and its sub-criteria grouped by parent
+    const inUse = {}, subs = {};
+    D.cps.forEach((k) => {
+      const list = D.cpc.filter((x) => x.checkpoint_id === k.checkpoint_id).map((x) => x.criterion_id);
+      const m = methods.find((mm) => mm.rubric_id === k.rubric_id);
+      inUse[k.checkpoint_id] = (list.length ? m.crits.filter((c) => list.includes(c.criterion_id)) : m.crits);
+      subs[k.checkpoint_id] = D.items.filter((i) => i.checkpoint_id === k.checkpoint_id);
+    });
+    // ratings by checkpoint and student
+    const R = {};
+    D.ratings.forEach((x) => { const key = x.checkpoint_id + '|' + x.student_no; (R[key] = R[key] || []).push(x); });
+    // students: the roster; if it cannot be read, the student numbers found in the ratings
+    let students = (D.roster || []).filter((s) => !/\(test\)/i.test(s.name_en || '')).map((s) => ({ no: String(s.student_no), name: s.name_en }));   // test accounts left out
+    const rosterOk = D.roster !== null;
+    if (!students.length) students = [...new Set(D.ratings.map((x) => x.student_no))].sort().map((no) => ({ no: no, name: 'Student ' + no }));
+    const rated = new Set(D.ratings.map((x) => x.student_no));
+    const term = o.semester + ' ' + o.year;
+    const last = D.cps.filter((k) => D.ratings.some((x) => x.checkpoint_id === k.checkpoint_id)).map((k) => k.held_from).filter(Boolean).sort().pop();
+    return { o: o, term: term, methods: methods, critById: critById, clos: D.clos, cloNo: cloNo, crClo: crClo, crPlo: crPlo, plos: plos, aPoint: aPoint,
+      cps: D.cps, inUse: inUse, subs: subs, R: R, students: students, rosterOk: rosterOk, rated: rated, lastDate: last };
+  }
+
+  // ---------- the weighted median (deck AL0 rules) ----------
+  wmed(items) {
+    const ORD = { NI: 1, D: 2, P: 3, E: 4 }, levels = ['NI', 'D', 'P', 'E'];
+    const it = items.filter((x) => ORD[x.lv] && x.w > 0);
+    if (!it.length) return null;
+    const tot = it.reduce((s, x) => s + x.w, 0), by = {};
+    it.forEach((x) => { by[x.lv] = (by[x.lv] || 0) + x.w; });
+    const present = levels.filter((l) => by[l]);
+    let cum = 0, med = null, tie = null;
+    for (let j = 0; j < present.length; j++) {
+      cum += by[present[j]];
+      if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < present.length) { med = present[j]; tie = present[j + 1]; break; }   // exact half: show both, use the lower
+      if (cum / tot > 0.5) { med = present[j]; break; }
+    }
+    return { lv: med, tie: tie, pp: Math.round(((by.P || 0) + (by.E || 0)) / tot * 100), segs: present.map((l) => ({ l: l, w: by[l] / tot })) };
+  }
+
+  // ---------- role menu (same as the other pages) ----------
+  roleMenu(role) {
+    const R = [['Course faculty', 'Your courses'], ['Program chair', 'Courses of your program'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const me = ARETE.db.me || { name: '' };
+    return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
+      meName: me.name, meInitials: me.name.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase(),
+      isInst: role === R[2][0], notInst: role !== R[2][0],
+      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
+        style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
+  }
+
+  renderVals() {
+    const role = this.state.role ?? 'Course faculty', RM = this.roleMenu(role);
+    const base = Object.assign(RM, { rail: [], railEmpty: '', msg: '', ready: false, canImport: role === 'Course faculty' });
+    if (!ARETE.db.signedIn()) return Object.assign(base, { msg: 'Please sign in.' });
+    if (this.courses === null) { if (!this.busy.courses) this.loadCourses(); return Object.assign(base, { msg: 'Loading your courses…' }); }
+    if (this.err) return Object.assign(base, { msg: this.err });
+
+    // course rail: this term first, then past offerings by term (newest first)
+    const now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
+    const curTerm = mo >= 8 ? 'Fall ' + yr : (mo <= 1 ? 'Fall ' + (yr - 1) : 'Spring ' + yr);
+    const termKey = (c) => Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0);
+    const curKey = mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
+    // only the current term and past terms: planned offerings have no ratings yet
+    const shownCourses = this.courses.filter((c) => termKey(c) <= curKey);
+    const groups = {};
+    shownCourses.forEach((c) => { const t = c.semester + ' ' + c.year; (groups[t] = groups[t] || []).push(c); });
+    const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
+    const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
+      sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
+      cur: c.offering_id === this.state.off ? 'page' : false,
+      s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
+      pick: () => this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }) });
+    const hsTop = 'padding: 0 24px 10px; font-size: 15px; font-weight: 500';
+    const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
+    let pastShown = false;
+    base.rail = order.map((t) => {
+      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
+      return g;
+    });
+    if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
+
+    const off = this.state.off;
+    if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    const S = this.data[off];
+    if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
+    if (S.error) return Object.assign(base, { msg: S.error });
+    return Object.assign(base, this.courseVals(S, role));
+  }
+
+  courseVals(S, role) {
+    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D' };
+    const isClo = this.state.set === 'CLO', inc = (rid) => this.state.inc[rid] !== false;
+    const chip = (l) => 'display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 22px; padding: 0 5px; box-sizing: border-box; font-size: 12px; font-weight: 600; ' +
+      (COL[l] ? 'color: #FFFFFF; background: ' + COL[l] : 'color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF');
+    const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    const cpWhen = (k) => [k.held_from ? fmtDate(k.held_from) + (k.held_to && k.held_to !== k.held_from ? ' – ' + fmtDate(k.held_to) : '') : 'through the term', k.kind, k.reading === 'own' ? 'own reading only' : ''].filter(Boolean).join(' · ');
+
+    // outcome columns
+    const cols = isClo
+      ? S.clos.map((c, i) => ({ id: c.clo_id, code: 'CLO' + (i + 1), tag: '', tip: 'CLO' + (i + 1) + ': ' + (c.text || '') }))
+      : S.plos.map((p) => ({ id: p.plo_id, code: p.plo_code, tag: S.aPoint[p.plo_id] ? 'A-point' : 'course', tip: p.plo_code + ' · ' + p.title + (p.definition ? ': ' + p.definition : '') }));
+    const links = (cid) => (isClo ? S.crClo[cid] : S.crPlo[cid]) || [];
+
+    // selected student
+    const stuNo = this.state.stu || (S.students.find((s) => S.rated.has(s.no)) || S.students[0] || {}).no;
+    const stu = S.students.find((s) => s.no === stuNo) || { name: 'No students', no: '' };
+    const ratingsAt = (k) => (S.R[k.checkpoint_id + '|' + stuNo] || []);
+
+    // method table
+    const rows = [];
+    S.methods.forEach((m) => {
+      const on = inc(m.rubric_id), withR = m.cps.filter((k) => Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|'))).length;
+      const mOpen = !!this.state.defsM[m.rubric_id];
+      rows.push({ isMethod: true, title: m.name, cid: 'inc-' + m.rubric_id, on: on, incLabel: 'Pool ' + m.name + ' into the results',
+        meta: [m.scope, m.share ? m.share + '% of grade' : '', m.crits.length + ' criteria', m.cps.length ? withR + ' of ' + m.cps.length + (m.cps.length === 1 ? ' checkpoint' : ' checkpoints') + ' with ratings' : 'no checkpoints yet', on ? '' : 'not pooled'].filter(Boolean).join(' · '),
+        toggle: () => { const n = Object.assign({}, this.state.inc); n[m.rubric_id] = !on; this.setState({ inc: n }); },
+        defsOpen: mOpen, defsLabel: (mOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions',
+        toggleDefs: () => { const d = Object.assign({}, this.state.defsM); d[m.rubric_id] = !mOpen; this.setState({ defsM: d }); },
+        defsBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (mOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
+        bandStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 18px; padding: 12px 14px; color: #FFFFFF; background: ' + (on ? '#2E1648' : '#77707F') });
+      if (!on) return;
+      if (mOpen) rows.push({ isDefs: true });
+      rows.push({ isHead: true });
+      if (!m.cps.length) { rows.push({ isNote: true, text: 'No checkpoints set up for this method yet.' }); return; }
+      m.cps.forEach((k) => {
+        const rs = ratingsAt(k), has = rs.length > 0, open = has && this.state.open[k.checkpoint_id] !== false;
+        rows.push({ isCp: true, title: k.label, meta: cpWhen(k), state: has ? 'Rated' : 'No ratings', canFold: has, open: open,
+          fold: () => { const o2 = Object.assign({}, this.state.open); o2[k.checkpoint_id] = !open; this.setState({ open: o2 }); },
+          foldLabel: (open ? 'Hide' : 'Show') + ' ratings for ' + k.label,
+          chev: 'display: block; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg)',
+          rowStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; padding: 10px 14px; background: #F7F7F5; border-bottom: 1px solid #EEEEEE; font-size: 13px' + (has ? '' : '; opacity: 0.45'),
+          stateStyle: 'margin-left: auto; padding: 2px 8px; font-size: 12px; font-weight: 600; ' + (has ? 'color: #FFFFFF; background: #111111' : 'color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF') });
+        if (!open) return;
+        S.inUse[k.checkpoint_id].forEach((c) => {
+          // stage-specific sub-criteria first (detail), then the criterion that counts
+          S.subs[k.checkpoint_id].filter((i) => i.parent_criterion_id === c.criterion_id).forEach((i) => {
+            const r = rs.find((x) => x.item_id === i.item_id), lv = r ? r.level : '';
+            rows.push({ isCrit: true, name: i.code + ' ' + i.name, lv: lv || '·', chip: lv ? chip(lv) + '; opacity: 0.7' : 'color: #C8C8C8', w: '—',
+              nameStyle: 'padding: 9px 0 9px 44px; border-bottom: 1px solid #EEEEEE; font-size: 13px; font-style: italic; color: #6B6B6B',
+              cells: cols.map(() => ({ t: '', style: '' })) });
+          });
+          const r = rs.find((x) => x.criterion_id === c.criterion_id), lv = r ? r.level : '';
+          rows.push({ isCrit: true, name: c.code + ' ' + c.name, lv: lv || '·', chip: lv ? chip(lv) : 'color: #C8C8C8', w: (Math.round(c.w * 10) / 10).toString(),
+            nameStyle: 'padding: 9px 0 9px 28px; border-bottom: 1px solid #EEEEEE; font-size: 14px',
+            cells: cols.map((col) => links(c.criterion_id).includes(col.id) && lv ? { t: lv, style: chip(lv) } : { t: '·', style: 'color: #C8C8C8' }) });
+        });
+      });
+    });
+
+    // readings: progress (latest rating per criterion, 'progress' checkpoints), each checkpoint on its own, and the record
+    const cpOrder = (a, b) => (a.held_from || '').localeCompare(b.held_from || '') || a.sort_order - b.sort_order;
+    const pooled = S.cps.filter((k) => inc(k.rubric_id)).sort(cpOrder);
+    const latest = (list) => {
+      const pick = {};
+      list.forEach((k) => ratingsAt(k).forEach((x) => { if (x.criterion_id) pick[x.criterion_id] = x.level; }));
+      return pick;
+    };
+    const ratedCps = pooled.filter((k) => ratingsAt(k).some((x) => x.criterion_id));
+    const progress = latest(pooled.filter((k) => k.reading === 'progress'));
+    const record = latest(pooled.filter((k) => k.kind === 'summative'));
+    let reading = this.state.reading;
+    if (reading == null || (reading !== 'progress' && !ratedCps.some((k) => k.checkpoint_id === reading)))
+      reading = Object.keys(progress).length || !ratedCps.length ? 'progress' : ratedCps[ratedCps.length - 1].checkpoint_id;
+    const pool = reading === 'progress' ? progress : latest(ratedCps.filter((k) => k.checkpoint_id === reading));
+    const big = (l) => 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; font-size: 15px; font-weight: 700; color: #FFFFFF; background: ' + COL[l];
+    const none = 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; box-sizing: border-box; font-size: 15px; color: #8A8A8A; background: #FFFFFF; box-shadow: inset 0 0 0 1px #CFCFCF';
+    const outcome = (pick, col) => this.wmed(Object.keys(pick).filter((cid) => links(Number(cid)).includes(col.id))
+      .map((cid) => ({ lv: pick[cid], w: S.critById[cid] ? S.critById[cid].w : 0 })));
+    const res = cols.map((col) => {
+      const r = outcome(pool, col);
+      if (!r) return { lv: '—', big: none, pp: 'no evidence', segs: [] };
+      return { lv: r.tie ? r.lv + '/' + r.tie + ' tie → ' + r.lv : r.lv, big: big(r.lv), pp: r.pp + '% P+',
+        segs: r.segs.map((g) => ({ style: 'width: ' + (g.w * 100) + '%; background: ' + COL[g.l] })) };
+    });
+    const rec = cols.map((col) => { const r = outcome(record, col); return r ? { lv: r.lv, big: big(r.lv) } : { lv: '', big: 'display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }; });
+    const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #FFFFFF; color: #2E1648; font-weight: 600' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)');
+    const readings = [{ t: 'Progress', id: 'progress' }].concat(ratedCps.map((k) => ({ t: k.label, id: k.checkpoint_id })))
+      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const curCp = reading === 'progress' ? null : ratedCps.find((k) => k.checkpoint_id === reading);
+
+    // workbook peek
+    const wb = this.workbook(S, chip, cpWhen);
+    // definitions
+    const defs = isClo ? S.clos.map((c, i) => ({ code: 'CLO' + (i + 1), title: '', def: c.text || '' }))
+      : S.plos.map((p) => ({ code: p.plo_code, title: p.title, def: p.definition || '' }));
+    const hasTitle = !isClo;
+    const tgOn = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
+    const nStu = S.students.length;
+    return {
+      ready: true,
+      course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
+        meta: nStu + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
+      wb: wb, studentCount: nStu ? '· ' + nStu : '',
+      rosterNote: S.rosterOk ? '' : 'The class list could not be read, so students are shown by number.',
+      students: S.students.map((s) => ({ name: s.name, no: s.no, cur: s.no === stuNo ? 'true' : false,
+        s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => this.setState({ stu: s.no }) })),
+      stu: stu, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
+      showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
+      cols: cols, rows: rows, res: res, rec: rec, readings: readings,
+      resTitle: isClo ? 'CLO results' : 'PLO results',
+      readLabel: reading === 'progress' ? 'Progress' : curCp.label,
+      readSub: reading === 'progress' ? 'latest rating of each criterion, checkpoints counted in progress' : 'this checkpoint on its own',
+      readNote: 'black line = 50% of the weight · % = share of weight at Proficient or above · N/O left out',
+      defs: defs.map((d) => Object.assign({ titleStyle: hasTitle ? 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' : 'display: none' }, d)),
+      defsGrid: 'display: grid; grid-template-columns: 80px ' + (hasTitle ? '220px ' : '') + '1fr',
+      defsTitleHead: hasTitle ? 'padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0' : 'display: none',
+      gridStyle: 'display: grid; grid-template-columns: minmax(260px, 1.6fr) 72px 72px repeat(' + Math.max(cols.length, 1) + ', minmax(64px, 1fr)); align-items: center; min-width: ' + (420 + cols.length * 70) + 'px'
+    };
+  }
+
+  // a peek into the course ratings workbook: Students tab + one tab per method;
+  // each checkpoint is a column group (sub-criteria in grey, then the criterion)
+  workbook(S, chip, cpWhen) {
+    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D' };
+    const SHOW = 7, tab = this.state.wbTab || (S.methods.find((m) => m.cps.length) || S.methods[0] || { rubric_id: 'st' }).rubric_id;
+    const base = 'height: 26px; box-sizing: border-box; display: flex; align-items: center; font-size: 11px; white-space: nowrap; overflow: hidden; border-right: 1px solid #E4E4E4; border-bottom: 1px solid #E4E4E4; ';
+    const hd = base + 'background: #F5F5F3; color: #444444; ';
+    const cells = [], shown = S.students.slice(0, SHOW);
+    let grid, note;
+    if (tab === 'st') {
+      grid = 'display: grid; grid-template-columns: 32px 120px 180px; min-width: 332px';
+      ['', 'Student no.', 'Name'].forEach((t) => cells.push({ t: t, s: hd + 'padding: 0 8px; font-weight: 600' }));
+      shown.forEach((s, i) => cells.push({ t: String(i + 1), s: hd + 'justify-content: center' }, { t: s.no, s: base + 'padding: 0 8px; color: #6B6B6B' }, { t: s.name, s: base + 'padding: 0 8px; font-size: 12px' }));
+      note = S.students.length + ' students from the course roster';
+    } else {
+      const m = S.methods.find((x) => x.rubric_id === tab);
+      const groups = m.cps.map((k) => {
+        const colsK = [];
+        S.inUse[k.checkpoint_id].forEach((c) => {
+          S.subs[k.checkpoint_id].filter((i) => i.parent_criterion_id === c.criterion_id).forEach((i) => colsK.push({ code: i.code, item: i.item_id, sub: true, tip: i.name + ' (detail of ' + c.code + ')' }));
+          colsK.push({ code: c.code, crit: c.criterion_id, tip: c.name });
+        });
+        return { k: k, cols: colsK, has: Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|')) };
+      });
+      const nCols = groups.reduce((s, g) => s + g.cols.length, 0);
+      grid = 'display: grid; grid-template-columns: 32px 150px' + (nCols ? ' repeat(' + nCols + ', 30px)' : ' 260px') + '; min-width: ' + (182 + Math.max(nCols * 30, 260)) + 'px';
+      if (!nCols) {
+        cells.push({ t: '', s: hd }, { t: 'Student', s: hd + 'padding: 0 8px; font-weight: 600' }, { t: 'No checkpoints yet', s: hd + 'padding: 0 8px; color: #9A9A9A' });
+        shown.forEach((s, i) => cells.push({ t: String(i + 1), s: hd + 'justify-content: center' }, { t: s.name, s: base + 'padding: 0 8px; font-size: 12px' }, { t: '', s: base }));
+      } else {
+        cells.push({ t: '', s: hd + 'grid-column: span 2' });
+        groups.forEach((g) => cells.push({ t: g.k.label + (g.has ? '' : ' · empty'), tip: g.k.label + ' · ' + cpWhen(g.k),
+          s: hd + 'grid-column: span ' + g.cols.length + '; padding: 0 8px; font-weight: 600; border-left: 1px solid #9C9C9C; ' + (g.has ? 'background: #2E1648; color: #FFFFFF' : 'color: #9A9A9A') }));
+        cells.push({ t: '', s: hd }, { t: 'Student', s: hd + 'padding: 0 8px; font-weight: 600' });
+        groups.forEach((g) => g.cols.forEach((c, j) => cells.push({ t: c.code, tip: c.tip,
+          s: hd + 'justify-content: center; ' + (j === 0 ? 'border-left: 1px solid #9C9C9C; ' : '') + (c.sub ? 'font-style: italic; color: #8A8A8A; ' : '') + (g.has ? '' : 'color: #B0B0B0') })));
+        shown.forEach((s, i) => {
+          cells.push({ t: String(i + 1), s: hd + 'justify-content: center' }, { t: s.name, s: base + 'padding: 0 8px; font-size: 12px' });
+          groups.forEach((g) => {
+            const rs = S.R[g.k.checkpoint_id + '|' + s.no] || [];
+            g.cols.forEach((c, j) => {
+              const r = rs.find((x) => c.sub ? x.item_id === c.item : x.criterion_id === c.crit), l = r && r.level, edge = j === 0 ? 'border-left: 1px solid #9C9C9C; ' : '';
+              cells.push(l ? { t: l, tip: s.name + ' · ' + c.code + ' · ' + l, s: base + edge + 'justify-content: center; font-weight: 600; ' + (COL[l] ? 'color: #FFFFFF; background: ' + COL[l] + (c.sub ? '; opacity: 0.75' : '') : 'color: #8A8A8A; background: #F3F3F3; font-size: 9px') }
+                : { t: '', s: base + edge });
+            });
+          });
+        });
+      }
+      const up = groups.filter((g) => g.has).length;
+      note = m.name + ' · ' + (m.cps.length ? up + ' of ' + m.cps.length + (m.cps.length === 1 ? ' checkpoint' : ' checkpoints') + ' uploaded' : 'no checkpoints yet');
+    }
+    if (S.students.length > SHOW) cells.push({ t: '… ' + (S.students.length - SHOW) + ' more students', s: 'grid-column: 1 / -1; padding: 6px 40px; font-size: 12px; color: #8A8A8A; background: linear-gradient(#FFFFFF, #F7F7F5)' });
+    const tabs = [{ id: 'st', t: 'Students' }].concat(S.methods.map((m) => ({ id: m.rubric_id, t: m.name })));
+    return { file: S.o.course_id + '_' + S.term.replace(' ', '') + '_ratings.xlsx', grid: grid, cells: cells, note: note,
+      tabs: tabs.map((t) => ({ t: t.t, on: tab === t.id, pick: () => this.setState({ wbTab: t.id }),
+        s: 'min-height: 34px; padding: 0 14px; border: none; font-family: inherit; font-size: 12px; white-space: nowrap; cursor: pointer; ' +
+          (tab === t.id ? 'position: relative; margin-top: -1px; background: #FFFFFF; color: #1D6F42; font-weight: 600; box-shadow: inset 0 -2px 0 #1D6F42, 1px 0 0 #D4D4D4, -1px 0 0 #D4D4D4' : 'background: transparent; color: #444444') })) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arete Pro · AL0 Assessment</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
+.sh h2{margin:0;font-weight:500;font-size:15px}
+.nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
+.nav a:hover{color:#502579}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.tab{padding:0 0 10px;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
+.xw{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.6);cursor:pointer}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #111111; background: #FFFFFF">
+
+<header style="padding: 22px 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; border-bottom: 1px solid #E6E6E6">
+<a href="Overview.dc.html" aria-label="Arete Pro, home" style="display: flex; align-items: center; gap: 12px">
+<svg role="img" aria-label="Arete logo: Corona Borealis" width="34" height="34" viewBox="0 0 76 76" style="flex: none"><rect width="76" height="76" rx="18" fill="#502579"></rect><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"></polyline><g fill="#fff"><circle cx="19" cy="30" r="3.6"></circle><circle cx="26" cy="46" r="3.6"></circle><circle cx="38" cy="52" r="5"></circle><circle cx="50" cy="46" r="3.6"></circle><circle cx="57" cy="30" r="3.6"></circle></g></svg>
+<span style="font-family: Marcellus, Georgia, serif; font-weight: 400; font-size: 25px; letter-spacing: 0.06em; color: #111111">Arete Pro</span>
+</a>
+<nav class="nav" aria-label="Main" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px 26px; font-size: 14px">
+<a href="Overview.dc.html">Home</a>
+<a href="AL0.dc.html" aria-current="page" style="border-bottom-color: #502579; color: #502579; font-weight: 500">AL0 Assessment</a>
+<a href="AL1.dc.html">AL1 Student</a>
+<a href="AL2.dc.html">AL2 Course</a>
+<a href="AL3.dc.html">AL3 Program</a>
+<a href="AL4.dc.html">AL4 Institution</a>
+<a href="#">About</a>
+<a href="#">Settings</a>
+</nav>
+<div style="position: relative">
+<button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span>{{roleLabel}}
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">Jiyoung Kwahk</div><div class="lbl" style="margin-top: 2px">View Arete as</div></div>
+<sc-for list="{{roleItems}}" as="ri" hint-placeholder-count="3">
+<button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
+</sc-for>
+<div style="padding: 10px 16px; border-top: 1px solid #EEEEEE; display: flex; gap: 16px; font-size: 13px"><a href="#">Change password</a><a href="SignIn.dc.html">Sign out</a></div>
+</div>
+</sc-if>
+</div>
+</header>
+
+<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<sc-if value="{{isFac}}" hint-placeholder-val="{{ true }}">
+<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">This term <span style="font-weight: 400; color: #6B6B6B">· Fall 2026</span></div>
+<a href="#" aria-current="page" style="display: block; padding: 12px 24px; background: #F4EFF9; box-shadow: inset 3px 0 0 #502579"><span style="display: block; font-size: 14px; font-weight: 600">DA321</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Data Analytics and Visualization</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">14 students · in progress</span></a>
+<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · no results yet</span></a>
+<div style="margin: 24px 24px 0; padding-top: 18px; border-top: 1px solid #111111; font-size: 15px; font-weight: 500">Past offerings</div>
+<div class="lbl" style="padding: 16px 24px 6px">Spring 2026</div>
+<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA204</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Exploring Data Ecosystems</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">4 students · course report</span></a>
+<div class="lbl" style="padding: 16px 24px 6px">Fall 2025</div>
+<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · before Arete</span></a>
+<div class="lbl" style="padding: 16px 24px 6px">Fall 2024</div>
+<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · before Arete</span></a>
+</aside>
+</sc-if>
+<sc-if value="{{isChairR}}" hint-placeholder-val="{{ false }}">
+<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">DS &amp; AI courses</div>
+<div style="margin: 20px 24px 0; padding-top: 14px; border-top: 1px solid #111111; font-size: 14px; font-weight: 500">This term <span style="font-weight: 400; color: #6B6B6B">· Fall 2026</span></div>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA201</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; background: #F4EFF9; box-shadow: inset 3px 0 0 #502579"><span style="display: block; font-size: 14px; font-weight: 600">DA321</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Data Analytics and Visualization</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">14 students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA322</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">no rubric yet</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA333</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA411</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA433</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA434</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">XD232</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
+<div style="margin: 20px 24px 0; padding-top: 14px; border-top: 1px solid #111111; font-size: 14px; font-weight: 500">Past offerings</div>
+<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA204</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Exploring Data Ecosystems</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">Spring 2026</span></a>
+</aside>
+</sc-if>
+<sc-if value="{{notInst}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<section aria-labelledby="co-h" style="padding: 28px 40px 24px; border-bottom: 1px solid #111111">
+<div class="lbl">AL0 Assessment · course</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
+<h1 id="co-h" style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">DA321 Data Analytics and Visualization <span style="color: #6B6B6B">· Fall 2026</span></h1>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+<span style="font-size: 13px; color: #6B6B6B">14 students · ratings uploaded up to Oct 7</span>
+</div>
+</div>
+<div aria-label="Course ratings workbook" style="margin-top: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px #D4D4D4">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 10px 8px 14px; background: #F5F5F3; border-bottom: 1px solid #D4D4D4">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" fill="#1D6F42"></rect><path d="M5 5l6 6M11 5l-6 6" stroke="#FFFFFF" stroke-width="1.6"></path></svg>
+<span style="font-size: 13px; font-weight: 600">DA321_Fall2026_ratings.xlsx</span>
+<span style="font-size: 12px; color: #6B6B6B">{{wb.note}}</span>
+<span style="margin-left: auto; display: flex; gap: 8px">
+<button type="button" class="xb" style="background: #FFFFFF" aria-label="Export the course ratings workbook"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="12"></rect><path d="M2 6h12M2 10h12M6 2v12"></path></svg>Export</button>
+<sc-if value="{{canImport}}" hint-placeholder-val="{{ true }}"><button type="button" class="xb" style="background: #FFFFFF" aria-label="Import the course ratings workbook"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2v8M5 7l3 3 3-3M2 12v2h12v-2"></path></svg>Import</button></sc-if>
+</span>
+</div>
+<div style="overflow-x: auto">
+<div style="{{wb.grid}}">
+<sc-for list="{{wb.cells}}" as="x" hint-placeholder-count="60"><span title="{{x.tip}}" style="{{x.s}}">{{x.t}}</span></sc-for>
+</div>
+</div>
+<div role="tablist" aria-label="Workbook tabs" style="display: flex; overflow-x: auto; background: #F5F5F3; border-top: 1px solid #D4D4D4; padding: 0 6px">
+<sc-for list="{{wb.tabs}}" as="t" hint-placeholder-count="4"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.s}}">{{t.t}}</button></sc-for>
+</div>
+</div>
+</section>
+<div style="display: flex; flex-wrap: wrap; align-items: stretch; flex: 1 1 auto">
+<aside aria-label="Students" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<div style="display: flex; justify-content: space-between; gap: 8px; padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students</div>
+<sc-for list="{{students}}" as="s" hint-placeholder-count="14">
+<div style="{{s.row}}">
+<span style="font-size: 14px; font-weight: 500">{{s.id}}</span>
+</div>
+</sc-for>
+<p class="lbl" style="margin: 12px 24px 0; line-height: 1.5">Names are fictional placeholders; Arete shows real names and student numbers from the students table.</p>
+</aside>
+<div style="flex: 999 1 640px; min-width: 0; padding: 32px 40px 100px">
+<div>
+<section aria-labelledby="st-h" style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div>
+<h2 id="st-h" style="margin: 0; font-weight: 300; font-size: 34px; letter-spacing: -0.01em">Lee Seoyeon <span style="font-size: 16px; color: #6B6B6B">2024[###]</span></h2>
+<div style="margin-top: 6px; font-size: 14px; color: #444444">Double Major: DS &amp; AI, NS</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div role="group" aria-label="Outcome set" style="display: flex">
+<button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button>
+<button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
+</div>
+</div>
+</div>
+
+<div>
+<div class="sh" style="margin-bottom: 0"><h2>Assessment methods with a rubric</h2></div>
+<div style="overflow-x: auto">
+<div style="{{gridStyle}}">
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="14">
+<sc-if value="{{r.isMethod}}" hint-placeholder-val="{{ false }}">
+<div style="{{r.bandStyle}}">
+<input type="checkbox" id="{{r.cid}}" checked="{{r.on}}" onChange="{{r.toggle}}" aria-label="{{r.incLabel}}" style="width: 20px; height: 20px; margin: 0; accent-color: #FFFFFF; flex: none">
+<label for="{{r.cid}}" style="cursor: pointer; flex: 1 1 320px"><span style="display: block; font-size: 15px; font-weight: 600">{{r.title}}</span><span style="display: block; margin-top: 2px; font-size: 13px; opacity: 0.85">{{r.meta}} · {{r.status}}</span></label>
+<button type="button" onClick="{{r.toggleDefs}}" aria-expanded="{{r.defsOpen}}" style="{{r.defsBtn}}">{{r.defsLabel}}</button>
+</div>
+</sc-if>
+<sc-if value="{{r.isDefs}}" hint-placeholder-val="{{ false }}">
+<div style="grid-column: 1 / -1; margin: 4px 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
+<div style="{{r.defsGrid}}">
+<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{r.defsTitleHead}}">{{r.defsTitleLabel}}</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
+<sc-for list="{{r.defs}}" as="d" hint-placeholder-count="6">
+<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{r.isHead}}" hint-placeholder-val="{{ false }}">
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Criterion</span>
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Rating</span>
+<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111; text-align: right; padding-right: 12px">Weight</span>
+<sc-for list="{{r.cols}}" as="c" hint-placeholder-count="6"><span title="{{c.tip}}" style="padding: 10px 0; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center">{{c.code}}<span style="display: block; font-size: 11px; font-weight: 400; color: #6B6B6B">{{c.tag}}</span></span></sc-for>
+</sc-if>
+<sc-if value="{{r.isCp}}" hint-placeholder-val="{{ false }}">
+<div style="{{r.rowStyle}}">
+<sc-if value="{{r.canFold}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{r.fold}}" aria-expanded="{{r.open}}" aria-label="{{r.foldLabel}}" style="width: 28px; height: 28px; margin: -4px 0 -4px -6px; padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; align-self: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#111111" stroke-width="1.8" style="{{r.chev}}"><path d="M6 3l5 5-5 5"></path></svg></button></sc-if>
+<span style="font-size: 12px; color: #6B6B6B">Checkpoint</span>
+<span style="font-weight: 600">{{r.title}}</span>
+<span style="color: #6B6B6B">{{r.meta}}</span>
+<span style="{{r.stateStyle}}">{{r.state}}</span>
+</div>
+</sc-if>
+<sc-if value="{{r.isCrit}}" hint-placeholder-val="{{ true }}">
+<span style="padding: 9px 0 9px 28px; border-bottom: 1px solid #EEEEEE; font-size: 14px">{{r.name}}</span>
+<span style="padding: 9px 0; border-bottom: 1px solid #EEEEEE"><span class="chip" style="{{r.chip}}">{{r.lv}}</span></span>
+<span style="padding: 9px 12px 9px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444; text-align: right; font-variant-numeric: tabular-nums">{{r.w}}</span>
+<sc-for list="{{r.cells}}" as="x" hint-placeholder-count="6"><span style="padding: 9px 0; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.style}}">{{x.t}}</span></span></sc-for>
+</sc-if>
+</sc-for>
+
+<div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; margin-top: 32px; padding: 14px 14px; background: #2E1648; color: #FFFFFF">
+<span style="font-size: 12px; opacity: 0.8">Result</span>
+<span style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
+<span style="font-size: 13px; opacity: 0.85">one per outcome · weighted median of every rated criterion in the checked methods</span>
+</div>
+<div style="grid-column: 1 / -1; background: #F3EFF7; padding: 0 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0 4px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span>black line = 50% of the weight · % = share of weight at Proficient or above</span></div>
+</div>
+<span style="padding: 10px 0 10px 14px; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span>
+<sc-for list="{{cols}}" as="c" hint-placeholder-count="6"><span title="{{c.tip}}" style="padding: 10px 0; background: #F3EFF7; font-size: 13px; font-weight: 600; text-align: center; color: #2E1648">{{c.code}}</span></sc-for>
+
+<span style="padding: 14px 0 14px 14px; background: #F3EFF7; font-size: 14px; font-weight: 600">Weighted median</span>
+<span style="padding: 14px 0; background: #F3EFF7; font-size: 12px; color: #444444; grid-column: span 2">50% of the weight</span>
+<sc-for list="{{res}}" as="m" hint-placeholder-count="6">
+<span style="padding: 14px 8px; background: #F3EFF7">
+<span style="position: relative; display: flex; height: 16px; background: #FFFFFF">
+<sc-for list="{{m.segs}}" as="g" hint-placeholder-count="3"><span class="seg" style="{{g.style}}"></span></sc-for>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: -5px; bottom: -5px; border-left: 2px solid #111111"></span>
+</span>
+</span>
+</sc-for>
+
+<span style="padding: 14px 0 16px 14px; background: #F3EFF7; font-size: 15px; font-weight: 600; border-top: 1px solid #DCD3E8">On track</span>
+<span style="padding: 14px 0 16px; background: #F3EFF7; font-size: 12px; color: #444444; border-top: 1px solid #DCD3E8; grid-column: span 2">formative checkpoints with ratings</span>
+<sc-for list="{{res}}" as="m" hint-placeholder-count="6">
+<span style="padding: 14px 0 16px; background: #F3EFF7; text-align: center; border-top: 1px solid #DCD3E8"><span style="{{m.big}}">{{m.lv}}</span><span style="display: block; margin-top: 6px; font-size: 13px; font-weight: 600; color: #2E1648; font-variant-numeric: tabular-nums">{{m.pp}}</span></span>
+</sc-for>
+
+<span style="padding: 14px 0 16px 14px; background: #F3EFF7; font-size: 15px; font-weight: 600; border-top: 1px solid #DCD3E8">Record</span>
+<span style="padding: 14px 0 16px; background: #F3EFF7; font-size: 12px; color: #444444; border-top: 1px solid #DCD3E8; grid-column: span 2">summative, after Demo Day and the final journal</span>
+<sc-for list="{{res}}" as="m" hint-placeholder-count="6">
+<span style="padding: 14px 0 16px; background: #F3EFF7; text-align: center; border-top: 1px solid #DCD3E8"><span style="display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF"></span></span>
+</sc-for>
+</div>
+</div>
+
+<p style="margin: 16px 0 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 860px">{{foot}}</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isInst}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1 1 100%; padding: 64px 40px 120px">
+<div style="max-width: 640px; padding: 28px; box-shadow: inset 0 0 0 1px #E0E0E0">
+<div class="lbl">AL0 Assessment</div>
+<div style="margin-top: 8px; font-size: 22px; font-weight: 300">Opened on request</div>
+<p style="margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #444444">Student-level results are not part of the institutional view. Ask the program chair to open a student’s or a course’s results when a review needs them; the institution reads AL3 and AL4.</p>
+</div>
+</div>
+</sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  roleMenu(role) {
+    const R = [['Course faculty', 'DA321, DA200 this term'], ['Program chair', 'Data Science and AI'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
+      isFac: role === 'Course faculty', isChairR: role === 'Program chair', isInst: role === 'Institution · IR / Dean of OAA', notInst: role !== 'Institution · IR / Dean of OAA',
+      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
+        style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
+  }
+  constructor(props) { super(props); this.state = { role: null, menu: false, set: 'CLO', inc: { cc: true, pj: true, lj: true }, raw: null, open: {} }; }
+  renderVals() {
+    const role = this.state.role ?? 'Course faculty', RM = this.roleMenu(role);
+    const isClo = this.state.set === 'CLO', inc = this.state.inc;
+    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D' };
+    const ORD = { N: 1, D: 2, P: 3, E: 4 };
+    const NAME = { E: 'E', P: 'P', D: 'D', N: 'NI', O: 'N/O' };
+    // DA321 Fall 2026 — rubric items and grade shares from TaeSylla (course_assessments, outcome_rubrics)
+    // Project ratings: pilot student S04 at the EDA workshop (deck slides clo-da321 / compute-da321); B1, B3 not observable
+    const PJ = [
+      ['A1 Problem definition & objectives', 'P', 8, [1], [1]],
+      ['A2 Data understanding & preparation', 'P', 8, [1], [1]],
+      ['A3 Exploratory data analysis', 'E', 8, [2], [1]],
+      ['A4 Reflection & limitations', 'E', 8, [3], [1, 5, 6]],
+      ['A5 Analytical process & reasoning', 'E', 8, [3, 4], [1, 4, 5, 6]],
+      ['B1 Visualization design & dashboard', 'O', 10, [], []],
+      ['B2 Insights & findings', 'P', 10, [2, 5], [1, 2]],
+      ['B3 Recommendations & decision support', 'O', 10, [], []],
+      ['C1 Presentation delivery', 'P', 10, [4], [4, 5]],
+      ['C2 Q&A and discussion', 'P', 10, [3, 4], [1, 4, 5, 6]],
+      ['C3 Teamwork & coordination', 'D', 10, [4], [4, 5]]
+    ];
+    const M = [
+      { k: 'cc', name: 'Concept Checks and Problem-solving Challenges', meta: 'Individual · 20% of grade · 18 criteria', status: 'No ratings yet',
+        cps: [['Challenges A–E', 'through the term · formative', 'Not yet rated', false]], crit: [] },
+      { k: 'pj', name: 'Project Demo and Presentation', meta: 'Team · 50% of grade · 11 criteria · Ergon showroom', status: '1 of 4 checkpoints rated',
+        cps: [['EDA workshop', 'Oct 5 & 7 · formative', 'Rated', true], ['Data-analytics case study', 'Nov 2 · formative', 'Scheduled', false],
+          ['Visualization case study', 'Nov 23 · formative', 'Scheduled', false], ['Demo Day', 'Dec 7 & 9 · summative', 'Scheduled', false]], crit: PJ },
+      { k: 'lj', name: 'Reflection Essay / Learning Journaling', meta: 'Individual · 20% of grade · 5 criteria · CLO6 → PLO3', status: 'Not yet rated',
+        cps: [['Mid-term journal', 'formative', 'Not yet rated', false], ['Final journal', 'summative', 'Scheduled', false]], crit: [] }
+    ];
+    const DEF_DA = [["Critical Thinking", "The ability to identify the assumptions, limitations, and biases embedded in data, algorithms, and AI systems, and to critically evaluate the validity and societal implications of AI outputs through evidence-based reasoning."], ["Creative Thinking", "The ability to design unprecedented solutions using data and AI technologies, devising novel approaches to complex socio-technical problems beyond the boundaries of established methodologies."], ["Self-directed Learning", "The ability to set one’s own learning direction in the rapidly evolving fields of AI and data science, and to autonomously explore, acquire, and apply new tools and methodologies."], ["Communication & Collaboration", "The ability to clearly communicate data-analysis results and AI systems to both technical and non-technical audiences, and to lead data-driven collaboration within multidisciplinary teams."], ["Diversity & Empathy", "The ability to recognize the differential impacts of AI and data systems on diverse populations, and to practice inclusive, equitable AI design and decision-making."], ["Global Harmony & Sustainability", "The ability to understand the global societal and environmental impacts of AI and data technologies, and to practice responsible AI governance for a sustainable digital future."]];
+    const DEF_ILO = ["Critical Thinking", "Creative Thinking", "Self-directed Learning", "Communication & Collaboration", "Diversity & Empathy", "Global Harmony & Sustainability"];
+    const dOpen = !!this.state.defsOpen;
+    const mkDefs = (kind, items) => ({
+      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + kind + ' Definitions', defs: items.map((d) => Object.assign({ titleStyle: d.title ? 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' : 'display: none' }, d)),
+      defsGrid: 'display: grid; grid-template-columns: 70px ' + (items.some((d) => d.title) ? '240px ' : '') + '1fr',
+      defsTitleLabel: kind, defsTitleHead: items.some((d) => d.title) ? 'padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0' : 'display: none',
+      toggleDefs: () => this.setState({ defsOpen: !dOpen }),
+      defsBtn: 'min-height: 40px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #2E1648; color: #FFFFFF' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF') });
+    const ploDefs = DEF_DA.map((d, i) => ({ code: 'PLO' + (i + 1), title: d[0], def: d[1] }));
+    const iloDefs = DEF_ILO.map((t, i) => ({ code: 'ILO' + (i + 1), title: t, def: '[Taejae definition, not in outcome_ilos yet]' }));
+    const CLO_TXT = ["Frame meaningful data-driven questions for real-world problems and acquire, organize, and prepare data for analysis using industry-standard tools.", "Apply descriptive, diagnostic, predictive, and prescriptive analytical methods to explore, interpret, and derive insights from data.", "Critically assess the strengths, limitations, and ethical and societal implications of data sources, analytical methods, and visualization choices.", "Design clear, impactful visualizations and dashboards and communicate findings and recommendations effectively to diverse stakeholders.", "Synthesize insights from multiple analyses into evidence-based, creative recommendations through a semester-long project.", "Independent exploration and reflection beyond class content."];
+    const cloDefs = CLO_TXT.map((t, i) => ({ code: 'CLO' + (i + 1), title: '', def: t }));
+    const cols = isClo ? [1, 2, 3, 4, 5, 6].map((n) => ({ n: n, code: 'CLO' + n, tag: n === 6 ? 'journal' : '', tip: 'CLO' + n + ': ' + CLO_TXT[n - 1] }))
+      : [1, 2, 3, 4, 5, 6].map((n) => ({ n: n, code: 'PLO' + n, tag: n <= 4 ? 'A-point' : 'course', tip: 'PLO' + n + ' \u00b7 ' + DEF_DA[n - 1][0] + ': ' + DEF_DA[n - 1][1] }));
+    const D = isClo ? mkDefs('CLO', cloDefs) : mkDefs('PLO', ploDefs);
+
+    const idx = isClo ? 3 : 4;
+    const chipS = (l) => 'display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 5px; box-sizing: border-box; font-size: 12px; font-weight: 600; ' +
+      (l === 'O' ? 'color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF' : 'color: #FFFFFF; background: ' + COL[l]);
+    const rows = [], pool = [];
+    M.forEach((m) => {
+      const on = inc[m.k], ro = this.state.raw === m.k;
+      const mOpen = !!(this.state.defsM && this.state.defsM[m.k]);
+      rows.push({ isMethod: true, defsOpen: mOpen, defsLabel: (mOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions',
+        toggleDefs: () => { const d = Object.assign({}, this.state.defsM); d[m.k] = !mOpen; this.setState({ defsM: d }); },
+        defsBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (mOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
+        title: m.name, meta: m.meta, status: on ? m.status : 'not pooled', cid: 'inc-' + m.k, on: on, incLabel: 'Pool ' + m.name + ' into the results',
+        toggle: () => { const n = Object.assign({}, this.state.inc); n[m.k] = !n[m.k]; this.setState({ inc: n }); },
+        openRaw: () => this.setState({ raw: ro ? null : m.k }), rawOn: ro,
+        rawBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (ro ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
+        expLabel: 'Export ' + m.name + ' ratings to Excel', impLabel: 'Import ' + m.name + ' ratings from Excel',
+        bandStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 18px; padding: 12px 14px; color: #FFFFFF; background: ' + (on ? '#2E1648' : '#77707F') });
+      if (!on) return;
+      if (this.state.defsM && this.state.defsM[m.k]) rows.push({ isDefs: true, defs: D.defs, defsGrid: D.defsGrid, defsTitleHead: D.defsTitleHead, defsTitleLabel: D.defsTitleLabel });
+      rows.push({ isHead: true, cols: cols });
+      m.cps.forEach((c, ci) => {
+        const key = m.k + ci, has = c[3] && ci === 0 && m.crit.length > 0, open = has && this.state.open[key] !== false;
+        rows.push({ isCp: true, title: c[0], meta: c[1], state: c[2], canFold: has, open: open,
+          rowStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; padding: 10px 14px; background: #F7F7F5; border-bottom: 1px solid #EEEEEE; font-size: 13px' + (c[3] ? '' : '; opacity: 0.45'),
+          fold: () => { const o = Object.assign({}, this.state.open); o[key] = !open; this.setState({ open: o }); },
+          foldLabel: (open ? 'Hide' : 'Show') + ' ratings for ' + c[0],
+          chev: 'display: block; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg)',
+          stateStyle: 'margin-left: auto; padding: 2px 8px; font-size: 12px; font-weight: 600; ' + (c[3] ? 'color: #FFFFFF; background: #111111' : 'color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF') });
+        if (has) m.crit.forEach((k) => {
+          if (open) rows.push({ isCrit: true, name: k[0], lv: NAME[k[1]], w: k[2], chip: chipS(k[1]),
+            cells: cols.map((cc) => k[idx].indexOf(cc.n) >= 0 && k[1] !== 'O' ? { t: NAME[k[1]], style: chipS(k[1]) } : { t: '·', style: 'color: #C8C8C8' }) });
+          if (k[1] !== 'O') pool.push(k);
+        });
+      });
+    });
+    const res = cols.map((c) => {
+      const it = pool.filter((k) => k[idx].indexOf(c.n) >= 0).map((k) => ({ lv: k[1], w: k[2] }));
+      if (!it.length) return { lv: '—', chip: 'background: transparent; color: #9A9A9A; box-shadow: inset 0 0 0 1px #DDDDDD', big: 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; box-sizing: border-box; font-size: 15px; color: #8A8A8A; background: #FFFFFF; box-shadow: inset 0 0 0 1px #CFCFCF', pp: 'no evidence', segs: [] };
+      const tot = it.reduce((s, x) => s + x.w, 0), by = {};
+      it.forEach((x) => { by[x.lv] = (by[x.lv] || 0) + x.w; });
+      const levels = Object.keys(by).sort((a, b) => ORD[a] - ORD[b]);
+      let cum = 0, med = null, tie = null;
+      for (let j = 0; j < levels.length; j++) {
+        cum += by[levels[j]];
+        if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < levels.length) { med = levels[j]; tie = levels[j + 1]; break; }
+        if (cum / tot > 0.5) { med = levels[j]; break; }
+      }
+      const pp = Math.round(((by.P || 0) + (by.E || 0)) / tot * 100);
+      return { lv: NAME[med] + (tie ? ' (tie)' : ''), chip: 'background: ' + COL[med], big: 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; font-size: 15px; font-weight: 700; color: #FFFFFF; background: ' + COL[med], pp: pp + '% P+',
+        segs: levels.map((l) => ({ style: 'width: ' + (by[l] / tot * 100) + '%; background: ' + COL[l] })) };
+    });
+    const methods = M.map((m) => ({ cid: 'inc-' + m.k, name: m.name, meta: m.meta, status: m.status, on: inc[m.k],
+      toggle: () => { const n = Object.assign({}, this.state.inc); n[m.k] = !n[m.k]; this.setState({ inc: n }); },
+      openRaw: () => this.setState({ raw: this.state.raw === m.k ? null : m.k }), rawOn: this.state.raw === m.k,
+      rawBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (this.state.raw === m.k ? 'background: #111111; color: #FFFFFF' : 'background: transparent; box-shadow: inset 0 0 0 1px #CFCFCF'),
+      expLabel: 'Export ' + m.name + ' ratings to Excel', impLabel: 'Import ' + m.name + ' ratings from Excel' }));
+    // raw ratings panel
+    const rm = M.find((m) => m.k === this.state.raw);
+    const NAMES = ['Kim Minjun', 'Park Jiwoo', 'Choi Yuna', 'Lee Seoyeon', 'Jung Hyunwoo', 'Kang Haeun', 'Yoon Dohyun', 'Han Sumin', 'Lim Jaehyun', 'Oh Chaewon', 'Shin Taeyang', 'Kwon Nari', 'Song Yejin', 'Bae Junho'];
+    const PAT = ['PPEPPOPOPPP', 'EPPPEOEOPEP', 'PDPPPOPOPDP', 'PPEEEOPOPPD', 'PPPDPOPOPPP', 'EEPEEOEOEPP', 'PPDPPOPODPP', 'DPPPPOPOPPD', 'PPPPPOPOPPP', 'EPEPEOEOPEP', 'PDPPDOPOPDP', 'PPPEPOPOPPP', 'EPPPPOEOPPP', 'PPDPPOPOPPD'];
+    const raw = rm ? { open: true, title: rm.name, has: rm.k === 'pj', none: rm.k !== 'pj',
+      cps: rm.cps.map((c, i) => ({ t: c[0] + (c[3] ? ' · rated' : ''), style: 'padding: 6px 12px; font-size: 13px; ' + (i === 0 ? 'background: #111111; color: #FFFFFF' : 'box-shadow: inset 0 0 0 1px #CFCFCF; color: #444444') })),
+      cols: ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3'],
+      grid: 'display: grid; grid-template-columns: 150px repeat(11, minmax(38px, 1fr)) 80px; align-items: center; min-width: 760px',
+      rows: NAMES.map((n, i) => ({ name: n, nameStyle: 'padding: 6px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; ' + (i === 3 ? 'font-weight: 600' : ''),
+        cells: PAT[i].split('').map((l) => ({ t: NAME[l], style: chipS(l) })) })) } : { open: false, has: false, none: false, cps: [], cols: [], rows: [], grid: '', title: '' };
+    // a peek into the course ratings workbook: Students tab + one tab per method,
+    // checkpoints as column groups; filled cells = uploaded ratings
+    const PJC = ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3'];
+    const WCRIT = { cc: Array.from({ length: 18 }, (_, i) => String(i + 1)), pj: PJC, lj: ['J1', 'J2', 'J3', 'J4', 'J5'] };
+    const SHOW = 7, wTab = this.state.wbTab || 'pj';
+    const base = 'height: 26px; box-sizing: border-box; display: flex; align-items: center; font-size: 11px; white-space: nowrap; overflow: hidden; border-right: 1px solid #E4E4E4; border-bottom: 1px solid #E4E4E4; ';
+    const hd = base + 'background: #F5F5F3; color: #444444; ';
+    const cells = [];
+    let grid = '', note = '';
+    if (wTab === 'st') {
+      grid = 'display: grid; grid-template-columns: 32px 120px 150px 100px; min-width: 402px';
+      ['', 'Student no.', 'Name', 'Team'].forEach((t) => cells.push({ t: t, s: hd + 'padding: 0 8px; font-weight: 600' }));
+      NAMES.slice(0, SHOW).forEach((n, i) => {
+        cells.push({ t: String(i + 1), s: hd + 'justify-content: center' });
+        cells.push({ t: '2024[###]', s: base + 'padding: 0 8px; color: #6B6B6B' });
+        cells.push({ t: n, s: base + 'padding: 0 8px; font-size: 12px' });
+        cells.push({ t: '[team]', s: base + 'padding: 0 8px; color: #6B6B6B' });
+      });
+      note = '14 students from the course roster';
+    } else {
+      const m = M.find((x) => x.k === wTab), cr = WCRIT[wTab], nG = m.cps.length;
+      grid = 'display: grid; grid-template-columns: 32px 130px repeat(' + nG * cr.length + ', 30px); min-width: ' + (162 + nG * cr.length * 30) + 'px';
+      cells.push({ t: '', s: hd + 'grid-column: span 2' });
+      m.cps.forEach((c) => cells.push({ t: c[0] + (c[3] ? '' : ' · empty'), tip: c[0] + ' · ' + c[1],
+        s: hd + 'grid-column: span ' + cr.length + '; padding: 0 8px; font-weight: 600; border-left: 1px solid #9C9C9C; ' + (c[3] ? 'background: #2E1648; color: #FFFFFF' : 'color: #9A9A9A') }));
+      cells.push({ t: '', s: hd }, { t: 'Student', s: hd + 'padding: 0 8px; font-weight: 600' });
+      m.cps.forEach((c) => cr.forEach((k, j) => cells.push({ t: k, s: hd + 'justify-content: center; ' + (j === 0 ? 'border-left: 1px solid #9C9C9C; ' : '') + (c[3] ? '' : 'color: #B0B0B0') })));
+      NAMES.slice(0, SHOW).forEach((n, i) => {
+        cells.push({ t: String(i + 1), s: hd + 'justify-content: center' }, { t: n, s: base + 'padding: 0 8px; font-size: 12px' });
+        m.cps.forEach((c, ci) => cr.forEach((k, j) => {
+          const edge = j === 0 ? 'border-left: 1px solid #9C9C9C; ' : '';
+          const l = c[3] && wTab === 'pj' && ci === 0 ? PAT[i][j] : null;
+          cells.push(l ? { t: NAME[l], tip: n + ' · ' + k + ' · ' + NAME[l], s: base + edge + 'justify-content: center; font-weight: 600; ' + (l === 'O' ? 'color: #8A8A8A; background: #F3F3F3; font-size: 9px' : 'color: #FFFFFF; background: ' + COL[l]) }
+            : { t: '', s: base + edge });
+        }));
+      });
+      const up = m.cps.filter((c) => c[3]).length;
+      note = m.name + ' · ' + up + ' of ' + nG + (nG === 1 ? ' checkpoint' : ' checkpoints') + ' uploaded';
+    }
+    cells.push({ t: '… 7 more students', s: 'grid-column: 1 / -1; padding: 6px 40px; font-size: 12px; color: #8A8A8A; background: linear-gradient(#FFFFFF, #F7F7F5)' });
+    const wb = { grid: grid, cells: cells, note: note,
+      tabs: [['st', 'Students']].concat(M.map((x) => [x.k, x.name])).map((t) => ({ t: t[1], on: wTab === t[0], pick: () => this.setState({ wbTab: t[0] }),
+        s: 'min-height: 34px; padding: 0 14px; border: none; font-family: inherit; font-size: 12px; white-space: nowrap; cursor: pointer; ' +
+          (wTab === t[0] ? 'position: relative; margin-top: -1px; background: #FFFFFF; color: #1D6F42; font-weight: 600; box-shadow: inset 0 -2px 0 #1D6F42, 1px 0 0 #D4D4D4, -1px 0 0 #D4D4D4' : 'background: transparent; color: #444444') })) };
+    const on = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
+    return Object.assign(RM, D, {
+      wb: wb, canImport: role === 'Course faculty',
+      isClo: isClo, isPlo: !isClo, tgClo: isClo ? on : '', tgPlo: isClo ? '' : on,
+      showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
+      closeRaw: () => this.setState({ raw: null }), resTitle: isClo ? 'CLO results' : 'PLO results',
+      methods: methods, raw: raw, cols: cols, rows: rows, res: res, students: this.studentList(COL),
+      gridStyle: 'display: grid; grid-template-columns: minmax(260px, 1.6fr) 72px 72px repeat(6, minmax(64px, 1fr)); align-items: center; min-width: 860px',
+      foot: 'Only methods with a rubric are listed; Course Engagement (10%) has none. Each outcome is the weighted median of every rated criterion behind it across the checked methods, each criterion once; weights are rubric points. ' +
+        (isClo ? 'CLOs come through the rubric map.' : 'PLOs pool criteria directly through the outcome map, never CLO results. A-point PLOs go on to the program.')
+    });
+  }
+  studentList(COL) {
+    const ST = [['Kim Minjun', 'PPPPE'], ['Park Jiwoo', 'EPPPE'], ['Choi Yuna', 'PPDDP'], ['Lee Seoyeon', 'PPPPE'], ['Jung Hyunwoo', 'PDPPP'], ['Kang Haeun', 'EEPPE'], ['Yoon Dohyun', 'PPDPP'],
+      ['Han Sumin', 'DPPPP'], ['Lim Jaehyun', 'PPPPP'], ['Oh Chaewon', 'EPEPE'], ['Shin Taeyang', 'PDPDP'], ['Kwon Nari', 'PPPPE'], ['Song Yejin', 'EPPPP'], ['Bae Junho', 'PPDPP']];
+    return ST.map((s) => ({ id: s[0], res: s[1].split('').map((l) => ({ style: 'display: block; width: 14px; height: 14px; background: ' + COL[l] })),
+      row: 'display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 24px; ' + (s[0] === 'Lee Seoyeon' ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '') }));
+  }
+}
+</script>
+</body>
+</html>
