@@ -629,7 +629,7 @@ class Component extends DCLogic {
     });
     steps.reduce((p, f) => p.then(f), Promise.resolve())
       .then(() => { const off = this.state.off; delete this.data[off]; ARETE.course.forget(off); this.cpCount = this.cpCount || {}; this.cpCount[off] = (this.cpCount[off] || 0) + imp.groups.filter((g) => !g.k).length;
-        this.setState({ imp: { stage: 'done', file: imp.file, msg: n + ' ratings changed in Arete. They are highlighted below; each can be undone.' }, reading: null, recentOpen: true }); })
+        this.setState({ imp: null, reading: null }); })   // the Latest upload panel takes over: what changed, with Undo
       .catch((ex) => this.setState({ imp: Object.assign({}, imp, { stage: 'error', msg: 'Upload stopped: ' + ex.message + '. Checkpoints saved before the error are kept.' }) }));
   }
 
