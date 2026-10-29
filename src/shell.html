@@ -45,7 +45,7 @@ body{margin:0;background:#FFFFFF}
 <label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
 <p class="si-err" id="si-err" role="alert"></p>
 <button type="submit" id="si-go">Sign in</button>
-<p class="si-note">AL0 Assessment reads live data. The other pages still show the design with sample data.</p>
+<p class="si-note">AL0 Assessment and AL2 Course read live data. The other pages still show the design with sample data.</p>
 </form>
 </div>
 </main>
@@ -133,7 +133,7 @@ body{margin:0;background:#FFFFFF}
     window.scrollTo(0, y);
   }
 
-  var LIVE = { al0: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al2: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -241,6 +241,10 @@ body{margin:0;background:#FFFFFF}
       return fresh().then(function () { return fetch(URL + '/rest/v1/' + table, { method: 'POST', headers: Object.assign(headers(), { Prefer: 'return=representation' }), body: JSON.stringify(body) }); })
         .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
     },
+    patch: function (path, body) {
+      return fresh().then(function () { return fetch(URL + '/rest/v1/' + path, { method: 'PATCH', headers: Object.assign(headers(), { Prefer: 'return=representation' }), body: JSON.stringify(body) }); })
+        .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
+    },
     rpc: function (name, body) {
       return fresh().then(function () { return fetch(URL + '/rest/v1/rpc/' + name, { method: 'POST', headers: headers(), body: JSON.stringify(body) }); })
         .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
@@ -263,6 +267,164 @@ body{margin:0;background:#FFFFFF}
 </script>
 <script>
 ARETE.db = window.ARETE_DB;
+</script>
+<script>
+/* Arete course data, shared by AL0 and AL2: my courses, one course's design and
+   ratings shaped for the screens, the weighted median, and readings. */
+(function () {
+  'use strict';
+  var curKey = function () {
+    var now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
+    return mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
+  };
+  var termKey = function (c) { return Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0); };
+
+  var C = {
+    sel: { off: null, stu: null },   // the course (and student) chosen on any page
+    curKey: curKey, termKey: termKey,
+
+    // my offerings with how many checkpoints each has; default = this term's first course with checkpoints
+    courses: function () {
+      var db = ARETE.db, out = {};
+      return db.rest('course_offerings?professor_email=eq.' + encodeURIComponent(db.me.email) +
+        '&select=offering_id,course_id,course_base_id,section,semester,year,title,status,courses(title)&order=year.desc,course_id.asc')
+        .then(function (rows) {
+          out.courses = rows;
+          return db.rest('outcome_checkpoints?offering_id=' + db.inList(rows.map(function (r) { return r.offering_id; })) + '&select=offering_id');
+        })
+        .then(function (cps) {
+          out.cpCount = {};
+          cps.forEach(function (c) { out.cpCount[c.offering_id] = (out.cpCount[c.offering_id] || 0) + 1; });
+          var shown = out.courses.filter(function (c) { return termKey(c) <= curKey(); });
+          var first = shown.find(function (c) { return out.cpCount[c.offering_id]; }) || shown[0];
+          out.defaultOff = first ? first.offering_id : null;
+          return out;
+        });
+    },
+
+    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    offering: function (o) {
+      var db = ARETE.db, I = db.inList, off = o.offering_id, soft = function (p) { return db.rest(p).catch(function () { return null; }); };
+      var D = { off: off, course: o };
+      return Promise.all([
+        db.rest('outcome_rubrics?offering_id=eq.' + off + '&select=rubric_id,assessment_item,default_scope,uses_program_rubric_id&order=rubric_id.asc'),
+        soft('course_assessments?offering_id=eq.' + off + '&select=item,ratio_pct'),
+        db.rest('outcome_clos?offering_id=eq.' + off + '&is_active=eq.true&select=clo_id,sort_order,text&order=sort_order.asc,clo_id.asc'),
+        o.course_base_id ? soft('outcome_curriculum_map?course_base_id=eq.' + encodeURIComponent(o.course_base_id) + '&select=plo_id,levels') : [],
+        soft('ergon_v_class_roster?offering_id=eq.' + off + '&select=student_no,name_en&order=name_en.asc'),
+        db.rest('outcome_checkpoints?offering_id=eq.' + off + '&select=checkpoint_id,rubric_id,label,held_from,held_to,kind,reading,sort_order&order=sort_order.asc,held_from.asc'),
+        soft('outcome_course_reviews?offering_id=eq.' + off + '&select=review_id,kind,target,note,status,created_by,created_at&order=created_at.desc')
+      ]).then(function (a) {
+        Object.assign(D, { rubrics: a[0], assess: a[1] || [], clos: a[2], curr: a[3] || [], roster: a[4], cps: a[5], reviews: a[6] });
+        var rids = D.rubrics.map(function (r) { return r.uses_program_rubric_id || r.rubric_id; });
+        var cids = D.cps.map(function (c) { return c.checkpoint_id; }), cloIds = D.clos.map(function (c) { return c.clo_id; });
+        return Promise.all([
+          db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
+          db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
+          db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
+          db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
+          db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level'),
+          soft('outcome_rating_history?checkpoint_id=' + I(cids) + '&upload_id=not.is.null&undone_at=is.null' +
+            '&select=history_id,upload_id,checkpoint_id,criterion_id,item_id,student_no,old_level,new_level,changed_by,changed_at&order=changed_at.desc&limit=5000')
+        ]);
+      }).then(function (a) {
+        Object.assign(D, { crits: a[0], pmap: a[1], cpc: a[2], items: a[3], ratings: a[4], hist: a[5] || [] });
+        return Promise.all([
+          db.rest('outcome_criterion_clo_map?criterion_id=' + I(D.crits.map(function (c) { return c.criterion_id; })) + '&select=criterion_id,clo_id'),
+          db.rest('outcome_plos?plo_id=' + I(Array.from(new Set(D.pmap.map(function (m) { return m.plo_id; })))) + '&select=plo_id,program_code,plo_code,title,definition,performance_standard_pct')
+        ]);
+      }).then(function (a) {
+        Object.assign(D, { cmap: a[0], plos: a[1] });
+        return C.shape(D);
+      });
+    },
+
+    shape: function (D) {
+      var byId = function (arr, k) { var m = {}; arr.forEach(function (x) { m[x[k]] = x; }); return m; };
+      var o = D.course;
+      // criteria with codes (A1, A2 … within a group; 1, 2 … without groups) and weights
+      var ratio = {}; D.assess.forEach(function (a) { ratio[a.item] = Number(a.ratio_pct); });
+      var methods = D.rubrics.map(function (r) {
+        var rid = r.uses_program_rubric_id || r.rubric_id;
+        var cs = D.crits.filter(function (c) { return c.rubric_id === rid; }).sort(function (a, b) { return a.sort_order - b.sort_order; });
+        var n = {}; cs.forEach(function (c, i) { var g = c.group_key || ''; n[g] = (n[g] || 0) + 1; c.code = g ? g + n[g] : String(i + 1); });
+        var share = ratio[r.assessment_item];
+        cs.forEach(function (c) { c.w = c.points != null ? Number(c.points) : (share ? share / cs.length : 1); });
+        return { rubric_id: r.rubric_id, name: r.assessment_item.replace(/\s*\((Team Work|Individual Work)\)\s*$/, ''), item: r.assessment_item,
+          scope: r.default_scope, share: share, crits: cs, cps: D.cps.filter(function (k) { return k.rubric_id === r.rubric_id; }) };
+      });
+      var critById = byId(D.crits, 'criterion_id');
+      // outcome links: criterion -> CLOs (rubric map) -> PLOs (outcome map)
+      var cloNo = {}; D.clos.forEach(function (c, i) { cloNo[c.clo_id] = i + 1; });
+      var crClo = {}, crPlo = {};
+      D.cmap.forEach(function (m) { (crClo[m.criterion_id] = crClo[m.criterion_id] || []).push(m.clo_id); });
+      Object.keys(crClo).forEach(function (cid) {
+        var s = new Set(); crClo[cid].forEach(function (clo) { D.pmap.filter(function (m) { return m.clo_id === clo; }).forEach(function (m) { s.add(m.plo_id); }); }); crPlo[cid] = Array.from(s);
+      });
+      var plos = D.plos.slice().sort(function (a, b) { return (a.program_code + a.plo_code).localeCompare(b.program_code + b.plo_code, undefined, { numeric: true }); });
+      var aPoint = {}; D.curr.forEach(function (c) { if (/A/.test(c.levels)) aPoint[c.plo_id] = true; });
+      // criteria in use at each checkpoint, and its sub-criteria
+      var inUse = {}, subs = {};
+      D.cps.forEach(function (k) {
+        var list = D.cpc.filter(function (x) { return x.checkpoint_id === k.checkpoint_id; }).map(function (x) { return x.criterion_id; });
+        var m = methods.find(function (mm) { return mm.rubric_id === k.rubric_id; });
+        inUse[k.checkpoint_id] = list.length ? m.crits.filter(function (c) { return list.includes(c.criterion_id); }) : m.crits;
+        subs[k.checkpoint_id] = D.items.filter(function (i) { return i.checkpoint_id === k.checkpoint_id; });
+      });
+      // ratings by checkpoint and student
+      var R = {};
+      D.ratings.forEach(function (x) { var key = x.checkpoint_id + '|' + x.student_no; (R[key] = R[key] || []).push(x); });
+      // students: the roster (test accounts left out); if it cannot be read, the numbers in the ratings
+      var students = (D.roster || []).filter(function (s) { return !/\(test\)/i.test(s.name_en || ''); }).map(function (s) { return { no: String(s.student_no), name: s.name_en }; });
+      var rosterOk = D.roster !== null;
+      if (!students.length) students = Array.from(new Set(D.ratings.map(function (x) { return x.student_no; }))).sort().map(function (no) { return { no: no, name: 'Student ' + no }; });
+      var rated = new Set(D.ratings.map(function (x) { return x.student_no; }));
+      var last = D.cps.filter(function (k) { return D.ratings.some(function (x) { return x.checkpoint_id === k.checkpoint_id; }); }).map(function (k) { return k.held_from; }).filter(Boolean).sort().pop();
+      // the latest upload (one workbook import): its changes that are still in place
+      var latestId = D.hist.length ? D.hist[0].upload_id : null;
+      var recentRows = D.hist.filter(function (h) { return h.upload_id === latestId; });
+      var recentKey = {};
+      recentRows.forEach(function (h) { recentKey[h.checkpoint_id + '|' + (h.criterion_id ? 'c' + h.criterion_id : 'i' + h.item_id) + '|' + h.student_no] = h; });
+      var recent = latestId ? { id: latestId, at: recentRows[0].changed_at, by: recentRows[0].changed_by, rows: recentRows } : null;
+      return { recent: recent, recentKey: recentKey, o: o, term: o.semester + ' ' + o.year, methods: methods, critById: critById, clos: D.clos, cloNo: cloNo,
+        crClo: crClo, crPlo: crPlo, plos: plos, aPoint: aPoint, cps: D.cps, inUse: inUse, subs: subs, R: R, students: students, rosterOk: rosterOk,
+        rated: rated, lastDate: last, reviews: D.reviews };
+    },
+
+    // the weighted median (deck AL0 rules): stack weights from the lowest level; exact half = tie, lower one used
+    wmed: function (items) {
+      var ORD = { NI: 1, D: 2, P: 3, E: 4 }, levels = ['NI', 'D', 'P', 'E'];
+      var it = items.filter(function (x) { return ORD[x.lv] && x.w > 0; });
+      if (!it.length) return null;
+      var tot = it.reduce(function (s, x) { return s + x.w; }, 0), by = {};
+      it.forEach(function (x) { by[x.lv] = (by[x.lv] || 0) + x.w; });
+      var present = levels.filter(function (l) { return by[l]; });
+      var cum = 0, med = null, tie = null;
+      for (var j = 0; j < present.length; j++) {
+        cum += by[present[j]];
+        if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < present.length) { med = present[j]; tie = present[j + 1]; break; }
+        if (cum / tot > 0.5) { med = present[j]; break; }
+      }
+      return { lv: med, tie: tie, pp: Math.round(((by.P || 0) + (by.E || 0)) / tot * 100), segs: present.map(function (l) { return { l: l, w: by[l] / tot }; }) };
+    },
+
+    // latest rating of each criterion for one student over a list of checkpoints (in date order)
+    pick: function (S, stuNo, cps) {
+      var out = {};
+      cps.forEach(function (k) { (S.R[k.checkpoint_id + '|' + stuNo] || []).forEach(function (x) { if (x.criterion_id) out[x.criterion_id] = x.level; }); });
+      return out;
+    },
+    cpOrder: function (a, b) { return (a.held_from || '').localeCompare(b.held_from || '') || a.sort_order - b.sort_order; },
+    // one outcome's result from a set of criterion levels
+    outcome: function (S, pickMap, outcomeId, isClo) {
+      return C.wmed(Object.keys(pickMap).filter(function (cid) { return ((isClo ? S.crClo[cid] : S.crPlo[cid]) || []).includes(outcomeId); })
+        .map(function (cid) { return { lv: pickMap[cid], w: S.critById[cid] ? S.critById[cid].w : 0 }; }));
+    }
+  };
+  ARETE.course = C;
+})();
+</script>
+<script>
 {{PAGE_SCRIPTS}}
 
 ARETE.start();

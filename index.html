@@ -45,7 +45,7 @@ body{margin:0;background:#FFFFFF}
 <label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
 <p class="si-err" id="si-err" role="alert"></p>
 <button type="submit" id="si-go">Sign in</button>
-<p class="si-note">AL0 Assessment reads live data. The other pages still show the design with sample data.</p>
+<p class="si-note">AL0 Assessment and AL2 Course read live data. The other pages still show the design with sample data.</p>
 </form>
 </div>
 </main>
@@ -645,12 +645,12 @@ body{margin:0;background:#FFFFFF}
 </nav>
 <div style="position: relative">
 <button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
-<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span><span class="me-name">Jiyoung Kwahk</span><span class="pill">Faculty</span>
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span><span class="me-name">{{meName}}</span><span class="pill">Faculty</span>
 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
 </button>
 <template data-if="menuOpen">
 <div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
-<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">Jiyoung Kwahk</div><div style="margin-top: 2px; font-size: 12px; color: #444444">Professor · Program Chair · Data Science &amp; AI</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">{{meName}}</div><div style="margin-top: 2px; font-size: 12px; color: #444444">{{meRole}}</div><div style="margin-top: 2px; font-size: 12px; color: #6B6B6B">{{meEmail}}</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
 <template data-for="roleItems" data-as="ri">
 <button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
 </template>
@@ -661,164 +661,129 @@ body{margin:0;background:#FFFFFF}
 </header>
 
 <main style="display: flex; flex-wrap: wrap; align-items: stretch">
-<template data-if="isFac">
-<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">This term <span style="font-weight: 400; color: #6B6B6B">· Fall 2026</span></div>
-<a href="#" aria-current="page" style="display: block; padding: 12px 24px; background: #F4EFF9; box-shadow: inset 3px 0 0 #502579"><span style="display: block; font-size: 14px; font-weight: 600">DA321</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Data Analytics and Visualization</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">14 students · in progress</span></a>
-<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · no results yet</span></a>
-<div style="margin: 24px 24px 0; padding-top: 18px; border-top: 1px solid #111111; font-size: 15px; font-weight: 500">Past offerings</div>
-<div class="lbl" style="padding: 16px 24px 6px">Spring 2026</div>
-<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA204</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Exploring Data Ecosystems</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">4 students · course report</span></a>
-<div class="lbl" style="padding: 16px 24px 6px">Fall 2025</div>
-<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · before Arete</span></a>
-<div class="lbl" style="padding: 16px 24px 6px">Fall 2024</div>
-<a href="#" style="display: block; padding: 12px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">[n] students · before Arete</span></a>
-</aside>
-</template>
-<template data-if="notFac">
-<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">DS &amp; AI courses</div>
-<div style="margin: 20px 24px 0; padding-top: 14px; border-top: 1px solid #111111; font-size: 14px; font-weight: 500">This term <span style="font-weight: 400; color: #6B6B6B">· Fall 2026</span></div>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA200</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[DA200 course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA201</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; background: #F4EFF9; box-shadow: inset 3px 0 0 #502579"><span style="display: block; font-size: 14px; font-weight: 600">DA321</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Data Analytics and Visualization</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">14 students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA322</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">no rubric yet</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA333</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA411</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA433</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA434</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">XD232</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">[course title]</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">[n] students</span></a>
-<div style="margin: 20px 24px 0; padding-top: 14px; border-top: 1px solid #111111; font-size: 14px; font-weight: 500">Past offerings</div>
-<a href="#" style="display: block; padding: 10px 24px; "><span style="display: block; font-size: 14px; font-weight: 600">DA204</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">Exploring Data Ecosystems</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">Spring 2026</span></a>
-</aside>
-</template>
-<div style="flex: 999 1 720px; min-width: 0; padding: 32px 40px 100px; display: flex; flex-direction: column; gap: 48px">
 
-<div>
-<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
-<div>
-<div class="lbl">AL2 · everyone enrolled · read and acted on each term</div>
-<h1 style="margin: 8px 0 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">DA321 Data Analytics and Visualization</h1>
-<div style="margin-top: 10px; font-size: 14px; color: #6B6B6B">Fall 2026 · 14 enrolled, majors or not · in progress, 1 of 4 project checkpoints rated</div>
+<template data-if="notInst">
+<aside aria-label="Courses" class="crs">
+<div class="crs-in">
+<template data-for="rail" data-as="g">
+<div class="grp" style="{{g.hs}}">{{g.title}} <span class="grp-sub" style="font-weight: 400; color: #6B6B6B">{{g.sub}}</span></div>
+<template data-for="g.items" data-as="c">
+<button type="button" class="rail" onClick="{{c.pick}}" aria-current="{{c.cur}}" title="{{c.tip}}" style="{{c.s}}"><span style="display: block; font-size: 14px; font-weight: 600">{{c.code}}</span><span class="rail-more" style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">{{c.title}}</span></button>
+</template>
+</template>
+<template data-if="railEmpty"><p class="lbl" style="margin: 0 24px; line-height: 1.5">{{railEmpty}}</p></template>
 </div>
-<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
-<button type="button" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}" style="{{defsBtn}}">{{defsLabel}}</button>
-<div role="group" aria-label="Outcome set" style="display: flex">
-<button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button>
-<button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
+</aside>
+
+<div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
+<template data-if="msg">
+<div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
+</template>
+<template data-if="ready">
+<div style="padding: 28px 40px 100px">
+<div class="lbl">AL2 Course · everyone enrolled</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
+<h1 style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{course.title}} <span style="color: #6B6B6B">· {{course.term}}</span></h1>
+<span style="font-size: 13px; color: #6B6B6B">{{course.meta}}</span>
 </div>
-</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 18px">
+<span class="lbl">Reading</span>
+<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="readings" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></template></span>
+<span style="margin-left: auto; display: flex; gap: 10px; align-items: center">
+<button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button>
+<span role="group" aria-label="Outcome set" style="display: flex"><button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button><button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button></span>
+</span>
 </div>
 <template data-if="defsOpen">
-<div style="box-shadow: inset 0 0 0 1px #2E1648; margin-top: 16px">
-<div style="{{defsGrid}}">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">{{defsTitleLabel}}</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<template data-for="defs" data-as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+<div style="margin-top: 14px; box-shadow: inset 0 0 0 1px #2E1648"><div style="{{defsGrid}}">
+<template data-for="defs" data-as="d"><span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span></template>
+</div></div>
 </template>
-</div>
-</div>
-</template>
-</div>
 
-<section aria-labelledby="res-h">
-<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 14px; background: #2E1648; color: #FFFFFF">
-<span style="font-size: 12px; opacity: 0.8">Result</span>
-<span id="res-h" style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
-<span style="font-size: 13px; opacity: 0.85">from rated checkpoints so far · formative, so read as on track or not</span>
+<section aria-labelledby="res-h" class="sec">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
+<span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">{{resTitle}}</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>
-<div style="background: #F3EFF7; padding: 0 14px">
-<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0 2px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span></div>
-</div>
-<div style="overflow-x: auto; background: #F3EFF7">
-<div style="display: grid; grid-template-columns: 150px minmax(280px, 1fr) 130px 260px 130px; gap: 0 20px; align-items: center; min-width: 1000px; padding: 0 14px">
-<span class="lbl" style="padding: 10px 0">Outcome</span><span class="lbl" style="padding: 10px 0">Students by result</span><span class="lbl" style="padding: 10px 0">% P or above</span><span class="lbl" style="padding: 10px 0">{{h4}}</span><span class="lbl" style="padding: 10px 0">{{h5}}</span>
-<template data-for="out" data-as="o">
-<span title="{{o.tip}}" style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: block; font-size: 15px; font-weight: 600">{{o.code}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{o.tag}}</span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: flex; height: 26px; background: #FFFFFF"><template data-for="o.segs" data-as="g"><span class="seg" style="{{g.style}}">{{g.t}}</span></template></span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 15px; font-weight: 700; color: #2E1648; font-variant-numeric: tabular-nums">{{o.pp}}</span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px; color: #444444">{{o.std}}</span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px"><span style="{{o.readStyle}}">{{o.read}}</span></span>
+<div style="overflow-x: auto"><div style="{{resGrid}}">
+<template data-for="resHead" data-as="h"><span class="cellh" style="{{h.s}}">{{h.t}}</span></template>
+<template data-for="resRows" data-as="r">
+<span class="cell" title="{{r.tip}}" style="font-weight: 600">{{r.code}} <span style="font-weight: 400; color: #6B6B6B">{{r.tag}}</span></span>
+<span class="cell"><span class="bar"><template data-for="r.segs" data-as="g"><span title="{{g.tip}}" style="{{g.s}}">{{g.t}}</span></template></span></span>
+<span class="cell" style="text-align: right; font-weight: 600; font-variant-numeric: tabular-nums">{{r.pp}}</span>
+<span class="cell" style="text-align: right; color: #6B6B6B; font-variant-numeric: tabular-nums">{{r.n}}</span>
+<span class="cell" style="text-align: right; font-variant-numeric: tabular-nums">{{r.c4}}</span>
+<span class="cell" style="{{r.c5s}}">{{r.c5}}</span>
 </template>
-</div>
-</div>
+</div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span>bar = students by result · % P+ = share of students with evidence at Proficient or above</span></div>
 </section>
 
-<section aria-labelledby="cp-h">
+<section aria-labelledby="cp-h" class="sec">
 <div class="sh"><h2 id="cp-h">By checkpoint</h2></div>
-<div style="overflow-x: auto">
-<div style="display: grid; grid-template-columns: 150px repeat(4, minmax(130px, 1fr)); align-items: center; min-width: 760px">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Outcome</span>
-<template data-for="cps" data-as="c"><span style="{{c.hs}}">{{c.t}}<span style="display: block; font-size: 11px; font-weight: 400; color: #6B6B6B">{{c.sub}}</span></span></template>
-<template data-for="cpRows" data-as="r">
-<span title="{{r.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; font-weight: 600">{{r.code}}</span>
-<template data-for="r.cells" data-as="x"><span style="padding: 12px 10px; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.wrap}}"><span style="{{x.txt}}">{{x.t}}</span><span style="{{x.track}}"><span style="{{x.e}}"></span><span style="{{x.p}}"></span></span></span></span></template>
-</template>
-</div>
-</div>
+<div style="overflow-x: auto"><div style="{{cpGrid}}">
+<span class="cellh">Outcome</span><template data-for="cpHead" data-as="h"><span class="cellh" title="{{h.tip}}" style="{{h.s}}">{{h.t}}<span style="display: block; font-size: 11px; letter-spacing: 0">{{h.sub}}</span></span></template>
+<template data-for="cpRows" data-as="r"><span class="cell" style="font-weight: 600">{{r.code}}</span><template data-for="r.cells" data-as="x"><span class="cell" style="{{x.s}}">{{x.t}}</span></template></template>
+</div></div>
 </section>
 
-<section aria-labelledby="m-h">
+<section aria-labelledby="m-h" class="sec">
 <div class="sh"><h2 id="m-h">By method</h2></div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 4px 0 4px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span></div>
-<div style="overflow-x: auto">
-<div style="display: grid; grid-template-columns: minmax(260px, 1.4fr) minmax(220px, 1fr) 90px 180px; gap: 0 16px; align-items: center; min-width: 860px">
-<template data-for="mrows" data-as="r">
-<template data-if="r.isBand">
-<div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 16px; padding: 10px 14px 10px 8px; background: #2E1648; color: #FFFFFF">
-<button type="button" onClick="{{r.fold}}" aria-expanded="{{r.open}}" aria-label="{{r.foldLabel}}" style="width: 28px; height: 28px; padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1.8" style="{{r.chev}}"><path d="M6 3l5 5-5 5"></path></svg></button>
-<span style="font-size: 12px; opacity: 0.8">Method</span>
-<span style="font-size: 15px; font-weight: 600">{{r.title}}</span>
-<span style="font-size: 13px; opacity: 0.85">{{r.meta}}</span>
-</div>
+<template data-for="mBands" data-as="b">
+<div style="margin-top: 14px; padding: 10px 14px; background: #2E1648; color: #FFFFFF; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline"><span style="font-size: 15px; font-weight: 600">{{b.name}}</span><span style="font-size: 13px; opacity: 0.85">{{b.meta}}</span></div>
+<template data-if="b.empty"><div style="padding: 10px 14px; font-size: 13px; color: #6B6B6B; border-bottom: 1px solid #EEEEEE">{{b.empty}}</div></template>
+<div style="overflow-x: auto"><div style="display: grid; grid-template-columns: minmax(240px, 1.6fr) minmax(220px, 2fr) 70px minmax(140px, 1fr); min-width: 700px">
+<template data-for="b.rows" data-as="r">
+<span class="cell">{{r.name}}</span>
+<span class="cell"><span class="bar"><template data-for="r.segs" data-as="g"><span title="{{g.tip}}" style="{{g.s}}">{{g.t}}</span></template></span></span>
+<span class="cell" style="text-align: right; font-weight: 600; font-variant-numeric: tabular-nums">{{r.pp}}</span>
+<span class="cell" style="color: #6B6B6B">{{r.feeds}}</span>
 </template>
-<template data-if="r.isHead">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Criterion · {{r.cp}}</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Class ratings</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">% P+</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">{{r.feedsLabel}}</span>
+</div></div>
 </template>
-<template data-if="r.isCrit">
-<span style="padding: 10px 0 10px 28px; border-bottom: 1px solid #EEEEEE; font-size: 14px">{{r.name}}</span>
-<span style="padding: 10px 0; border-bottom: 1px solid #EEEEEE"><span style="display: flex; height: 20px; background: #F0F0F0"><template data-for="r.segs" data-as="g"><span class="seg" style="{{g.style}}">{{g.t}}</span></template></span></span>
-<span style="{{r.ppStyle}}">{{r.pp}}</span>
-<span style="padding: 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444">{{r.feeds}}</span>
-</template>
-<template data-if="r.isNote">
-<div style="grid-column: 1 / -1; padding: 12px 0 12px 28px; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #6B6B6B">{{r.text}}</div>
-</template>
-</template>
-</div>
-</div>
 </section>
 
-<section aria-labelledby="fu-h">
-<div class="sh"><h2 id="fu-h">Follow-up</h2></div>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 16px">
-<template data-for="follow" data-as="f">
-<a href="#al0" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; box-shadow: inset 0 0 0 1px #E0E0E0">
-<span style="font-size: 14px; font-weight: 500">{{f.name}}</span>
-<span style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end"><template data-for="f.items" data-as="i"><span style="{{i.style}}">{{i.t}}</span></template></span>
-</a>
-</template>
+<section aria-labelledby="fu-h" class="sec">
+<div class="sh"><h2 id="fu-h">Follow-up</h2><span class="lbl">{{fuNote}}</span></div>
+<template data-if="fuEmpty"><p style="margin: 0; font-size: 14px; color: #6B6B6B">{{fuEmpty}}</p></template>
+<template data-for="fu" data-as="f">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 10px 0; border-bottom: 1px solid #EEEEEE">
+<span style="font-size: 14px; font-weight: 500; min-width: 180px">{{f.name}} <span style="font-weight: 400; font-size: 12px; color: #6B6B6B">{{f.no}}</span></span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="f.low" data-as="x"><span style="{{x.s}}">{{x.t}}</span></template></span>
+<button type="button" class="xb" onClick="{{f.open}}" style="margin-left: auto">Open in AL0</button>
 </div>
+</template>
 </section>
 
-<section aria-labelledby="cqi-h">
-<div class="sh"><h2 id="cqi-h">Course review</h2><span style="display: flex; align-items: center; gap: 16px"><template data-if="isFac"><button type="button" style="min-height: 36px; padding: 0 12px; border: none; background: transparent; font-size: 13px; box-shadow: inset 0 0 0 1px #CFCFCF; cursor: pointer">+ Add action</button></template><template data-if="notFac"><span style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF">Read only</span></template></span></div>
-<div style="overflow-x: auto">
-<div style="display: grid; grid-template-columns: 110px 150px 200px minmax(260px, 1fr) 150px; align-items: center; min-width: 940px">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Term</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Type</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Target</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Note</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111; text-align: right">Status</span>
-<template data-for="review" data-as="v">
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #6B6B6B">{{v.term}}</span>
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE"><span style="{{v.typeStyle}}">{{v.type}}</span></span>
-<span style="padding: 14px 8px 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; font-weight: 600">{{v.target}}</span>
-<span style="padding: 14px 12px 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; line-height: 1.45">{{v.note}}</span>
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE; text-align: right"><span style="{{v.stStyle}}">{{v.status}}</span></span>
+<section aria-labelledby="cr-h" class="sec">
+<div class="sh"><h2 id="cr-h">Course review</h2></div>
+<template data-if="crMissing"><p style="margin: 0; font-size: 14px; color: #6B6B6B">{{crMissing}}</p></template>
+<template data-if="crReady">
+<template data-if="canEdit">
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">Type<select id="cr-kind" style="min-height: 36px; padding: 0 8px; border: 1px solid #CFCFCF; font-family: inherit; font-size: 13px"><option value="action">Action · next offering</option><option value="indirect">Indirect evidence</option><option value="check">Check of last action</option><option value="flag">Flag from program</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">Target<input id="cr-target" placeholder="PLO1, A4 …" style="width: 110px; min-height: 36px; padding: 0 8px; border: 1px solid #CFCFCF; font-family: inherit; font-size: 13px"></label>
+<label style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">Note<input id="cr-note" style="min-height: 36px; padding: 0 8px; border: 1px solid #CFCFCF; font-family: inherit; font-size: 13px"></label>
+<button type="button" class="xb" onClick="{{addReview}}" style="align-self: flex-end; background: #2E1648; color: #FFFFFF; box-shadow: none">+ Add</button>
+</div>
+</template>
+<template data-if="crMsg"><p style="margin: 0 0 10px; font-size: 13px; color: #8A3A0A">{{crMsg}}</p></template>
+<template data-if="crEmpty"><p style="margin: 0; font-size: 14px; color: #6B6B6B">{{crEmpty}}</p></template>
+<div style="overflow-x: auto"><div style="display: grid; grid-template-columns: 110px 170px 90px minmax(240px, 1fr) 120px; min-width: 760px">
+<template data-for="cr" data-as="r">
+<span class="cell" style="color: #6B6B6B">{{r.when}}</span><span class="cell">{{r.kind}}</span><span class="cell" style="font-weight: 600">{{r.target}}</span><span class="cell" style="line-height: 1.5">{{r.note}}</span>
+<span class="cell"><button type="button" class="xb" onClick="{{r.toggle}}" aria-pressed="{{r.done}}" style="{{r.s}}">{{r.status}}</button></span>
+</template>
+</div></div>
+</template>
+</section>
+</div>
 </template>
 </div>
-</div>
-</section>
+</template>
 
-<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">EDA workshop ratings: Lee Seoyeon’s row is pilot draft data (Exhibit B-E05-2); the other 13 students are illustrative. Names are fictional; Arete shows real names. CLO and PLO definitions are DA321’s and DS &amp; AI’s from TaeSylla.</p>
-</div>
+<template data-if="isInst">
+<div style="flex: 1 1 100%; padding: 64px 40px 120px"><div style="max-width: 640px; padding: 28px; box-shadow: inset 0 0 0 1px #E0E0E0"><div class="lbl">AL2 Course</div><div style="margin-top: 8px; font-size: 22px; font-weight: 300">Opened on request</div><p style="margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #444444">Course reports are read by the course and its program. The institution reads AL3 and AL4.</p></div></div>
+</template>
 </main>
 </div>
 </template>
@@ -1380,10 +1345,9 @@ button,input{font-family:inherit}
 <style type="text/x-page-css" data-page="al2">
 body{margin:0;background:#FFFFFF}
 a{color:inherit;text-decoration:none}
-button,textarea{font-family:inherit}
-button{cursor:pointer}
+button{font-family:inherit;cursor:pointer}
 .lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
-.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid #111111}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
 .sh h2{margin:0;font-weight:500;font-size:15px}
 .nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
 /* suite header (same as Telos, TaeSylla, Ergon, Paideia) */
@@ -1401,9 +1365,32 @@ button{cursor:pointer}
   .me-name,.pill{display:none}
 }
 .nav a:hover{color:#502579}
-.seg{display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;font-weight:600;color:#FFFFFF}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.xb[aria-disabled="true"]{color:#9A9A9A;cursor:default}
 .tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
-.tab{padding:0 0 10px;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
+.rail{display:block;width:100%;padding:12px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.rail:hover{background:#FAF8FC}
+.stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.stu:hover{background:#FAF8FC}
+.bar{display:flex;height:14px;background:#F0F0EE}
+.sec{margin-top:48px}
+.cell{padding:9px 12px 9px 0;border-bottom:1px solid #EEEEEE;font-size:13px}
+.cellh{padding:8px 12px 8px 0;border-bottom:1px solid #111111;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+/* course column: full width on wide screens; on narrower ones only the course codes show,
+   and the column opens over the page on hover or keyboard focus */
+.crs{flex:0 0 280px;width:280px;box-sizing:border-box;border-right:1px solid #E6E6E6;position:relative}
+.crs-in{padding:24px 0 40px;background:#FFFFFF}
+.grp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1279px){
+  .crs{flex:0 0 92px;width:92px}
+  .crs-in{position:absolute;top:0;left:0;bottom:0;width:92px;overflow-x:hidden;overflow-y:auto;z-index:6;transition:width .15s ease,box-shadow .15s ease}
+  .crs:hover .crs-in,.crs:focus-within .crs-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .crs:not(:hover):not(:focus-within) .rail-more,.crs:not(:hover):not(:focus-within) .grp-sub{display:none !important}
+  .crs:not(:hover):not(:focus-within) .rail{padding:10px 14px !important}
+  .crs:not(:hover):not(:focus-within) .grp{margin-left:14px !important;margin-right:10px !important;padding-left:0 !important;font-size:11px !important}
+}
 </style>
 <style type="text/x-page-css" data-page="al3">
 body{margin:0;background:#FFFFFF}
@@ -1541,7 +1528,7 @@ button{cursor:pointer}
     window.scrollTo(0, y);
   }
 
-  var LIVE = { al0: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al2: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -1649,6 +1636,10 @@ button{cursor:pointer}
       return fresh().then(function () { return fetch(URL + '/rest/v1/' + table, { method: 'POST', headers: Object.assign(headers(), { Prefer: 'return=representation' }), body: JSON.stringify(body) }); })
         .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
     },
+    patch: function (path, body) {
+      return fresh().then(function () { return fetch(URL + '/rest/v1/' + path, { method: 'PATCH', headers: Object.assign(headers(), { Prefer: 'return=representation' }), body: JSON.stringify(body) }); })
+        .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
+    },
     rpc: function (name, body) {
       return fresh().then(function () { return fetch(URL + '/rest/v1/rpc/' + name, { method: 'POST', headers: headers(), body: JSON.stringify(body) }); })
         .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
@@ -1671,6 +1662,164 @@ button{cursor:pointer}
 </script>
 <script>
 ARETE.db = window.ARETE_DB;
+</script>
+<script>
+/* Arete course data, shared by AL0 and AL2: my courses, one course's design and
+   ratings shaped for the screens, the weighted median, and readings. */
+(function () {
+  'use strict';
+  var curKey = function () {
+    var now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
+    return mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
+  };
+  var termKey = function (c) { return Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0); };
+
+  var C = {
+    sel: { off: null, stu: null },   // the course (and student) chosen on any page
+    curKey: curKey, termKey: termKey,
+
+    // my offerings with how many checkpoints each has; default = this term's first course with checkpoints
+    courses: function () {
+      var db = ARETE.db, out = {};
+      return db.rest('course_offerings?professor_email=eq.' + encodeURIComponent(db.me.email) +
+        '&select=offering_id,course_id,course_base_id,section,semester,year,title,status,courses(title)&order=year.desc,course_id.asc')
+        .then(function (rows) {
+          out.courses = rows;
+          return db.rest('outcome_checkpoints?offering_id=' + db.inList(rows.map(function (r) { return r.offering_id; })) + '&select=offering_id');
+        })
+        .then(function (cps) {
+          out.cpCount = {};
+          cps.forEach(function (c) { out.cpCount[c.offering_id] = (out.cpCount[c.offering_id] || 0) + 1; });
+          var shown = out.courses.filter(function (c) { return termKey(c) <= curKey(); });
+          var first = shown.find(function (c) { return out.cpCount[c.offering_id]; }) || shown[0];
+          out.defaultOff = first ? first.offering_id : null;
+          return out;
+        });
+    },
+
+    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    offering: function (o) {
+      var db = ARETE.db, I = db.inList, off = o.offering_id, soft = function (p) { return db.rest(p).catch(function () { return null; }); };
+      var D = { off: off, course: o };
+      return Promise.all([
+        db.rest('outcome_rubrics?offering_id=eq.' + off + '&select=rubric_id,assessment_item,default_scope,uses_program_rubric_id&order=rubric_id.asc'),
+        soft('course_assessments?offering_id=eq.' + off + '&select=item,ratio_pct'),
+        db.rest('outcome_clos?offering_id=eq.' + off + '&is_active=eq.true&select=clo_id,sort_order,text&order=sort_order.asc,clo_id.asc'),
+        o.course_base_id ? soft('outcome_curriculum_map?course_base_id=eq.' + encodeURIComponent(o.course_base_id) + '&select=plo_id,levels') : [],
+        soft('ergon_v_class_roster?offering_id=eq.' + off + '&select=student_no,name_en&order=name_en.asc'),
+        db.rest('outcome_checkpoints?offering_id=eq.' + off + '&select=checkpoint_id,rubric_id,label,held_from,held_to,kind,reading,sort_order&order=sort_order.asc,held_from.asc'),
+        soft('outcome_course_reviews?offering_id=eq.' + off + '&select=review_id,kind,target,note,status,created_by,created_at&order=created_at.desc')
+      ]).then(function (a) {
+        Object.assign(D, { rubrics: a[0], assess: a[1] || [], clos: a[2], curr: a[3] || [], roster: a[4], cps: a[5], reviews: a[6] });
+        var rids = D.rubrics.map(function (r) { return r.uses_program_rubric_id || r.rubric_id; });
+        var cids = D.cps.map(function (c) { return c.checkpoint_id; }), cloIds = D.clos.map(function (c) { return c.clo_id; });
+        return Promise.all([
+          db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
+          db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
+          db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
+          db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
+          db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level'),
+          soft('outcome_rating_history?checkpoint_id=' + I(cids) + '&upload_id=not.is.null&undone_at=is.null' +
+            '&select=history_id,upload_id,checkpoint_id,criterion_id,item_id,student_no,old_level,new_level,changed_by,changed_at&order=changed_at.desc&limit=5000')
+        ]);
+      }).then(function (a) {
+        Object.assign(D, { crits: a[0], pmap: a[1], cpc: a[2], items: a[3], ratings: a[4], hist: a[5] || [] });
+        return Promise.all([
+          db.rest('outcome_criterion_clo_map?criterion_id=' + I(D.crits.map(function (c) { return c.criterion_id; })) + '&select=criterion_id,clo_id'),
+          db.rest('outcome_plos?plo_id=' + I(Array.from(new Set(D.pmap.map(function (m) { return m.plo_id; })))) + '&select=plo_id,program_code,plo_code,title,definition,performance_standard_pct')
+        ]);
+      }).then(function (a) {
+        Object.assign(D, { cmap: a[0], plos: a[1] });
+        return C.shape(D);
+      });
+    },
+
+    shape: function (D) {
+      var byId = function (arr, k) { var m = {}; arr.forEach(function (x) { m[x[k]] = x; }); return m; };
+      var o = D.course;
+      // criteria with codes (A1, A2 … within a group; 1, 2 … without groups) and weights
+      var ratio = {}; D.assess.forEach(function (a) { ratio[a.item] = Number(a.ratio_pct); });
+      var methods = D.rubrics.map(function (r) {
+        var rid = r.uses_program_rubric_id || r.rubric_id;
+        var cs = D.crits.filter(function (c) { return c.rubric_id === rid; }).sort(function (a, b) { return a.sort_order - b.sort_order; });
+        var n = {}; cs.forEach(function (c, i) { var g = c.group_key || ''; n[g] = (n[g] || 0) + 1; c.code = g ? g + n[g] : String(i + 1); });
+        var share = ratio[r.assessment_item];
+        cs.forEach(function (c) { c.w = c.points != null ? Number(c.points) : (share ? share / cs.length : 1); });
+        return { rubric_id: r.rubric_id, name: r.assessment_item.replace(/\s*\((Team Work|Individual Work)\)\s*$/, ''), item: r.assessment_item,
+          scope: r.default_scope, share: share, crits: cs, cps: D.cps.filter(function (k) { return k.rubric_id === r.rubric_id; }) };
+      });
+      var critById = byId(D.crits, 'criterion_id');
+      // outcome links: criterion -> CLOs (rubric map) -> PLOs (outcome map)
+      var cloNo = {}; D.clos.forEach(function (c, i) { cloNo[c.clo_id] = i + 1; });
+      var crClo = {}, crPlo = {};
+      D.cmap.forEach(function (m) { (crClo[m.criterion_id] = crClo[m.criterion_id] || []).push(m.clo_id); });
+      Object.keys(crClo).forEach(function (cid) {
+        var s = new Set(); crClo[cid].forEach(function (clo) { D.pmap.filter(function (m) { return m.clo_id === clo; }).forEach(function (m) { s.add(m.plo_id); }); }); crPlo[cid] = Array.from(s);
+      });
+      var plos = D.plos.slice().sort(function (a, b) { return (a.program_code + a.plo_code).localeCompare(b.program_code + b.plo_code, undefined, { numeric: true }); });
+      var aPoint = {}; D.curr.forEach(function (c) { if (/A/.test(c.levels)) aPoint[c.plo_id] = true; });
+      // criteria in use at each checkpoint, and its sub-criteria
+      var inUse = {}, subs = {};
+      D.cps.forEach(function (k) {
+        var list = D.cpc.filter(function (x) { return x.checkpoint_id === k.checkpoint_id; }).map(function (x) { return x.criterion_id; });
+        var m = methods.find(function (mm) { return mm.rubric_id === k.rubric_id; });
+        inUse[k.checkpoint_id] = list.length ? m.crits.filter(function (c) { return list.includes(c.criterion_id); }) : m.crits;
+        subs[k.checkpoint_id] = D.items.filter(function (i) { return i.checkpoint_id === k.checkpoint_id; });
+      });
+      // ratings by checkpoint and student
+      var R = {};
+      D.ratings.forEach(function (x) { var key = x.checkpoint_id + '|' + x.student_no; (R[key] = R[key] || []).push(x); });
+      // students: the roster (test accounts left out); if it cannot be read, the numbers in the ratings
+      var students = (D.roster || []).filter(function (s) { return !/\(test\)/i.test(s.name_en || ''); }).map(function (s) { return { no: String(s.student_no), name: s.name_en }; });
+      var rosterOk = D.roster !== null;
+      if (!students.length) students = Array.from(new Set(D.ratings.map(function (x) { return x.student_no; }))).sort().map(function (no) { return { no: no, name: 'Student ' + no }; });
+      var rated = new Set(D.ratings.map(function (x) { return x.student_no; }));
+      var last = D.cps.filter(function (k) { return D.ratings.some(function (x) { return x.checkpoint_id === k.checkpoint_id; }); }).map(function (k) { return k.held_from; }).filter(Boolean).sort().pop();
+      // the latest upload (one workbook import): its changes that are still in place
+      var latestId = D.hist.length ? D.hist[0].upload_id : null;
+      var recentRows = D.hist.filter(function (h) { return h.upload_id === latestId; });
+      var recentKey = {};
+      recentRows.forEach(function (h) { recentKey[h.checkpoint_id + '|' + (h.criterion_id ? 'c' + h.criterion_id : 'i' + h.item_id) + '|' + h.student_no] = h; });
+      var recent = latestId ? { id: latestId, at: recentRows[0].changed_at, by: recentRows[0].changed_by, rows: recentRows } : null;
+      return { recent: recent, recentKey: recentKey, o: o, term: o.semester + ' ' + o.year, methods: methods, critById: critById, clos: D.clos, cloNo: cloNo,
+        crClo: crClo, crPlo: crPlo, plos: plos, aPoint: aPoint, cps: D.cps, inUse: inUse, subs: subs, R: R, students: students, rosterOk: rosterOk,
+        rated: rated, lastDate: last, reviews: D.reviews };
+    },
+
+    // the weighted median (deck AL0 rules): stack weights from the lowest level; exact half = tie, lower one used
+    wmed: function (items) {
+      var ORD = { NI: 1, D: 2, P: 3, E: 4 }, levels = ['NI', 'D', 'P', 'E'];
+      var it = items.filter(function (x) { return ORD[x.lv] && x.w > 0; });
+      if (!it.length) return null;
+      var tot = it.reduce(function (s, x) { return s + x.w; }, 0), by = {};
+      it.forEach(function (x) { by[x.lv] = (by[x.lv] || 0) + x.w; });
+      var present = levels.filter(function (l) { return by[l]; });
+      var cum = 0, med = null, tie = null;
+      for (var j = 0; j < present.length; j++) {
+        cum += by[present[j]];
+        if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < present.length) { med = present[j]; tie = present[j + 1]; break; }
+        if (cum / tot > 0.5) { med = present[j]; break; }
+      }
+      return { lv: med, tie: tie, pp: Math.round(((by.P || 0) + (by.E || 0)) / tot * 100), segs: present.map(function (l) { return { l: l, w: by[l] / tot }; }) };
+    },
+
+    // latest rating of each criterion for one student over a list of checkpoints (in date order)
+    pick: function (S, stuNo, cps) {
+      var out = {};
+      cps.forEach(function (k) { (S.R[k.checkpoint_id + '|' + stuNo] || []).forEach(function (x) { if (x.criterion_id) out[x.criterion_id] = x.level; }); });
+      return out;
+    },
+    cpOrder: function (a, b) { return (a.held_from || '').localeCompare(b.held_from || '') || a.sort_order - b.sort_order; },
+    // one outcome's result from a set of criterion levels
+    outcome: function (S, pickMap, outcomeId, isClo) {
+      return C.wmed(Object.keys(pickMap).filter(function (cid) { return ((isClo ? S.crClo[cid] : S.crPlo[cid]) || []).includes(outcomeId); })
+        .map(function (cid) { return { lv: pickMap[cid], w: S.critById[cid] ? S.critById[cid].w : 0 }; }));
+    }
+  };
+  ARETE.course = C;
+})();
+</script>
+<script>
 ARETE.page("home", "Home", {"role": "Course faculty"}, function (DCLogic) {
 class Component extends DCLogic {
   constructor(props) { super(props); this.state = { menu: false, role: null }; }
@@ -1787,136 +1936,25 @@ class Component extends DCLogic {
     this.courses = null; this.data = {}; this.err = null; this.busy = {};
   }
 
-  // ---------- loading (Supabase, read only) ----------
+  // ---------- loading (shared with AL2: ARETE.course) ----------
   loadCourses() {
-    const db = ARETE.db, me = db.me;
     this.busy.courses = true;
-    db.rest('course_offerings?professor_email=eq.' + encodeURIComponent(me.email) +
-      '&select=offering_id,course_id,course_base_id,section,semester,year,title,status,courses(title)&order=year.desc,course_id.asc')
-      .then((rows) => {
-        this.courses = rows;
-        return db.rest('outcome_checkpoints?offering_id=' + db.inList(rows.map((r) => r.offering_id)) + '&select=offering_id').then((cps) => {
-          this.cpCount = {}; cps.forEach((c) => { this.cpCount[c.offering_id] = (this.cpCount[c.offering_id] || 0) + 1; });
-        });
-      })
+    ARETE.course.courses()
+      .then((r) => { this.courses = r.courses; this.cpCount = r.cpCount;
+        if (ARETE.course.sel.off == null || !r.courses.some((c) => c.offering_id === ARETE.course.sel.off)) ARETE.course.sel.off = r.defaultOff; })
       .catch((e) => { this.err = 'Could not load your courses: ' + e.message; this.courses = []; })
-      .then(() => {
-        this.busy.courses = false;
-        const now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
-        const curKey = mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
-        const shown = this.courses.filter((c) => Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0) <= curKey);
-        const withCp = shown.find((c) => this.cpCount && this.cpCount[c.offering_id]);
-        const first = withCp || shown[0];
-        this.setState({ off: first ? first.offering_id : null });
-      });
+      .then(() => { this.busy.courses = false; this.setState({ off: ARETE.course.sel.off }); });
   }
 
   loadOffering(off) {
-    const db = ARETE.db, I = db.inList, rest = (p) => db.rest(p).catch(() => null);
     const o = this.courses.find((c) => c.offering_id === off);
     this.busy[off] = true;
-    const D = { off: off, course: o };
-    Promise.all([
-      db.rest('outcome_rubrics?offering_id=eq.' + off + '&select=rubric_id,assessment_item,default_scope,uses_program_rubric_id&order=rubric_id.asc'),
-      rest('course_assessments?offering_id=eq.' + off + '&select=item,ratio_pct'),
-      db.rest('outcome_clos?offering_id=eq.' + off + '&is_active=eq.true&select=clo_id,sort_order,text&order=sort_order.asc,clo_id.asc'),
-      o.course_base_id ? rest('outcome_curriculum_map?course_base_id=eq.' + encodeURIComponent(o.course_base_id) + '&select=plo_id,levels') : [],
-      rest('ergon_v_class_roster?offering_id=eq.' + off + '&select=student_no,name_en&order=name_en.asc'),
-      db.rest('outcome_checkpoints?offering_id=eq.' + off + '&select=checkpoint_id,rubric_id,label,held_from,held_to,kind,reading,sort_order&order=sort_order.asc,held_from.asc')
-    ]).then(([rubrics, assess, clos, curr, roster, cps]) => {
-      Object.assign(D, { rubrics: rubrics, assess: assess || [], clos: clos, curr: curr || [], roster: roster, cps: cps });
-      const rids = rubrics.map((r) => r.uses_program_rubric_id || r.rubric_id), cids = cps.map((c) => c.checkpoint_id), cloIds = clos.map((c) => c.clo_id);
-      return Promise.all([
-        db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
-        db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
-        db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
-        db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
-        db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level'),
-        rest('outcome_rating_history?checkpoint_id=' + I(cids) + '&upload_id=not.is.null&undone_at=is.null' +
-          '&select=history_id,upload_id,checkpoint_id,criterion_id,item_id,student_no,old_level,new_level,changed_by,changed_at&order=changed_at.desc&limit=5000')
-      ]);
-    }).then(([crits, pmap, cpc, items, ratings, hist]) => {
-      Object.assign(D, { crits: crits, pmap: pmap, cpc: cpc, items: items, ratings: ratings, hist: hist || [] });
-      return Promise.all([
-        db.rest('outcome_criterion_clo_map?criterion_id=' + I(crits.map((c) => c.criterion_id)) + '&select=criterion_id,clo_id'),
-        db.rest('outcome_plos?plo_id=' + I([...new Set(pmap.map((m) => m.plo_id))]) + '&select=plo_id,program_code,plo_code,title,definition')
-      ]);
-    }).then(([cmap, plos]) => {
-      Object.assign(D, { cmap: cmap, plos: plos });
-      this.data[off] = this.shape(D);
-    }).catch((e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
+    ARETE.course.offering(o)
+      .then((S) => { this.data[off] = S; }, (e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
       .then(() => { this.busy[off] = false; this.setState({}); });
   }
 
-  // ---------- shaping: everything the screen needs, computed once per course ----------
-  shape(D) {
-    const byId = (arr, k) => { const m = {}; arr.forEach((x) => { m[x[k]] = x; }); return m; };
-    const o = D.course;
-    // criteria with codes (A1, A2 … within a group; 1, 2 … without groups) and weights
-    const ratio = {}; D.assess.forEach((a) => { ratio[a.item] = Number(a.ratio_pct); });
-    const methods = D.rubrics.map((r) => {
-      const rid = r.uses_program_rubric_id || r.rubric_id;
-      const cs = D.crits.filter((c) => c.rubric_id === rid).sort((a, b) => a.sort_order - b.sort_order);
-      const n = {}; cs.forEach((c, i) => { const g = c.group_key || ''; n[g] = (n[g] || 0) + 1; c.code = g ? g + n[g] : String(i + 1); });
-      const share = ratio[r.assessment_item];
-      cs.forEach((c) => { c.w = c.points != null ? Number(c.points) : (share ? share / cs.length : 1); });
-      return { rubric_id: r.rubric_id, name: r.assessment_item.replace(/\s*\((Team Work|Individual Work)\)\s*$/, ''), item: r.assessment_item,
-        scope: r.default_scope, share: share, crits: cs, cps: D.cps.filter((k) => k.rubric_id === r.rubric_id) };
-    });
-    const critById = byId(D.crits, 'criterion_id');
-    // outcome links: criterion -> CLOs (rubric map) -> PLOs (outcome map)
-    const cloNo = {}; D.clos.forEach((c, i) => { cloNo[c.clo_id] = i + 1; });
-    const crClo = {}, crPlo = {};
-    D.cmap.forEach((m) => { (crClo[m.criterion_id] = crClo[m.criterion_id] || []).push(m.clo_id); });
-    Object.keys(crClo).forEach((cid) => {
-      const s = new Set(); crClo[cid].forEach((clo) => D.pmap.filter((m) => m.clo_id === clo).forEach((m) => s.add(m.plo_id))); crPlo[cid] = [...s];
-    });
-    const plos = D.plos.slice().sort((a, b) => (a.program_code + a.plo_code).localeCompare(b.program_code + b.plo_code, undefined, { numeric: true }));
-    const aPoint = {}; D.curr.forEach((c) => { if (/A/.test(c.levels)) aPoint[c.plo_id] = true; });
-    // criteria in use at each checkpoint, and its sub-criteria grouped by parent
-    const inUse = {}, subs = {};
-    D.cps.forEach((k) => {
-      const list = D.cpc.filter((x) => x.checkpoint_id === k.checkpoint_id).map((x) => x.criterion_id);
-      const m = methods.find((mm) => mm.rubric_id === k.rubric_id);
-      inUse[k.checkpoint_id] = (list.length ? m.crits.filter((c) => list.includes(c.criterion_id)) : m.crits);
-      subs[k.checkpoint_id] = D.items.filter((i) => i.checkpoint_id === k.checkpoint_id);
-    });
-    // ratings by checkpoint and student
-    const R = {};
-    D.ratings.forEach((x) => { const key = x.checkpoint_id + '|' + x.student_no; (R[key] = R[key] || []).push(x); });
-    // students: the roster; if it cannot be read, the student numbers found in the ratings
-    let students = (D.roster || []).filter((s) => !/\(test\)/i.test(s.name_en || '')).map((s) => ({ no: String(s.student_no), name: s.name_en }));   // test accounts left out
-    const rosterOk = D.roster !== null;
-    if (!students.length) students = [...new Set(D.ratings.map((x) => x.student_no))].sort().map((no) => ({ no: no, name: 'Student ' + no }));
-    const rated = new Set(D.ratings.map((x) => x.student_no));
-    const term = o.semester + ' ' + o.year;
-    const last = D.cps.filter((k) => D.ratings.some((x) => x.checkpoint_id === k.checkpoint_id)).map((k) => k.held_from).filter(Boolean).sort().pop();
-    // the latest upload (one workbook import): its changes that are still in place
-    const latestId = D.hist.length ? D.hist[0].upload_id : null;
-    const recentRows = D.hist.filter((h) => h.upload_id === latestId);
-    const recentKey = {};
-    recentRows.forEach((h) => { recentKey[h.checkpoint_id + '|' + (h.criterion_id ? 'c' + h.criterion_id : 'i' + h.item_id) + '|' + h.student_no] = h; });
-    const recent = latestId ? { id: latestId, at: recentRows[0].changed_at, by: recentRows[0].changed_by, rows: recentRows } : null;
-    return { recent: recent, recentKey: recentKey, o: o, term: term, methods: methods, critById: critById, clos: D.clos, cloNo: cloNo, crClo: crClo, crPlo: crPlo, plos: plos, aPoint: aPoint,
-      cps: D.cps, inUse: inUse, subs: subs, R: R, students: students, rosterOk: rosterOk, rated: rated, lastDate: last };
-  }
-
-  // ---------- the weighted median (deck AL0 rules) ----------
-  wmed(items) {
-    const ORD = { NI: 1, D: 2, P: 3, E: 4 }, levels = ['NI', 'D', 'P', 'E'];
-    const it = items.filter((x) => ORD[x.lv] && x.w > 0);
-    if (!it.length) return null;
-    const tot = it.reduce((s, x) => s + x.w, 0), by = {};
-    it.forEach((x) => { by[x.lv] = (by[x.lv] || 0) + x.w; });
-    const present = levels.filter((l) => by[l]);
-    let cum = 0, med = null, tie = null;
-    for (let j = 0; j < present.length; j++) {
-      cum += by[present[j]];
-      if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < present.length) { med = present[j]; tie = present[j + 1]; break; }   // exact half: show both, use the lower
-      if (cum / tot > 0.5) { med = present[j]; break; }
-    }
-    return { lv: med, tie: tie, pp: Math.round(((by.P || 0) + (by.E || 0)) / tot * 100), segs: present.map((l) => ({ l: l, w: by[l] / tot })) };
-  }
+  wmed(items) { return ARETE.course.wmed(items); }
 
   // ---------- role menu (same as the other pages) ----------
   roleMenu(role) {
@@ -1954,7 +1992,7 @@ class Component extends DCLogic {
       cur: c.offering_id === this.state.off ? 'page' : false,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
-      pick: () => this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }) });
+      pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }); } });
     const hsTop = 'padding: 0 24px 10px; font-size: 15px; font-weight: 500';
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
@@ -1965,6 +2003,8 @@ class Component extends DCLogic {
     });
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
+    if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }
+    if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
     const S = this.data[off];
@@ -2082,7 +2122,7 @@ class Component extends DCLogic {
       imp: this.importVals(S), pickFile: () => this.pickFile(), importFile: (e) => this.importFile(e), rc: this.recentVals(S),
       rosterNote: S.rosterOk ? '' : 'The class list could not be read, so students are shown by number.',
       students: S.students.map((s) => ({ name: s.name, no: s.no, cur: s.no === stuNo ? 'true' : false,
-        s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => this.setState({ stu: s.no }) })),
+        s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: stu, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
       cols: cols, rows: rows, res: res, rec: rec, readings: readings,
@@ -2529,119 +2569,213 @@ return Component;
 
 ARETE.page("al2", "AL2 Course", {}, function (DCLogic) {
 class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { role: null, menu: false, set: 'CLO', off: null, reading: null, defsOpen: false };
+    this.courses = null; this.data = {}; this.err = null; this.busy = {};
+  }
+
+  // ---------- loading (shared with AL2: ARETE.course) ----------
+  loadCourses() {
+    this.busy.courses = true;
+    ARETE.course.courses()
+      .then((r) => { this.courses = r.courses; this.cpCount = r.cpCount;
+        if (ARETE.course.sel.off == null || !r.courses.some((c) => c.offering_id === ARETE.course.sel.off)) ARETE.course.sel.off = r.defaultOff; })
+      .catch((e) => { this.err = 'Could not load your courses: ' + e.message; this.courses = []; })
+      .then(() => { this.busy.courses = false; this.setState({ off: ARETE.course.sel.off }); });
+  }
+
+  loadOffering(off) {
+    const o = this.courses.find((c) => c.offering_id === off);
+    this.busy[off] = true;
+    ARETE.course.offering(o)
+      .then((S) => { this.data[off] = S; }, (e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
+      .then(() => { this.busy[off] = false; this.setState({}); });
+  }
+
+  wmed(items) { return ARETE.course.wmed(items); }
+
+  // ---------- role menu (same as the other pages) ----------
   roleMenu(role) {
-    const R = [['Course faculty', 'DA321, DA200 this term'], ['Program chair', 'Data Science and AI'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const R = [['Course faculty', 'Your courses'], ['Program chair', 'Courses of your program'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const me = ARETE.db.me || { name: '' };
     return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
       menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
-      isFac: role === 'Course faculty', isChairR: role === 'Program chair', isInst: role === 'Institution · IR / Dean of OAA', notInst: role !== 'Institution · IR / Dean of OAA',
+      meName: me.name, meEmail: me.email || '',
+      meRole: ['Professor', me.isChair ? 'Program Chair' : '', (me.program || [])[0] || ''].filter(Boolean).join(' \u00b7 '),
+      meInitials: me.name.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase(),
+      isInst: role === R[2][0], notInst: role !== R[2][0],
       roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
         style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
   }
-  constructor(props) { super(props); this.state = { role: null, menu: false, set: 'CLO', open: { pj: true }, defsOpen: false }; }
+
   renderVals() {
     const role = this.state.role ?? 'Course faculty', RM = this.roleMenu(role);
-    const isClo = this.state.set === 'CLO';
-    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D' };
-    const ORD = { N: 1, D: 2, P: 3, E: 4 }, NM = { E: 'E', P: 'P', D: 'D', N: 'NI', O: 'N/O' };
-    const DEF_DA = [["Critical Thinking", "The ability to identify the assumptions, limitations, and biases embedded in data, algorithms, and AI systems, and to critically evaluate the validity and societal implications of AI outputs through evidence-based reasoning."], ["Creative Thinking", "The ability to design unprecedented solutions using data and AI technologies, devising novel approaches to complex socio-technical problems beyond the boundaries of established methodologies."], ["Self-directed Learning", "The ability to set one’s own learning direction in the rapidly evolving fields of AI and data science, and to autonomously explore, acquire, and apply new tools and methodologies."], ["Communication & Collaboration", "The ability to clearly communicate data-analysis results and AI systems to both technical and non-technical audiences, and to lead data-driven collaboration within multidisciplinary teams."], ["Diversity & Empathy", "The ability to recognize the differential impacts of AI and data systems on diverse populations, and to practice inclusive, equitable AI design and decision-making."], ["Global Harmony & Sustainability", "The ability to understand the global societal and environmental impacts of AI and data technologies, and to practice responsible AI governance for a sustainable digital future."]];
-    const CLO_TXT = ["Frame meaningful data-driven questions for real-world problems and acquire, organize, and prepare data for analysis using industry-standard tools.", "Apply descriptive, diagnostic, predictive, and prescriptive analytical methods to explore, interpret, and derive insights from data.", "Critically assess the strengths, limitations, and ethical and societal implications of data sources, analytical methods, and visualization choices.", "Design clear, impactful visualizations and dashboards and communicate findings and recommendations effectively to diverse stakeholders.", "Synthesize insights from multiple analyses into evidence-based, creative recommendations through a semester-long project.", "Independent exploration and reflection beyond class content."];
-    // DA321 Project rubric, EDA workshop: [code, name, weight, CLOs, PLOs]; B1 and B3 not observable
-    const CR = [['A1', 'Problem definition & objectives', 8, [1], [1]], ['A2', 'Data understanding & preparation', 8, [1], [1]], ['A3', 'Exploratory data analysis', 8, [2], [1]],
-      ['A4', 'Reflection & limitations', 8, [3], [1, 5, 6]], ['A5', 'Analytical process & reasoning', 8, [3, 4], [1, 4, 5, 6]], ['B1', 'Visualization design & dashboard', 10, [], []],
-      ['B2', 'Insights & findings', 10, [2, 5], [1, 2]], ['B3', 'Recommendations & decision support', 10, [], []], ['C1', 'Presentation delivery', 10, [4], [4, 5]],
-      ['C2', 'Q&A and discussion', 10, [3, 4], [1, 4, 5, 6]], ['C3', 'Teamwork & coordination', 10, [4], [4, 5]]];
-    const NAMES = ['Kim Minjun', 'Park Jiwoo', 'Choi Yuna', 'Lee Seoyeon', 'Jung Hyunwoo', 'Kang Haeun', 'Yoon Dohyun', 'Han Sumin', 'Lim Jaehyun', 'Oh Chaewon', 'Shin Taeyang', 'Kwon Nari', 'Song Yejin', 'Bae Junho'];
-    const PAT = ['PPEPPOPOPPP', 'EPPPEOEOPEP', 'PDPPPOPOPDP', 'PPEEEOPOPPD', 'PPPDPOPOPPP', 'EEPEEOEOEPP', 'PPDPPOPODPP', 'DPPPPOPOPPD', 'PPPPPOPOPPP', 'EPEPEOEOPEP', 'PDPPDOPOPDP', 'PPPEPOPOPPP', 'EPPPPOEOPPP', 'PPDPPOPOPPD'];
-    const idx = isClo ? 3 : 4, N6 = [1, 2, 3, 4, 5, 6];
-    const wmed = (items) => {
-      if (!items.length) return null;
-      const tot = items.reduce((s, x) => s + x.w, 0), by = {};
-      items.forEach((x) => { by[x.lv] = (by[x.lv] || 0) + x.w; });
-      const lv = Object.keys(by).sort((a, b) => ORD[a] - ORD[b]);
-      let cum = 0;
-      for (let i = 0; i < lv.length; i++) { cum += by[lv[i]]; if (cum / tot >= 0.5 - 1e-9) return lv[i]; }
-      return lv[lv.length - 1];
+    const base = Object.assign(RM, { rail: [], railEmpty: '', msg: '', ready: false, canEdit: role === 'Course faculty' });
+    if (!ARETE.db.signedIn()) return Object.assign(base, { msg: 'Please sign in.' });
+    if (this.courses === null) { if (!this.busy.courses) this.loadCourses(); return Object.assign(base, { msg: 'Loading your courses…' }); }
+    if (this.err) return Object.assign(base, { msg: this.err });
+
+    // course rail: this term first, then past offerings by term (newest first)
+    const now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
+    const curTerm = mo >= 8 ? 'Fall ' + yr : (mo <= 1 ? 'Fall ' + (yr - 1) : 'Spring ' + yr);
+    const termKey = (c) => Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0);
+    const curKey = mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
+    // only the current term and past terms: planned offerings have no ratings yet
+    const shownCourses = this.courses.filter((c) => termKey(c) <= curKey);
+    const groups = {};
+    shownCourses.forEach((c) => { const t = c.semester + ' ' + c.year; (groups[t] = groups[t] || []).push(c); });
+    const order = Object.keys(groups).sort((a, b) => termKey(groups[b][0]) - termKey(groups[a][0]));
+    const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
+      sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
+      cur: c.offering_id === this.state.off ? 'page' : false,
+      tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
+      s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
+      pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, reading: null }); } });
+    const hsTop = 'padding: 0 24px 10px; font-size: 15px; font-weight: 500';
+    const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
+    let pastShown = false;
+    base.rail = order.map((t) => {
+      const isCur = t === curTerm, g = { title: isCur ? 'This term' : t, sub: isCur ? '· ' + t : '', items: groups[t].map(item), hs: isCur ? hsTop : hsPast };
+      if (!isCur && !pastShown) { pastShown = true; g.hs = 'margin: 24px 24px 0; padding: 18px 0 6px; border-top: 1px solid #111111; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B'; }
+      return g;
+    });
+    if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
+
+    if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }
+    if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
+    const off = this.state.off;
+    if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    const S = this.data[off];
+    if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
+    if (S.error) return Object.assign(base, { msg: S.error });
+    return Object.assign(base, this.courseVals(S, role));
+  }
+
+  courseVals(S, role) {
+    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D' }, LV = ['E', 'P', 'D', 'NI'];
+    const K = ARETE.course, isClo = this.state.set !== 'PLO';
+    const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    const outs = isClo ? S.clos.map((c, i) => ({ id: c.clo_id, code: 'CLO' + (i + 1), tag: '', tip: c.text || '' }))
+      : S.plos.map((p) => ({ id: p.plo_id, code: p.plo_code, tag: S.aPoint[p.plo_id] ? 'A-point' : 'course', tip: p.title + (p.definition ? ': ' + p.definition : ''), std: S.aPoint[p.plo_id] ? p.performance_standard_pct : null }));
+    const links = (cid) => (isClo ? S.crClo[cid] : S.crPlo[cid]) || [];
+    // readings: progress, each rated checkpoint, the record
+    const cps = S.cps.slice().sort(K.cpOrder);
+    const hasR = (k) => Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|'));
+    const rated = cps.filter(hasR);
+    const progCps = cps.filter((k) => k.reading === 'progress'), recCps = cps.filter((k) => k.kind === 'summative');
+    let reading = this.state.reading;
+    const anyProg = S.students.some((s) => Object.keys(K.pick(S, s.no, progCps)).length);
+    if (reading == null || (typeof reading === 'number' && !rated.some((k) => k.checkpoint_id === reading)))
+      reading = anyProg || !rated.length ? 'progress' : rated[rated.length - 1].checkpoint_id;
+    const poolCps = reading === 'progress' ? progCps : reading === 'record' ? recCps : cps.filter((k) => k.checkpoint_id === reading);
+    const pools = {}; S.students.forEach((s) => { pools[s.no] = K.pick(S, s.no, poolCps); });
+    const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #2E1648; color: #FFFFFF; font-weight: 600' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF');
+    const readings = [{ id: 'progress', t: 'Progress' }].concat(rated.map((k) => ({ id: k.checkpoint_id, t: k.label }))).concat(recCps.length ? [{ id: 'record', t: 'Record' }] : [])
+      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const formative = reading !== 'record' && !(typeof reading === 'number' && (cps.find((k) => k.checkpoint_id === reading) || {}).kind === 'summative');
+
+    // class distribution of one outcome over the students
+    const dist = (pick) => {
+      const n = { E: 0, P: 0, D: 0, NI: 0 }, below = [];
+      S.students.forEach((s) => { const r = K.outcome(S, pools[s.no], pick.id, isClo); if (r) { n[r.lv]++; if (r.lv === 'D' || r.lv === 'NI') below.push(s.no); } });
+      const tot = n.E + n.P + n.D + n.NI;
+      return { n: n, tot: tot, pp: tot ? Math.round((n.E + n.P) / tot * 100) : null, below: below };
     };
-    // each student's result per outcome (AL0 rule), then the class distribution (AL2)
-    const res = NAMES.map((nm, si) => N6.map((n) => wmed(CR.map((c, ci) => ({ lv: PAT[si][ci], w: c[2], m: c[idx] })).filter((x) => x.lv !== 'O' && x.m.indexOf(n) >= 0))));
-    const tags = isClo ? N6.map((n) => n === 6 ? 'journal · not yet rated' : 'course review') : N6.map((n) => n <= 4 ? 'A-point' : 'course only');
-    const STD = { 1: 75, 2: 70, 3: 80, 4: 75 };
-    const tipOf = (n) => isClo ? 'CLO' + n + ': ' + CLO_TXT[n - 1] : 'PLO' + n + ' · ' + DEF_DA[n - 1][0] + ': ' + DEF_DA[n - 1][1];
-    const critPct = CR.map((c, ci) => { const v = PAT.map((p) => p[ci]); if (v[0] === 'O') return null; return Math.round(v.filter((l) => l === 'E' || l === 'P').length / v.length * 100); });
-    const lowest = (n) => { let best = null; CR.forEach((c, ci) => { if (critPct[ci] === null || c[idx].indexOf(n) < 0) return; if (best === null || critPct[ci] < critPct[best]) best = ci; }); return best; };
-    const out = N6.map((n, i) => {
-      const v = res.map((r) => r[i]).filter(Boolean), cnt = { E: 0, P: 0, D: 0, N: 0 };
-      v.forEach((l) => cnt[l]++);
-      const code = (isClo ? 'CLO' : 'PLO') + n;
-      if (!v.length) return { code: code, tip: tipOf(n), tag: tags[i], segs: [], pp: '—', std: '—', read: 'no evidence yet', readStyle: 'color: #6B6B6B' };
-      const pp = cnt.E + cnt.P, pct = Math.round(pp / v.length * 100), std = !isClo ? STD[n] : null;
-      return { code: code, tip: tipOf(n), tag: tags[i], e: cnt.E, p: cnt.P, nv: v.length,
-        segs: ['E', 'P', 'D', 'N'].filter((k) => cnt[k]).map((k) => ({ t: String(cnt[k]), style: 'width: ' + (cnt[k] / v.length * 100) + '%; background: ' + COL[k] })),
-        pp: pp + '/' + v.length + ' · ' + pct + '%',
-        std: isClo ? (lowest(n) === null ? '—' : CR[lowest(n)][0] + ' ' + CR[lowest(n)][1]) : (std ? '≥ ' + std + '%' : '—'),
-        read: isClo ? (lowest(n) === null ? '' : critPct[lowest(n)] + '% at P+') : (std ? (pct >= std ? 'On track' : 'Not on track') : 'Course review'),
-        readStyle: isClo ? 'font-weight: 600; color: ' + (lowest(n) !== null && critPct[lowest(n)] < 70 ? '#8A3A0A' : '#111111') : (std ? 'font-weight: 600; color: ' + (pct >= std ? '#111111' : '#8A3A0A') : 'color: #6B6B6B') };
+    const segs = (n, tot) => LV.slice().reverse().filter((l) => n[l]).map((l) => ({ t: n[l] / tot >= 0.08 ? String(n[l]) : '', tip: l + ': ' + n[l],
+      s: 'display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #FFFFFF; width: ' + (n[l] / tot * 100) + '%; background: ' + COL[l] }));
+    // criterion-level class share at P+ (CLO view: the weakest criterion behind each CLO)
+    const critShare = (cid) => { let t = 0, ok = 0; S.students.forEach((s) => { const l = pools[s.no][cid]; if (l && l !== 'N/O') { t++; if (l === 'E' || l === 'P') ok++; } }); return t ? { t: t, pp: Math.round(ok / t * 100) } : null; };
+
+    const resRows = outs.map((o) => {
+      const d = dist(o);
+      const row = { code: o.code, tag: o.tag, tip: o.tip, segs: d.tot ? segs(d.n, d.tot) : [], pp: d.pp == null ? '—' : d.pp + '%', n: d.tot ? d.tot + ' / ' + S.students.length : 'no evidence' };
+      if (isClo) {
+        const crs = Object.keys(S.critById).filter((cid) => (S.crClo[cid] || []).includes(o.id)).map((cid) => ({ c: S.critById[cid], s: critShare(cid) })).filter((x) => x.s);
+        const low = crs.sort((a, b) => a.s.pp - b.s.pp)[0];
+        row.c4 = low ? low.c.code : '—'; row.c5 = low ? low.s.pp + '% at P+' : ''; row.c5s = 'padding: 9px 12px 9px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; ' + (low && low.s.pp < 70 ? 'color: #8A3A0A; font-weight: 600' : 'color: #444444');
+      } else {
+        const std = o.std != null ? Number(o.std) : null, meets = std != null && d.pp != null ? d.pp >= std : null;
+        row.c4 = std != null ? std + '%' : '—';
+        row.c5 = meets == null ? (std == null ? 'course PLO' : '—') : formative ? (meets ? 'On track' : 'Not on track') : (meets ? 'Meets' : 'Below standard');
+        row.c5s = 'padding: 9px 12px 9px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; ' + (meets === false ? 'color: #8A3A0A; font-weight: 600' : meets ? 'color: #1F6B35; font-weight: 600' : 'color: #6B6B6B');
+      }
+      return row;
     });
-    const cps = [{ t: 'EDA workshop', sub: 'Oct 5 & 7 · rated' }, { t: 'Data-analytics case study', sub: 'Nov 2' }, { t: 'Visualization case study', sub: 'Nov 23' }, { t: 'Demo Day', sub: 'Dec 7 & 9 · summative' }].map((c, ci) => Object.assign(c, {
-      hs: 'padding: 10px 0; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center' + (ci > 0 ? '; opacity: 0.45' : '') }));  // no results yet = dimmed
-    const cpRows = N6.map((n, i) => {
-      const o = out[i], has = o.pp !== '—';
-      return { code: o.code, tip: o.tip, cells: cps.map((c, ci) => {
-        if (ci > 0 || !has) return { t: '', wrap: 'display: inline-block; width: 110px; height: 28px; box-sizing: border-box; border: 1px dashed #DDDDDD', txt: 'display: none', track: 'display: none', e: '', p: '' };
-        const pct = Math.round((o.e + o.p) / o.nv * 100), low = !isClo && STD[n] && pct < STD[n];
-        return { t: pct + '%', wrap: 'display: inline-flex; align-items: center; gap: 8px', txt: 'width: 40px; text-align: right; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: ' + (low ? '#8A3A0A' : '#111111'),
-          track: 'display: flex; width: 70px; height: 12px; background: #EEEEEE', e: 'display: block; width: ' + (o.e / o.nv * 100) + '%; background: #0077B6', p: 'display: block; width: ' + (o.p / o.nv * 100) + '%; background: #2EA043' };
-      }) };
-    });
-    // By method
-    const M = [['pj', 'Project Demo and Presentation', 'Team · 50% of grade · 11 criteria · EDA workshop rated'], ['cc', 'Concept Checks and Problem-solving Challenges', 'Individual · 20% · 18 criteria'], ['lj', 'Reflection Essay / Learning Journaling', 'Individual · 20% · 5 criteria · CLO6 → PLO3']];
-    const mrows = [];
-    M.forEach((m) => {
-      const open = this.state.open[m[0]] !== false && !!this.state.open[m[0]];
-      mrows.push({ isBand: true, title: m[1], meta: m[2], open: open,
-        fold: () => { const o = Object.assign({}, this.state.open); o[m[0]] = !open; this.setState({ open: o }); },
-        foldLabel: (open ? 'Hide ' : 'Show ') + m[1],
-        chev: 'display: block; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg)' });
-      if (!open) return;
-      if (m[0] !== 'pj') { mrows.push({ isNote: true, text: 'No ratings yet' }); return; }
-      mrows.push({ isHead: true, cp: 'EDA workshop', feedsLabel: isClo ? 'Feeds CLO' : 'Feeds PLO' });
-      CR.forEach((c, ci) => {
-        const v = PAT.map((p) => p[ci]);
-        if (v[0] === 'O') { mrows.push({ isCrit: true, name: c[0] + ' ' + c[1], segs: [{ t: 'N/O · not observable at this checkpoint', style: 'width: 100%; background: #FFFFFF; color: #8A8A8A; box-shadow: inset 0 0 0 1px #DDDDDD' }], pp: '—', ppStyle: 'padding: 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #8A8A8A', feeds: '—' }); return; }
-        const cnt = { E: 0, P: 0, D: 0, N: 0 }; v.forEach((l) => cnt[l]++);
-        const pct = Math.round((cnt.E + cnt.P) / v.length * 100);
-        mrows.push({ isCrit: true, name: c[0] + ' ' + c[1],
-          segs: ['E', 'P', 'D', 'N'].filter((k) => cnt[k]).map((k) => ({ t: String(cnt[k]), style: 'width: ' + (cnt[k] / v.length * 100) + '%; background: ' + COL[k] })),
-          pp: pct + '%', ppStyle: 'padding: 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; font-variant-numeric: tabular-nums; font-weight: ' + (pct < 70 ? '700; color: #8A3A0A' : '500; color: #111111'),
-          feeds: c[idx].map((n) => (isClo ? 'CLO' : 'PLO') + n).join(', ') || '—' });
+    const resHead = [['Outcome', ''], ['Students by result', ''], ['% P+', 'text-align: right'], ['With evidence', 'text-align: right'],
+      [isClo ? 'Lowest criterion' : 'Standard', 'text-align: right'], [isClo ? 'Its share' : (formative ? 'Reading (formative)' : 'Judgement'), '']].map((h) => ({ t: h[0], s: h[1] }));
+
+    // by checkpoint: class % P+ per outcome, each checkpoint on its own
+    const cpPools = cps.map((k) => { const p = {}; S.students.forEach((s) => { p[s.no] = K.pick(S, s.no, [k]); }); return p; });
+    const cpHead = cps.map((k) => ({ t: k.label, sub: [fmtDate(k.held_from), k.kind].filter(Boolean).join(' · '), tip: k.label, s: 'text-align: center' + (hasR(k) ? '' : '; opacity: 0.45') }));
+    const cpRows = outs.map((o) => ({ code: o.code, cells: cps.map((k, i) => {
+      let t = 0, ok = 0; S.students.forEach((s) => { const r = K.outcome(S, cpPools[i][s.no], o.id, isClo); if (r) { t++; if (r.lv === 'E' || r.lv === 'P') ok++; } });
+      return t ? { t: Math.round(ok / t * 100) + '%', s: 'text-align: center; font-weight: 600; font-variant-numeric: tabular-nums' } : { t: '·', s: 'text-align: center; color: #C8C8C8' + (hasR(k) ? '' : '; opacity: 0.45') };
+    }) }));
+
+    // by method: class distribution per criterion in the reading
+    const mBands = S.methods.map((m) => {
+      const used = {}; poolCps.filter((k) => k.rubric_id === m.rubric_id).forEach((k) => S.inUse[k.checkpoint_id].forEach((c) => { used[c.criterion_id] = c; }));
+      const rows = m.crits.filter((c) => used[c.criterion_id]).map((c) => {
+        const n = { E: 0, P: 0, D: 0, NI: 0 }; let no = 0;
+        S.students.forEach((s) => { const l = pools[s.no][c.criterion_id]; if (n[l] != null) n[l]++; else if (l === 'N/O') no++; });
+        const tot = n.E + n.P + n.D + n.NI;
+        return { name: c.code + ' ' + c.name, segs: tot ? segs(n, tot) : [], pp: tot ? Math.round((n.E + n.P) / tot * 100) + '%' : '—',
+          feeds: links(c.criterion_id).map((id) => (outs.find((o) => o.id === id) || {}).code).filter(Boolean).join(', ') + (no ? ' · ' + no + ' N/O' : '') };
       });
+      return { name: m.name, meta: [m.scope, m.share ? m.share + '% of grade' : '', m.crits.length + ' criteria'].filter(Boolean).join(' · '), rows: rows,
+        empty: rows.length ? '' : 'No ratings in this reading.' };
     });
-    // Follow-up: anyone below Proficient on any outcome
-    const follow = NAMES.map((nm, si) => ({ name: nm, items: N6.map((n, i) => ({ n: n, l: res[si][i] })).filter((x) => x.l && ORD[x.l] < 3)
-      .map((x) => ({ t: (isClo ? 'CLO' : 'PLO') + x.n + ' ' + NM[x.l], style: 'padding: 3px 8px; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + COL[x.l] })) })).filter((f) => f.items.length);
-    const tStyle = (k) => 'display: inline-block; padding: 3px 9px; font-size: 12px; font-weight: 600; ' + ({ flag: 'color: #8A3A0A; box-shadow: inset 0 0 0 1px #8A3A0A', action: 'color: #FFFFFF; background: #2E1648', check: 'color: #2E1648; box-shadow: inset 0 0 0 1px #2E1648', feedback: 'color: #444444; background: #EEEEEE' })[k];
-    const sStyle = (k) => 'font-size: 13px; font-weight: 600; color: ' + (k === 'open' ? '#8A3A0A' : k === 'done' ? '#111111' : '#6B6B6B');
-    const review = [
-      ['Fall 2026', 'action', 'Action · next offering', 'C3 Teamwork & coordination', 'Lowest criterion behind CLO4 (79% at P+): [what changes, e.g. team contract and mid-project peer check]', 'Draft', 'draft'],
-      ['Fall 2026', 'feedback', 'Indirect evidence', 'Early-term feedback', '[Satisfaction score and main comments]', 'Received', 'done'],
-      ['Fall 2025', 'check', 'Check of last action', '[Target]', '[Action recorded for the previous DA321 offering]', '[done / partly / not yet]', 'draft']
-    ].map((r) => ({ term: r[0], type: r[2], typeStyle: tStyle(r[1]), target: r[3], note: r[4], status: r[5], stStyle: sStyle(r[6]) }));
-    // definitions
-    const dOpen = !!this.state.defsOpen;
-    const defs = isClo ? CLO_TXT.map((t, i) => ({ code: 'CLO' + (i + 1), title: '', def: t, titleStyle: 'display: none' }))
-      : DEF_DA.map((d, i) => ({ code: 'PLO' + (i + 1), title: d[0], def: d[1], titleStyle: 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' }));
-    const on = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
-    return Object.assign(RM, { notFac: role !== 'Course faculty' }, {
-      isClo: isClo, isPlo: !isClo, tgClo: isClo ? on : '', tgPlo: isClo ? '' : on,
+
+    // follow-up: students below Proficient on any outcome in the reading
+    const fu = S.students.map((s) => {
+      const low = outs.map((o) => { const r = K.outcome(S, pools[s.no], o.id, isClo); return r && (r.lv === 'D' || r.lv === 'NI') ? { t: o.code + ' ' + r.lv, s: 'padding: 2px 8px; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + COL[r.lv] } : null; }).filter(Boolean);
+      return low.length ? { name: s.name, no: s.no, low: low, open: () => { ARETE.course.sel.off = S.o.offering_id; ARETE.course.sel.stu = s.no; location.hash = '#al0'; } } : null;
+    }).filter(Boolean);
+
+    // course review
+    const KIND = { action: 'Action · next offering', indirect: 'Indirect evidence', check: 'Check of last action', flag: 'Flag from program' };
+    const canEdit = role === 'Course faculty';
+    const cr = (S.reviews || []).map((r) => ({ when: new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }), kind: KIND[r.kind] || r.kind,
+      target: r.target || '', note: r.note, status: r.status === 'done' ? 'Done' : 'Open', done: r.status === 'done',
+      s: r.status === 'done' ? 'background: #EAF5EC; color: #1F6B35; box-shadow: none' : '',
+      toggle: () => { if (!canEdit) return; this.saveReview('PATCH', r.review_id, { status: r.status === 'done' ? 'open' : 'done' }); } }));
+
+    const tgOn = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
+    const defs = isClo ? S.clos.map((c, i) => ({ code: 'CLO' + (i + 1), title: '', def: c.text || '' })) : S.plos.map((p) => ({ code: p.plo_code, title: p.title, def: p.definition || '' }));
+    const dOpen = !!this.state.defsOpen, curCp = typeof reading === 'number' ? cps.find((k) => k.checkpoint_id === reading) : null;
+    const withEv = S.students.filter((s) => Object.keys(pools[s.no]).length).length;
+    return {
+      ready: true,
+      course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
+        meta: S.students.length + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
+      readings: readings, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
-      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', defs: defs,
-      defsGrid: 'display: grid; grid-template-columns: 70px ' + (isClo ? '' : '240px ') + '1fr', defsTitleLabel: isClo ? '' : 'PLO',
-      defsTitleHead: isClo ? 'display: none' : 'padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0',
-      toggleDefs: () => this.setState({ defsOpen: !dOpen }),
-      defsBtn: 'min-height: 40px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #2E1648; color: #FFFFFF' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF'),
-      resTitle: isClo ? 'Course CLO results' : 'Course PLO results', h4: isClo ? 'Lowest criterion' : 'Standard', h5: isClo ? 'Its share' : 'Reading', setName: isClo ? 'CLO' : 'PLO',
-      out: out, cps: cps, cpRows: cpRows, mrows: mrows, follow: follow, review: review
-    });
+      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', toggleDefs: () => this.setState({ defsOpen: !dOpen }),
+      defs: defs.map((d) => Object.assign({ titleStyle: isClo ? 'display: none' : 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' }, d)),
+      defsGrid: 'display: grid; grid-template-columns: 80px ' + (isClo ? '' : '220px ') + '1fr',
+      resTitle: 'Course ' + (isClo ? 'CLO' : 'PLO') + ' results',
+      resSub: (reading === 'progress' ? 'Progress: latest rating of each criterion' : reading === 'record' ? 'Record: summative checkpoints' : (curCp ? curCp.label + ' on its own' : '')) + ' · ' + withEv + ' of ' + S.students.length + ' students with ratings',
+      resHead: resHead, resRows: resRows,
+      resGrid: 'display: grid; grid-template-columns: minmax(120px, 0.8fr) minmax(220px, 2fr) 70px 110px 120px minmax(130px, 1fr); align-items: center; min-width: 760px',
+      cpHead: cpHead, cpRows: cpRows, cpGrid: 'display: grid; grid-template-columns: 120px repeat(' + Math.max(cps.length, 1) + ', minmax(110px, 1fr)); min-width: ' + (120 + cps.length * 110) + 'px',
+      mBands: mBands,
+      fu: fu, fuNote: 'students below Proficient on any ' + (isClo ? 'CLO' : 'PLO') + ' in this reading',
+      fuEmpty: fu.length ? '' : (withEv ? 'Nobody is below Proficient in this reading.' : 'No ratings in this reading yet.'),
+      crMissing: S.reviews === null ? 'Course review is not set up in the database yet.' : '', crReady: S.reviews !== null, canEdit: canEdit,
+      cr: cr, crEmpty: S.reviews && !S.reviews.length ? 'No records yet.' : '', crMsg: this.state.crMsg || '',
+      addReview: () => {
+        const kind = document.getElementById('cr-kind').value, target = document.getElementById('cr-target').value.trim(), note = document.getElementById('cr-note').value.trim();
+        if (!note) { this.setState({ crMsg: 'Write a note first.' }); return; }
+        this.saveReview('POST', null, { offering_id: S.o.offering_id, kind: kind, target: target || null, note: note });
+      }
+    };
+  }
+
+  saveReview(method, id, body) {
+    const off = this.state.off, db = ARETE.db;
+    const done = method === 'POST' ? db.post('outcome_course_reviews', body) : db.patch('outcome_course_reviews?review_id=eq.' + id, body);
+    done.then(() => { delete this.data[off]; this.setState({ crMsg: '' }); }, (e) => this.setState({ crMsg: 'Could not save: ' + e.message }));
   }
 }
 return Component;

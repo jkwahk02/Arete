@@ -316,136 +316,25 @@ class Component extends DCLogic {
     this.courses = null; this.data = {}; this.err = null; this.busy = {};
   }
 
-  // ---------- loading (Supabase, read only) ----------
+  // ---------- loading (shared with AL2: ARETE.course) ----------
   loadCourses() {
-    const db = ARETE.db, me = db.me;
     this.busy.courses = true;
-    db.rest('course_offerings?professor_email=eq.' + encodeURIComponent(me.email) +
-      '&select=offering_id,course_id,course_base_id,section,semester,year,title,status,courses(title)&order=year.desc,course_id.asc')
-      .then((rows) => {
-        this.courses = rows;
-        return db.rest('outcome_checkpoints?offering_id=' + db.inList(rows.map((r) => r.offering_id)) + '&select=offering_id').then((cps) => {
-          this.cpCount = {}; cps.forEach((c) => { this.cpCount[c.offering_id] = (this.cpCount[c.offering_id] || 0) + 1; });
-        });
-      })
+    ARETE.course.courses()
+      .then((r) => { this.courses = r.courses; this.cpCount = r.cpCount;
+        if (ARETE.course.sel.off == null || !r.courses.some((c) => c.offering_id === ARETE.course.sel.off)) ARETE.course.sel.off = r.defaultOff; })
       .catch((e) => { this.err = 'Could not load your courses: ' + e.message; this.courses = []; })
-      .then(() => {
-        this.busy.courses = false;
-        const now = new Date(), mo = now.getMonth() + 1, yr = now.getFullYear();
-        const curKey = mo >= 8 ? yr * 2 + 1 : (mo <= 1 ? (yr - 1) * 2 + 1 : yr * 2);
-        const shown = this.courses.filter((c) => Number(c.year) * 2 + (c.semester === 'Fall' ? 1 : 0) <= curKey);
-        const withCp = shown.find((c) => this.cpCount && this.cpCount[c.offering_id]);
-        const first = withCp || shown[0];
-        this.setState({ off: first ? first.offering_id : null });
-      });
+      .then(() => { this.busy.courses = false; this.setState({ off: ARETE.course.sel.off }); });
   }
 
   loadOffering(off) {
-    const db = ARETE.db, I = db.inList, rest = (p) => db.rest(p).catch(() => null);
     const o = this.courses.find((c) => c.offering_id === off);
     this.busy[off] = true;
-    const D = { off: off, course: o };
-    Promise.all([
-      db.rest('outcome_rubrics?offering_id=eq.' + off + '&select=rubric_id,assessment_item,default_scope,uses_program_rubric_id&order=rubric_id.asc'),
-      rest('course_assessments?offering_id=eq.' + off + '&select=item,ratio_pct'),
-      db.rest('outcome_clos?offering_id=eq.' + off + '&is_active=eq.true&select=clo_id,sort_order,text&order=sort_order.asc,clo_id.asc'),
-      o.course_base_id ? rest('outcome_curriculum_map?course_base_id=eq.' + encodeURIComponent(o.course_base_id) + '&select=plo_id,levels') : [],
-      rest('ergon_v_class_roster?offering_id=eq.' + off + '&select=student_no,name_en&order=name_en.asc'),
-      db.rest('outcome_checkpoints?offering_id=eq.' + off + '&select=checkpoint_id,rubric_id,label,held_from,held_to,kind,reading,sort_order&order=sort_order.asc,held_from.asc')
-    ]).then(([rubrics, assess, clos, curr, roster, cps]) => {
-      Object.assign(D, { rubrics: rubrics, assess: assess || [], clos: clos, curr: curr || [], roster: roster, cps: cps });
-      const rids = rubrics.map((r) => r.uses_program_rubric_id || r.rubric_id), cids = cps.map((c) => c.checkpoint_id), cloIds = clos.map((c) => c.clo_id);
-      return Promise.all([
-        db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
-        db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
-        db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
-        db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
-        db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level'),
-        rest('outcome_rating_history?checkpoint_id=' + I(cids) + '&upload_id=not.is.null&undone_at=is.null' +
-          '&select=history_id,upload_id,checkpoint_id,criterion_id,item_id,student_no,old_level,new_level,changed_by,changed_at&order=changed_at.desc&limit=5000')
-      ]);
-    }).then(([crits, pmap, cpc, items, ratings, hist]) => {
-      Object.assign(D, { crits: crits, pmap: pmap, cpc: cpc, items: items, ratings: ratings, hist: hist || [] });
-      return Promise.all([
-        db.rest('outcome_criterion_clo_map?criterion_id=' + I(crits.map((c) => c.criterion_id)) + '&select=criterion_id,clo_id'),
-        db.rest('outcome_plos?plo_id=' + I([...new Set(pmap.map((m) => m.plo_id))]) + '&select=plo_id,program_code,plo_code,title,definition')
-      ]);
-    }).then(([cmap, plos]) => {
-      Object.assign(D, { cmap: cmap, plos: plos });
-      this.data[off] = this.shape(D);
-    }).catch((e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
+    ARETE.course.offering(o)
+      .then((S) => { this.data[off] = S; }, (e) => { this.data[off] = { error: 'Could not load this course: ' + e.message }; })
       .then(() => { this.busy[off] = false; this.setState({}); });
   }
 
-  // ---------- shaping: everything the screen needs, computed once per course ----------
-  shape(D) {
-    const byId = (arr, k) => { const m = {}; arr.forEach((x) => { m[x[k]] = x; }); return m; };
-    const o = D.course;
-    // criteria with codes (A1, A2 … within a group; 1, 2 … without groups) and weights
-    const ratio = {}; D.assess.forEach((a) => { ratio[a.item] = Number(a.ratio_pct); });
-    const methods = D.rubrics.map((r) => {
-      const rid = r.uses_program_rubric_id || r.rubric_id;
-      const cs = D.crits.filter((c) => c.rubric_id === rid).sort((a, b) => a.sort_order - b.sort_order);
-      const n = {}; cs.forEach((c, i) => { const g = c.group_key || ''; n[g] = (n[g] || 0) + 1; c.code = g ? g + n[g] : String(i + 1); });
-      const share = ratio[r.assessment_item];
-      cs.forEach((c) => { c.w = c.points != null ? Number(c.points) : (share ? share / cs.length : 1); });
-      return { rubric_id: r.rubric_id, name: r.assessment_item.replace(/\s*\((Team Work|Individual Work)\)\s*$/, ''), item: r.assessment_item,
-        scope: r.default_scope, share: share, crits: cs, cps: D.cps.filter((k) => k.rubric_id === r.rubric_id) };
-    });
-    const critById = byId(D.crits, 'criterion_id');
-    // outcome links: criterion -> CLOs (rubric map) -> PLOs (outcome map)
-    const cloNo = {}; D.clos.forEach((c, i) => { cloNo[c.clo_id] = i + 1; });
-    const crClo = {}, crPlo = {};
-    D.cmap.forEach((m) => { (crClo[m.criterion_id] = crClo[m.criterion_id] || []).push(m.clo_id); });
-    Object.keys(crClo).forEach((cid) => {
-      const s = new Set(); crClo[cid].forEach((clo) => D.pmap.filter((m) => m.clo_id === clo).forEach((m) => s.add(m.plo_id))); crPlo[cid] = [...s];
-    });
-    const plos = D.plos.slice().sort((a, b) => (a.program_code + a.plo_code).localeCompare(b.program_code + b.plo_code, undefined, { numeric: true }));
-    const aPoint = {}; D.curr.forEach((c) => { if (/A/.test(c.levels)) aPoint[c.plo_id] = true; });
-    // criteria in use at each checkpoint, and its sub-criteria grouped by parent
-    const inUse = {}, subs = {};
-    D.cps.forEach((k) => {
-      const list = D.cpc.filter((x) => x.checkpoint_id === k.checkpoint_id).map((x) => x.criterion_id);
-      const m = methods.find((mm) => mm.rubric_id === k.rubric_id);
-      inUse[k.checkpoint_id] = (list.length ? m.crits.filter((c) => list.includes(c.criterion_id)) : m.crits);
-      subs[k.checkpoint_id] = D.items.filter((i) => i.checkpoint_id === k.checkpoint_id);
-    });
-    // ratings by checkpoint and student
-    const R = {};
-    D.ratings.forEach((x) => { const key = x.checkpoint_id + '|' + x.student_no; (R[key] = R[key] || []).push(x); });
-    // students: the roster; if it cannot be read, the student numbers found in the ratings
-    let students = (D.roster || []).filter((s) => !/\(test\)/i.test(s.name_en || '')).map((s) => ({ no: String(s.student_no), name: s.name_en }));   // test accounts left out
-    const rosterOk = D.roster !== null;
-    if (!students.length) students = [...new Set(D.ratings.map((x) => x.student_no))].sort().map((no) => ({ no: no, name: 'Student ' + no }));
-    const rated = new Set(D.ratings.map((x) => x.student_no));
-    const term = o.semester + ' ' + o.year;
-    const last = D.cps.filter((k) => D.ratings.some((x) => x.checkpoint_id === k.checkpoint_id)).map((k) => k.held_from).filter(Boolean).sort().pop();
-    // the latest upload (one workbook import): its changes that are still in place
-    const latestId = D.hist.length ? D.hist[0].upload_id : null;
-    const recentRows = D.hist.filter((h) => h.upload_id === latestId);
-    const recentKey = {};
-    recentRows.forEach((h) => { recentKey[h.checkpoint_id + '|' + (h.criterion_id ? 'c' + h.criterion_id : 'i' + h.item_id) + '|' + h.student_no] = h; });
-    const recent = latestId ? { id: latestId, at: recentRows[0].changed_at, by: recentRows[0].changed_by, rows: recentRows } : null;
-    return { recent: recent, recentKey: recentKey, o: o, term: term, methods: methods, critById: critById, clos: D.clos, cloNo: cloNo, crClo: crClo, crPlo: crPlo, plos: plos, aPoint: aPoint,
-      cps: D.cps, inUse: inUse, subs: subs, R: R, students: students, rosterOk: rosterOk, rated: rated, lastDate: last };
-  }
-
-  // ---------- the weighted median (deck AL0 rules) ----------
-  wmed(items) {
-    const ORD = { NI: 1, D: 2, P: 3, E: 4 }, levels = ['NI', 'D', 'P', 'E'];
-    const it = items.filter((x) => ORD[x.lv] && x.w > 0);
-    if (!it.length) return null;
-    const tot = it.reduce((s, x) => s + x.w, 0), by = {};
-    it.forEach((x) => { by[x.lv] = (by[x.lv] || 0) + x.w; });
-    const present = levels.filter((l) => by[l]);
-    let cum = 0, med = null, tie = null;
-    for (let j = 0; j < present.length; j++) {
-      cum += by[present[j]];
-      if (Math.abs(cum / tot - 0.5) < 1e-9 && j + 1 < present.length) { med = present[j]; tie = present[j + 1]; break; }   // exact half: show both, use the lower
-      if (cum / tot > 0.5) { med = present[j]; break; }
-    }
-    return { lv: med, tie: tie, pp: Math.round(((by.P || 0) + (by.E || 0)) / tot * 100), segs: present.map((l) => ({ l: l, w: by[l] / tot })) };
-  }
+  wmed(items) { return ARETE.course.wmed(items); }
 
   // ---------- role menu (same as the other pages) ----------
   roleMenu(role) {
@@ -483,7 +372,7 @@ class Component extends DCLogic {
       cur: c.offering_id === this.state.off ? 'page' : false,
       tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
-      pick: () => this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }) });
+      pick: () => { ARETE.course.sel.off = c.offering_id; ARETE.course.sel.stu = null; this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }); } });
     const hsTop = 'padding: 0 24px 10px; font-size: 15px; font-weight: 500';
     const hsPast = 'margin: 0 24px; padding: 16px 0 6px; font-size: 12px; letter-spacing: 0.04em; color: #6B6B6B';
     let pastShown = false;
@@ -494,6 +383,8 @@ class Component extends DCLogic {
     });
     if (!shownCourses.length) base.railEmpty = 'No courses found for ' + ARETE.db.me.email + '.';
 
+    if (ARETE.course.sel.off != null && ARETE.course.sel.off !== this.state.off) { this.state.off = ARETE.course.sel.off; this.state.stu = ARETE.course.sel.stu; }
+    if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
     const S = this.data[off];
@@ -611,7 +502,7 @@ class Component extends DCLogic {
       imp: this.importVals(S), pickFile: () => this.pickFile(), importFile: (e) => this.importFile(e), rc: this.recentVals(S),
       rosterNote: S.rosterOk ? '' : 'The class list could not be read, so students are shown by number.',
       students: S.students.map((s) => ({ name: s.name, no: s.no, cur: s.no === stuNo ? 'true' : false,
-        s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => this.setState({ stu: s.no }) })),
+        s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: stu, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
       cols: cols, rows: rows, res: res, rec: rec, readings: readings,
