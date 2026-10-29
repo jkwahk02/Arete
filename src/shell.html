@@ -236,6 +236,25 @@ body{margin:0;background:#FFFFFF}
     },
     signOut: function () { user = null; db.me = null; db.cache = {}; clear(); },
     rest: rest,
+    // writes: insert rows (returns them) and call a database function
+    post: function (table, body) {
+      return fresh().then(function () { return fetch(URL + '/rest/v1/' + table, { method: 'POST', headers: Object.assign(headers(), { Prefer: 'return=representation' }), body: JSON.stringify(body) }); })
+        .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
+    },
+    rpc: function (name, body) {
+      return fresh().then(function () { return fetch(URL + '/rest/v1/rpc/' + name, { method: 'POST', headers: headers(), body: JSON.stringify(body) }); })
+        .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
+    },
+    // SheetJS, loaded only when a workbook is read
+    xlsx: function () {
+      if (window.XLSX) return Promise.resolve(window.XLSX);
+      return new Promise(function (ok, fail) {
+        var el = document.createElement('script');
+        el.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        el.onload = function () { ok(window.XLSX); }; el.onerror = function () { fail(new Error('Could not load the Excel reader')); };
+        document.head.appendChild(el);
+      });
+    },
     // ids for an in.(...) filter; an empty list matches nothing
     inList: function (ids) { return ids.length ? 'in.(' + ids.join(',') + ')' : 'in.(-1)'; }
   };
