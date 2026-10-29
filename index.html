@@ -220,14 +220,16 @@ body{margin:0;background:#FFFFFF}
 <main style="display: flex; flex-wrap: wrap; align-items: stretch">
 
 <template data-if="notInst">
-<aside aria-label="Courses" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
+<aside aria-label="Courses" class="crs">
+<div class="crs-in">
 <template data-for="rail" data-as="g">
-<div style="{{g.hs}}">{{g.title}} <span style="font-weight: 400; color: #6B6B6B">{{g.sub}}</span></div>
+<div class="grp" style="{{g.hs}}">{{g.title}} <span class="grp-sub" style="font-weight: 400; color: #6B6B6B">{{g.sub}}</span></div>
 <template data-for="g.items" data-as="c">
-<button type="button" class="rail" onClick="{{c.pick}}" aria-current="{{c.cur}}" style="{{c.s}}"><span style="display: block; font-size: 14px; font-weight: 600">{{c.code}}</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">{{c.title}}</span><span style="display: block; margin-top: 3px; font-size: 12px; color: #6B6B6B">{{c.sub}}</span></button>
+<button type="button" class="rail" onClick="{{c.pick}}" aria-current="{{c.cur}}" title="{{c.tip}}" style="{{c.s}}"><span style="display: block; font-size: 14px; font-weight: 600">{{c.code}}</span><span class="rail-more" style="display: block; margin-top: 2px; font-size: 13px; color: #444444; line-height: 1.35">{{c.title}}</span></button>
 </template>
 </template>
 <template data-if="railEmpty"><p class="lbl" style="margin: 0 24px; line-height: 1.5">{{railEmpty}}</p></template>
+</div>
 </aside>
 
 <div style="flex: 999 1 960px; min-width: 0; display: flex; flex-direction: column">
@@ -244,8 +246,7 @@ body{margin:0;background:#FFFFFF}
 <div aria-label="Course ratings workbook" style="margin-top: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px #D4D4D4">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 10px 8px 14px; background: #F5F5F3; border-bottom: 1px solid #D4D4D4">
 <svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" fill="#1D6F42"></rect><path d="M5 5l6 6M11 5l-6 6" stroke="#FFFFFF" stroke-width="1.6"></path></svg>
-<span style="font-size: 13px; font-weight: 600">{{wb.file}}</span>
-<span style="font-size: 12px; color: #6B6B6B">{{wb.note}}</span>
+<span style="font-size: 13px; font-weight: 600">{{wb.title}}</span>
 <span style="margin-left: auto; display: flex; gap: 8px">
 <button type="button" class="xb" aria-disabled="true" title="Coming next" style="background: #FFFFFF"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="12"></rect><path d="M2 6h12M2 10h12M6 2v12"></path></svg>Export</button>
 <template data-if="canImport"><button type="button" class="xb" aria-disabled="true" title="Coming next" style="background: #FFFFFF"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2v8M5 7l3 3 3-3M2 12v2h12v-2"></path></svg>Import</button></template>
@@ -1262,6 +1263,19 @@ button{font-family:inherit;cursor:pointer}
 .rail:hover{background:#FAF8FC}
 .stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
 .stu:hover{background:#FAF8FC}
+/* course column: full width on wide screens; on narrower ones only the course codes show,
+   and the column opens over the page on hover or keyboard focus */
+.crs{flex:0 0 280px;width:280px;box-sizing:border-box;border-right:1px solid #E6E6E6;position:relative}
+.crs-in{padding:24px 0 40px;background:#FFFFFF}
+.grp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1279px){
+  .crs{flex:0 0 92px;width:92px}
+  .crs-in{position:absolute;top:0;left:0;bottom:0;width:92px;overflow-x:hidden;overflow-y:auto;z-index:6;transition:width .15s ease,box-shadow .15s ease}
+  .crs:hover .crs-in,.crs:focus-within .crs-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .crs:not(:hover):not(:focus-within) .rail-more,.crs:not(:hover):not(:focus-within) .grp-sub{display:none !important}
+  .crs:not(:hover):not(:focus-within) .rail{padding:10px 14px !important}
+  .crs:not(:hover):not(:focus-within) .grp{margin-left:14px !important;margin-right:10px !important;padding-left:0 !important;font-size:11px !important}
+}
 </style>
 <style type="text/x-page-css" data-page="al1">
 body{margin:0;background:#FFFFFF}
@@ -1781,6 +1795,7 @@ class Component extends DCLogic {
     const item = (c) => ({ code: c.course_id + (c.section && !String(c.course_id).endsWith('-' + c.section) ? '-' + c.section : ''), title: c.title || (c.courses && c.courses.title) || '',
       sub: this.cpCount && this.cpCount[c.offering_id] ? this.cpCount[c.offering_id] + (this.cpCount[c.offering_id] === 1 ? ' checkpoint' : ' checkpoints') : 'no checkpoints yet',
       cur: c.offering_id === this.state.off ? 'page' : false,
+      tip: c.course_id + ' ' + (c.title || (c.courses && c.courses.title) || '') + ' · ' + c.semester + ' ' + c.year,
       s: c.offering_id === this.state.off ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
       pick: () => this.setState({ off: c.offering_id, stu: null, inc: {}, wbTab: null, reading: null, open: {} }) });
     const hsTop = 'padding: 0 24px 10px; font-size: 15px; font-weight: 500';
@@ -1975,7 +1990,7 @@ class Component extends DCLogic {
     }
     if (S.students.length > SHOW) cells.push({ t: '… ' + (S.students.length - SHOW) + ' more students', s: 'grid-column: 1 / -1; padding: 6px 40px; font-size: 12px; color: #8A8A8A; background: linear-gradient(#FFFFFF, #F7F7F5)' });
     const tabs = [{ id: 'st', t: 'Students' }].concat(S.methods.map((m) => ({ id: m.rubric_id, t: m.name })));
-    return { file: S.o.course_id + '_' + S.term.replace(' ', '') + '_ratings.xlsx', grid: grid, cells: cells, note: note,
+    return { title: S.o.course_id + ' ' + S.term + ' Ratings', grid: grid, cells: cells, note: note,
       tabs: tabs.map((t) => ({ t: t.t, on: tab === t.id, pick: () => this.setState({ wbTab: t.id }),
         s: 'min-height: 34px; padding: 0 14px; border: none; font-family: inherit; font-size: 12px; white-space: nowrap; cursor: pointer; ' +
           (tab === t.id ? 'position: relative; margin-top: -1px; background: #FFFFFF; color: #1D6F42; font-weight: 600; box-shadow: inset 0 -2px 0 #1D6F42, 1px 0 0 #D4D4D4, -1px 0 0 #D4D4D4' : 'background: transparent; color: #444444') })) };
