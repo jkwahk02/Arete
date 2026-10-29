@@ -24,13 +24,19 @@ button{font-family:inherit;cursor:pointer}
 .nav a{display:inline-block;transition:transform .15s ease,color .15s ease;transform-origin:center bottom}
 .nav a:hover,.nav a[aria-current="page"]{transform:scale(1.08);color:#502579}
 .me-name{font-size:14px;color:#111111}
+.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
 .pill{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#F3EFF7;color:#502579;padding:2px 7px;border-radius:20px}
 @media (max-width:759px){
   .top{gap:10px 16px;padding-top:12px;padding-bottom:0}
   .top > a:first-child{margin-right:auto}
   .nav{order:3;width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px}
   .nav::-webkit-scrollbar{display:none}
-  .me-name,.pill{display:none}
+  .me-name,.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{display:none}
 }
 .nav a:hover{color:#502579}
 .chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
@@ -80,6 +86,7 @@ button{font-family:inherit;cursor:pointer}
 <a href="#">About</a>
 <a href="#">Settings</a>
 </nav>
+<button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
 <div style="position: relative">
 <button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
 <span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span><span class="me-name">{{meName}}</span><span class="pill">Faculty</span>
@@ -322,7 +329,7 @@ class Component extends DCLogic {
       Object.keys(years).sort((a, b) => b - a).forEach((y) => {
         const key = k + y, o2 = !!this.state.open[key];
         groups.push({ label: (y === 'null' ? 'Year ?' : 'Year ' + y), n: years[y].length, open: o2, s: 'padding-left: 40px; color: #444444',
-          names: years[y].map((s) => s.name).sort(), note: '',
+          names: years[y].slice().sort((a, b) => a.name.localeCompare(b.name)).map((s) => ARETE.who(s.no, s.name)), note: '',
           toggle: () => { const o = Object.assign({}, this.state.open); o[key] = !o2; this.setState({ open: o }); } });
       });
       groups[groups.length - 1].note = k === 'minor' ? 'reported apart, not in the program judgement' : 'counted in the program judgement';
@@ -333,7 +340,7 @@ class Component extends DCLogic {
     const grad = { when: 'August ' + (acadYear + 1), head: P.plos.map((p) => p.plo_code),
       grid: 'display: grid; grid-template-columns: minmax(200px, 1.4fr) repeat(' + P.plos.length + ', minmax(56px, 1fr)); min-width: ' + (220 + P.plos.length * 60) + 'px',
       note: y4.length + ' Year-4 majors · judgement to date from A-point courses',
-      rows: y4.map((s) => ({ name: s.name, role: s.role === 'first' ? '1st' : '2nd', cells: P.plos.map((p) => { const r = studentLevel(s.no, p, true);
+      rows: y4.map((s) => ({ name: ARETE.who(s.no, s.name), role: s.role === 'first' ? '1st' : '2nd', cells: P.plos.map((p) => { const r = studentLevel(s.no, p, true);
         return r ? { t: r.lv, s: 'display: inline-block; min-width: 26px; padding: 2px 4px; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + COL[r.lv] } : { t: '·', s: 'color: #C8C8C8' }; }) })),
       empty: y4.length ? '' : 'No Year-4 majors.' };
 

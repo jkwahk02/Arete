@@ -151,7 +151,7 @@ body{margin:0;background:#FFFFFF}
     var app = document.getElementById('app'), tpl = document.getElementById('tpl-' + current);
     var frag = document.createDocumentFragment();
     if (current === 'signin') { frag.appendChild(document.importNode(tpl.content, true)); app.replaceChildren(frag); return; }
-    else render(tpl.content.childNodes, [pages[current].inst.renderVals()], frag);
+    else render(tpl.content.childNodes, [ARETE.globals(), pages[current].inst.renderVals()], frag);
     var y = window.scrollY;
     app.replaceChildren(frag);
     window.scrollTo(0, y);
@@ -187,6 +187,25 @@ body{margin:0;background:#FFFFFF}
       document.getElementById('app').innerHTML = '<div class="ld" role="status" aria-live="polite"><div class="ld-top"><span class="ld-step">Opening Arete…</span></div>' +
         '<div class="ld-track"><span class="ld-fill" style="width: 30%"></span></div><div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 90%"></span><span style="width: 80%"></span><span style="width: 86%"></span></div></div>';
       ARETE.db.restore().then(route);
+    },
+    // demo mode: student names become aliases (S1, S2 …, the same alias everywhere in this
+    // session) and student numbers are hidden on screen. Files keep the numbers, which Import needs.
+    anon: (function () { try { return sessionStorage.getItem('arete_anon') === '1'; } catch (e) { return false; } })(),
+    _alias: {}, _aliasN: 0,
+    who: function (no, name) {
+      if (!ARETE.anon || !no) return name;
+      if (!ARETE._alias[no]) ARETE._alias[no] = 'S' + (++ARETE._aliasN);
+      return ARETE._alias[no];
+    },
+    sno: function (no) { return ARETE.anon ? '' : no; },
+    toggleAnon: function () {
+      ARETE.anon = !ARETE.anon;
+      try { sessionStorage.setItem('arete_anon', ARETE.anon ? '1' : '0'); } catch (e) {}
+      draw();
+    },
+    globals: function () {
+      return { anon: ARETE.anon, toggleAnon: ARETE.toggleAnon, anonLabel: ARETE.anon ? 'Names hidden' : 'Anonymize names',
+        anonStyle: ARETE.anon ? 'background: #2E1648; color: #FFFFFF; box-shadow: none' : '' };
     },
     submitSignIn: function (e) {
       e.preventDefault();
@@ -276,6 +295,16 @@ body{margin:0;background:#FFFFFF}
       return fresh().then(function () { return fetch(URL + '/rest/v1/rpc/' + name, { method: 'POST', headers: headers(), body: JSON.stringify(body) }); })
         .then(function (r) { return r.ok ? r.json() : r.text().then(function (t) { throw new Error(r.status + ' ' + t); }); });
     },
+    // ExcelJS (formatting, dropdowns), loaded only when a workbook is written
+    exceljs: function () {
+      if (window.ExcelJS) return Promise.resolve(window.ExcelJS);
+      return new Promise(function (ok, fail) {
+        var el = document.createElement('script');
+        el.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+        el.onload = function () { ok(window.ExcelJS); }; el.onerror = function () { fail(new Error('Could not load the Excel writer')); };
+        document.head.appendChild(el);
+      });
+    },
     // SheetJS, loaded only when a workbook is read
     xlsx: function () {
       if (window.XLSX) return Promise.resolve(window.XLSX);
@@ -361,10 +390,10 @@ ARETE.db = window.ARETE_DB;
         var rids = D.rubrics.map(function (r) { return r.uses_program_rubric_id || r.rubric_id; });
         var cids = D.cps.map(function (c) { return c.checkpoint_id; }), cloIds = D.clos.map(function (c) { return c.clo_id; });
         return Promise.all([
-          db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points&order=sort_order.asc'),
+          db.rest('outcome_rubric_criteria?rubric_id=' + I(rids) + '&select=criterion_id,rubric_id,group_key,sort_order,name,points,descriptors&order=sort_order.asc'),
           db.rest('outcome_clo_plo_map?clo_id=' + I(cloIds) + '&select=clo_id,plo_id,role'),
           db.rest('outcome_checkpoint_criteria?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id'),
-          db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,sort_order&order=sort_order.asc'),
+          db.rest('outcome_checkpoint_items?checkpoint_id=' + I(cids) + '&select=item_id,checkpoint_id,parent_criterion_id,code,name,descriptors,sort_order&order=sort_order.asc'),
           db.rest('outcome_ratings?checkpoint_id=' + I(cids) + '&select=checkpoint_id,criterion_id,item_id,student_no,level'),
           soft('outcome_rating_history?checkpoint_id=' + I(cids) + '&upload_id=not.is.null&undone_at=is.null' +
             '&select=history_id,upload_id,checkpoint_id,criterion_id,item_id,student_no,old_level,new_level,changed_by,changed_at&order=changed_at.desc&limit=5000')

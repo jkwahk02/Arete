@@ -24,13 +24,19 @@ button{font-family:inherit;cursor:pointer}
 .nav a{display:inline-block;transition:transform .15s ease,color .15s ease;transform-origin:center bottom}
 .nav a:hover,.nav a[aria-current="page"]{transform:scale(1.08);color:#502579}
 .me-name{font-size:14px;color:#111111}
+.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
 .pill{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#F3EFF7;color:#502579;padding:2px 7px;border-radius:20px}
 @media (max-width:759px){
   .top{gap:10px 16px;padding-top:12px;padding-bottom:0}
   .top > a:first-child{margin-right:auto}
   .nav{order:3;width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px}
   .nav::-webkit-scrollbar{display:none}
-  .me-name,.pill{display:none}
+  .me-name,.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{display:none}
 }
 .seg{display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;font-weight:600;color:#FFFFFF;overflow:hidden}
 .tile{display:flex;flex-direction:column;gap:6px;padding:20px;min-height:150px;box-sizing:border-box;box-shadow:inset 0 0 0 1px #E0E0E0}
@@ -55,6 +61,7 @@ button{font-family:inherit;cursor:pointer}
 <a href="#">About</a>
 <a href="#">Settings</a>
 </nav>
+<button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
 <div style="position: relative">
 <button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
 <span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span><span class="me-name">Jiyoung Kwahk</span><span class="pill">Faculty</span>
