@@ -524,12 +524,12 @@ body{margin:0;background:#FFFFFF}
 <button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
 <div style="position: relative">
 <button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
-<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span><span class="me-name">Jiyoung Kwahk</span><span class="pill">Faculty</span>
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span><span class="me-name">{{meName}}</span><span class="pill">Faculty</span>
 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
 </button>
 <template data-if="menuOpen">
 <div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
-<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">Jiyoung Kwahk</div><div style="margin-top: 2px; font-size: 12px; color: #444444">Professor · Program Chair · Data Science &amp; AI</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">{{meName}}</div><div style="margin-top: 2px; font-size: 12px; color: #444444">{{meRole}}</div><div style="margin-top: 2px; font-size: 12px; color: #6B6B6B">{{meEmail}}</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
 <template data-for="roleItems" data-as="ri">
 <button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
 </template>
@@ -539,148 +539,88 @@ body{margin:0;background:#FFFFFF}
 </div>
 </header>
 
-<main style="display: flex; flex-wrap: wrap; align-items: stretch">
+<main class="lay" style="display: flex; align-items: stretch">
 <template data-if="notInst">
-<aside aria-label="Students" style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="padding: 0 24px 14px"><label for="find" style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #6B6B6B">Find a student<input id="find" type="search" placeholder="Name or student number" style="min-height: 44px; padding: 0 12px; border: 1px solid #E0E0E0; font-size: 15px; color: #111111"></label></div>
-<div role="group" aria-label="Which students" style="display: flex; margin: 0 24px 16px">
-<button type="button" onClick="{{showMine}}" aria-pressed="{{isMine}}" style="{{tgMine}}">{{lab1}} <span style="opacity: 0.7">{{nMine}}</span></button>
-<button type="button" onClick="{{showTerm}}" aria-pressed="{{isTerm}}" style="{{tgTerm}}">{{lab2}} <span style="opacity: 0.7">{{nTerm}}</span></button>
-<button type="button" onClick="{{showAll}}" aria-pressed="{{isAll}}" style="{{tgAll}}">All <span style="opacity: 0.7">{{nAll}}</span></button>
+<aside aria-label="Students" class="stu-col" style="flex: 0 0 280px; max-width: 280px; box-sizing: border-box; border-right: 1px solid #E6E6E6">
+<div class="stu-in" style="padding: 24px 0 40px">
+<div class="stu-h" style="padding: 0 24px 10px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{nShown}}</span></div>
+<div class="stu-note" style="padding: 0 24px 10px"><input id="al1-find" class="find" type="search" placeholder="Name or student number" aria-label="Find a student" value="{{q}}" onInput="{{find}}"></div>
+<div class="stu-note" role="group" aria-label="Which students" style="display: flex; margin: 0 24px 12px">
+<template data-for="whoBtns" data-as="w"><button type="button" class="who-b" onClick="{{w.pick}}" aria-pressed="{{w.on}}" style="{{w.s}}">{{w.t}} <span style="opacity: 0.7">{{w.n}}</span></button></template>
 </div>
 <template data-for="list" data-as="s">
-<a href="#" style="{{s.row}}">
-<span><span style="display: block; font-size: 14px; font-weight: 500">{{s.id}}</span><span style="display: block; margin-top: 1px; font-size: 12px; color: #6B6B6B">{{s.meta}}</span></span>
-<span style="display: flex; gap: 2px"><template data-for="s.sq" data-as="q"><span style="{{q}}"></span></template></span>
-</a>
+<button type="button" class="stu" onClick="{{s.pick}}" aria-current="{{s.cur}}" style="{{s.s}}"><span class="stu-nm" style="min-width: 0"><span style="display: block; font-size: 14px; font-weight: 500">{{s.name}}</span><span style="display: block; margin-top: 1px; font-size: 12px; color: #6B6B6B">{{s.meta}}</span></span><span class="stu-no" title="{{s.sqTip}}" style="display: flex; gap: 2px; flex: none"><template data-for="s.sq" data-as="x"><span class="sq" style="{{x}}"></span></template></span><span class="stu-sh" style="display: none; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{s.short}}</span></button>
 </template>
-<p class="lbl" style="margin: 16px 24px 0; line-height: 1.5">{{listNote}}</p>
+<p class="lbl stu-note" style="margin: 14px 24px 0; line-height: 1.5">{{listNote}}</p>
+</div>
 </aside>
-<div style="flex: 999 1 720px; min-width: 0; padding: 32px 40px 100px; display: flex; flex-direction: column; gap: 32px">
 
-<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
-<div>
-<div class="lbl">AL1 · one student across courses</div>
-<h1 style="margin: 8px 0 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">Lee Seoyeon <span style="font-size: 16px; color: #6B6B6B">2024[###]</span></h1>
-<div style="margin-top: 6px; font-size: 14px; color: #444444">Double Major: DS &amp; AI, NS</div>
+<div class="lay-main" style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column">
+<template data-if="ld">
+<div class="ld" role="status" aria-live="polite">
+<div class="ld-top"><span class="ld-step">{{ld.label}}</span><span class="ld-count">{{ld.count}}</span></div>
+<div class="ld-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ld.pct}}" aria-label="Loading students"><span class="ld-fill" style="{{ld.fill}}"></span></div>
+<ol class="ld-steps"><template data-for="ld.steps" data-as="x"><li class="{{x.c}}"><span class="ld-dot">{{x.mark}}</span>{{x.t}}</li></template></ol>
+<div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 92%"></span><span style="width: 84%"></span><span style="width: 88%"></span><span style="width: 76%"></span></div>
 </div>
-<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
-<div role="group" aria-label="Outcome set" style="display: flex">
-<button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
-<button type="button" class="tg" onClick="{{showIlo}}" aria-pressed="{{isIlo}}" style="{{tgIlo}}">ILO</button>
+</template>
+<template data-if="msg">
+<div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
+</template>
+<template data-if="ready">
+<div class="pad" style="padding: 28px 40px 100px">
+<div class="dd-bar dd-in"><label class="dd-l" for="dd-stu1">Student</label><select id="dd-stu1" class="dd" onChange="{{pickDd}}"><template data-for="list" data-as="s"><option value="{{s.key}}" selected="{{s.cur}}">{{s.name}} {{s.no}}</option></template></select></div>
+<div class="lbl">AL1 Student · one student across courses</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 8px">
+<h1 style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{stu.name}} <span style="font-size: 16px; color: #6B6B6B">{{stu.no}}</span></h1>
+<span style="font-size: 13px; color: #6B6B6B">{{stu.meta}}</span>
 </div>
-</div>
-</div>
+<div style="margin-top: 6px; font-size: 14px; color: #444444">{{stu.programs}}</div>
 
-<div>
-<div class="sh" style="margin-bottom: 0"><h2>{{secTitle}}</h2></div>
-<div style="display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 10px; font-size: 12px; color: #444444">
+<div style="display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 24px; font-size: 12px; color: #444444">
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #0077B6"></span>Exemplary</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #2EA043"></span>Proficient</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #ED7D31"></span>Developing</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #C0504D"></span>Needs Improvement</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #111111; color: #FFFFFF; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span>A-point (summative)</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border: 1.5px dashed #111111"></span>formative, this term</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border: 1.5px dashed #111111"></span>formative (progress)</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #111111; color: #FFFFFF; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span>A-point</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; box-shadow: inset 0 0 0 1px #D4D4D4"></span>on the map, no ratings yet</span>
 </div>
-<div style="overflow-x: auto">
-<div style="display: grid; grid-template-columns: minmax(260px, 1.6fr) 120px repeat(6, minmax(64px, 1fr)); align-items: center; min-width: 860px">
-<template data-for="rows" data-as="r">
-<template data-if="r.isGroup">
-<div style="{{r.bandStyle}}">
-<button type="button" onClick="{{r.fold}}" aria-expanded="{{r.open}}" aria-label="{{r.foldLabel}}" style="width: 28px; height: 28px; padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1.8" style="{{r.chev}}"><path d="M6 3l5 5-5 5"></path></svg></button>
-<span style="font-size: 12px; opacity: 0.8">{{r.kind}}</span>
-<span style="font-size: 15px; font-weight: 600">{{r.title}}</span>
-<span style="font-size: 13px; opacity: 0.85">{{r.meta}}</span>
-<template data-if="r.hasDefs"><button type="button" onClick="{{r.toggleDefs}}" aria-expanded="{{r.defsOpen}}" style="{{r.defsBtn}}">{{r.defsLabel}}</button></template>
+
+<template data-for="secs" data-as="g">
+<div style="{{g.band}}">
+<span style="font-size: 12px; opacity: 0.8">{{g.kind}}</span>
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">{{g.title}}</h2>
+<span style="font-size: 13px; opacity: 0.85">{{g.meta}}</span>
+<template data-if="g.hasDefs"><button type="button" onClick="{{g.toggleDefs}}" aria-expanded="{{g.defsOpen}}" style="{{g.defsBtn}}">{{g.defsLabel}}</button></template>
 </div>
+<template data-if="g.defsOpen">
+<div style="box-shadow: inset 0 0 0 1px #2E1648"><div style="display: grid; grid-template-columns: 70px 220px 1fr">
+<template data-for="g.defs" data-as="d"><span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span></template>
+</div></div>
 </template>
-<template data-if="r.isDefs">
-<div style="grid-column: 1 / -1; margin: 0 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
-<div style="display: grid; grid-template-columns: 70px 220px 1fr">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">PLO</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<template data-for="r.defs" data-as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
-</template>
-</div>
-</div>
-</template>
-<template data-if="r.isHead">
+<template data-if="g.hasRows">
+<div style="overflow-x: auto"><div style="{{g.grid}}">
 <span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Course</span>
 <span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Term</span>
-<template data-for="r.cols" data-as="c"><span title="{{c.tip}}" style="padding: 10px 0; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center">{{c.t}}</span></template>
-</template>
-<template data-if="r.isCourse">
-<span style="padding: 10px 0 10px 28px; border-bottom: 1px solid #EEEEEE; font-size: 14px"><span style="font-weight: 600">{{r.code}}</span> <span style="color: #444444">{{r.title}}</span></span>
+<template data-for="g.cols" data-as="c"><span class="hc" title="{{c.tip}}">{{c.t}}</span></template>
+<template data-for="g.rows" data-as="r">
+<span style="padding: 10px 8px 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px"><span style="font-weight: 600">{{r.code}}</span> <span style="color: #444444">{{r.title}}</span></span>
 <span style="padding: 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #6B6B6B">{{r.term}}</span>
-<template data-for="r.cells" data-as="x"><span style="padding: 10px 0; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.style}}">{{x.t}}<template data-if="x.a"><span style="position: absolute; top: -7px; right: -7px; width: 14px; height: 14px; background: #111111; color: #FFFFFF; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span></template></span></span></template>
+<template data-for="r.cells" data-as="x"><span class="cl" title="{{x.tip}}"><span style="{{x.style}}">{{x.t}}<template data-if="x.a"><span style="position: absolute; top: -7px; right: -7px; width: 14px; height: 14px; background: #111111; color: #FFFFFF; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span></template></span></span></template>
 </template>
-<template data-if="r.isSub">
-<span style="{{r.labStyle}}">{{r.label}}</span>
-<span style="{{r.noteStyle}}">{{r.note}}</span>
-<template data-for="r.cells" data-as="x"><span style="{{r.cellStyle}}"><span style="{{x.style}}">{{x.t}}</span></span></template>
+<template data-for="g.subs" data-as="q">
+<span style="{{q.ls}}">{{q.label}} <span style="display: block; margin-top: 2px; font-weight: 400; font-size: 12px; color: #444444">{{q.note}}</span></span>
+<span style="{{q.ns}}"></span>
+<template data-for="q.cells" data-as="x"><span style="{{q.cs}}"><span title="{{x.tip}}" style="{{x.style}}">{{x.t}}</span></span></template>
 </template>
-<template data-if="r.isNote">
-<div style="grid-column: 1 / -1; padding: 12px 0 12px 28px; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #6B6B6B">{{r.text}}</div>
+</div></div>
 </template>
+<template data-if="g.empty"><p style="margin: 0; padding: 12px 0; font-size: 13px; color: #6B6B6B; border-bottom: 1px solid #EEEEEE">{{g.empty}}</p></template>
 </template>
-
-<template data-if="isIlo">
-<div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; margin-top: 16px; padding: 14px; background: #2E1648; color: #FFFFFF">
-<span style="font-size: 12px; opacity: 0.8">Result</span>
-<span style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
-<span style="font-size: 13px; opacity: 0.85">{{resNote}}</span>
-<button type="button" onClick="{{toggleIloDefs}}" aria-expanded="{{iloDefsOpen}}" style="{{iloDefsBtn}}">{{iloDefsLabel}}</button>
-</div>
-<template data-if="iloDefsOpen">
-<div style="grid-column: 1 / -1; margin: 0 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
-<div style="display: grid; grid-template-columns: 70px 260px 1fr">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">ILO · core competency</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<template data-for="iloDefs" data-as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
-</template>
-</div>
+<p style="margin: 20px 0 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">{{foot}}</p>
 </div>
 </template>
-<template data-for="resGroups" data-as="rg">
-<div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; padding: 12px 14px; background: #E6DEF0; border-top: 2px solid #2E1648">
-<span style="font-size: 15px; font-weight: 600; color: #2E1648">{{rg.title}}</span>
-<span style="font-size: 12px; color: #444444">{{rg.meta}}</span>
-</div>
-<template data-if="rg.full">
-<span style="padding: 8px 0 8px 14px; background: #F3EFF7"></span><span style="padding: 8px 0; background: #F3EFF7"></span>
-<template data-for="rg.cols" data-as="c"><span title="{{c.tip}}" style="padding: 8px 0; background: #F3EFF7; font-size: 13px; font-weight: 600; text-align: center; color: #2E1648">{{c.t}}</span></template>
-<template data-for="rg.rows" data-as="q">
-<span style="padding: 12px 0 14px 14px; background: #F3EFF7; font-size: 15px; font-weight: 600; border-top: 1px solid #DCD3E8">{{q.label}}</span>
-<span style="padding: 12px 0 14px; background: #F3EFF7; font-size: 12px; color: #444444; border-top: 1px solid #DCD3E8">{{q.note}}</span>
-<template data-for="q.cells" data-as="m"><span style="padding: 12px 0 14px; background: #F3EFF7; text-align: center; border-top: 1px solid #DCD3E8"><span style="{{m.big}}">{{m.lv}}</span><span style="display: block; margin-top: 6px; font-size: 12px; color: #2E1648">{{m.n}}</span></span></template>
-</template>
-</template>
-<template data-if="rg.empty">
-<div style="grid-column: 1 / -1; padding: 12px 14px; background: #F3EFF7; font-size: 13px; color: #6B6B6B">No rated results yet</div>
-</template>
-</template>
-</template>
-</div>
-</div>
-
-<template data-if="isIlo">
-<div style="margin-top: 48px">
-<div class="sh" style="margin-bottom: 0"><h2>Progress by term</h2></div>
-<div style="overflow-x: auto">
-<div style="{{termGrid}}">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">ILO</span>
-<template data-for="terms" data-as="t"><span style="padding: 10px 0; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center">{{t}}</span></template>
-<template data-for="termRows" data-as="tr">
-<span title="{{tr.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px"><span style="font-weight: 600">{{tr.code}}</span> <span style="color: #6B6B6B">{{tr.name}}</span></span>
-<template data-for="tr.cells" data-as="x"><span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; text-align: center"><span style="{{x.style}}">{{x.t}}<template data-if="x.dot"><span aria-hidden="true" style="position: absolute; top: -4px; right: -4px; width: 9px; height: 9px; border-radius: 50%; background: #111111; box-shadow: 0 0 0 2px #FFFFFF"></span></template></span></span></template>
-</template>
-</div>
-</div>
-<p style="margin: 12px 0 0; font-size: 13px; color: #6B6B6B">Which courses and programs each result comes from: switch to PLO.</p>
-</div>
-</template>
-<p style="margin: 16px 0 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">DA204 and DA321 values come from the pilots (Exhibits B-E05-1, B-E05-2); other course values are illustrative and [bracketed] courses are placeholders. Names are fictional; Arete shows real names and student numbers.</p>
-</div>
 </div>
 </template>
 <template data-if="isInst">
@@ -1272,7 +1212,7 @@ button{font-family:inherit;cursor:pointer}
 <style type="text/x-page-css" data-page="al1">
 body{margin:0;background:#FFFFFF}
 a{color:inherit;text-decoration:none}
-button,input{font-family:inherit}
+button{font-family:inherit;cursor:pointer}
 .lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
 .sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
 .sh h2{margin:0;font-weight:500;font-size:15px}
@@ -1298,10 +1238,40 @@ button,input{font-family:inherit}
 .pill{display:none}
 }
 .nav a:hover{color:#502579}
-.hc{padding:10px 4px;border-bottom:1px solid #111111;font-size:13px;font-weight:600;text-align:center;line-height:1.3}
-.hc small{display:block;font-size:11px;font-weight:400;color:#6B6B6B}
-.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px;cursor:pointer}
-.cl{padding:10px 4px;border-bottom:1px solid #EEEEEE;text-align:center}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.xb[aria-disabled="true"]{color:#9A9A9A;cursor:default}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
+.rail{display:block;width:100%;padding:12px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.rail:hover{background:#FAF8FC}
+.stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.stu:hover{background:#FAF8FC}
+.bar{display:flex;height:14px;background:#F0F0EE}
+.sec{margin-top:48px}
+.cell{padding:9px 12px 9px 0;border-bottom:1px solid #EEEEEE;font-size:13px}
+.cellh{padding:8px 12px 8px 0;border-bottom:1px solid #111111;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+.pop{display:flex;justify-content:space-between;gap:10px;width:100%;padding:7px 24px;border:none;background:transparent;text-align:left;font-family:inherit;font-size:13px;color:#111111;cursor:pointer}
+.pop:hover{background:#FAF8FC}
+/* course column: full width on wide screens; on narrower ones only the course codes show,
+   and the column opens over the page on hover or keyboard focus */
+.crs{flex:0 0 280px;width:280px;box-sizing:border-box;border-right:1px solid #E6E6E6;position:relative}
+.crs-in{padding:24px 0 40px;background:#FFFFFF}
+.grp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1279px){
+  .crs{flex:0 0 92px;width:92px}
+  .crs-in{position:absolute;top:0;left:0;bottom:0;width:92px;overflow-x:hidden;overflow-y:auto;z-index:6;transition:width .15s ease,box-shadow .15s ease}
+  .crs:hover .crs-in,.crs:focus-within .crs-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .crs:not(:hover):not(:focus-within) .rail-more,.crs:not(:hover):not(:focus-within) .grp-sub{display:none !important}
+  .crs:not(:hover):not(:focus-within) .rail{padding:10px 14px !important}
+  .crs:not(:hover):not(:focus-within) .grp{margin-left:14px !important;margin-right:10px !important;padding-left:0 !important;font-size:11px !important}
+}
+.who-b{flex:1;min-height:36px;padding:0 8px;border:none;font-family:inherit;font-size:12px;cursor:pointer}
+.find{width:100%;box-sizing:border-box;min-height:40px;padding:0 12px;border:1px solid #E0E0E0;font-family:inherit;font-size:14px;color:#111111}
+.find:focus{outline:2px solid #502579;outline-offset:-1px}
+.hc{padding:10px 4px;border-bottom:1px solid #111111;font-size:13px;font-weight:600;text-align:center}
+.cl{padding:9px 4px;border-bottom:1px solid #EEEEEE;text-align:center}
+.sq{display:block;width:10px;height:10px}
 </style>
 <style type="text/x-page-css" data-page="al2">
 body{margin:0;background:#FFFFFF}
@@ -1525,12 +1495,13 @@ button{cursor:pointer}
     var frag = document.createDocumentFragment();
     if (current === 'signin') { frag.appendChild(document.importNode(tpl.content, true)); app.replaceChildren(frag); return; }
     else render(tpl.content.childNodes, [ARETE.globals(), pages[current].inst.renderVals()], frag);
-    var y = window.scrollY;
+    var y = window.scrollY, ae = document.activeElement, fid = ae && ae.id && ae.tagName === 'INPUT' ? ae.id : null, s0 = fid ? ae.selectionStart : null, s1 = fid ? ae.selectionEnd : null;
     app.replaceChildren(frag);
     window.scrollTo(0, y);
+    if (fid) { var n = document.getElementById(fid); if (n) { n.focus(); try { n.setSelectionRange(s0, s1); } catch (e) {} } }
   }
 
-  var LIVE = { al0: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al1: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -2578,199 +2549,226 @@ return Component;
 
 ARETE.page("al1", "AL1 Student", {}, function (DCLogic) {
 class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { role: null, menu: false, who: null, q: '', stu: null, defs: {} };
+    this.P = null; this.busy = false; this.err = null; this.stuC = {}; this.stuBusy = {};
+  }
+
+  // ---------- loading: students, my courses and rosters, maps, every course with ratings ----------
+  load() {
+    const db = ARETE.db, K = ARETE.course, I = db.inList;
+    this.busy = true;
+    const step = (i, extra) => { this.step = i; this.stepExtra = extra || ''; this.setState({}); };
+    const P = { version: K.version || 0 };
+    step(0);
+    Promise.all([
+      db.rest('students?status=eq.Enrolled&select=id,name_en,cohort,major1,major2,minor,advisor1_email,advisor2_email'),
+      K.courses(), K.myPrograms().catch(() => []),
+      db.rest('outcome_plos?is_active=eq.true&select=plo_id,program_code,plo_code,title,definition&order=plo_code.asc'),
+      db.rest('outcome_curriculum_map?select=course_base_id,plo_id,levels'),
+      db.rest('outcome_checkpoints?select=offering_id')
+    ]).then(([students, mine, progs, plos, cm, cps]) => {
+      P.students = students.filter((s) => !/\(test\)/i.test(s.name_en || '')).map((s) => ({ no: String(s.id), name: s.name_en || ('Student ' + s.id), cohort: s.cohort,
+        major1: s.major1, major2: s.major2, minor: s.minor, advisee: [s.advisor1_email, s.advisor2_email].some((e) => e && e.toLowerCase() === (db.me.email || '').toLowerCase()) }));
+      P.progs = progs; P.plos = plos; P.cm = cm;
+      P.mine = mine.courses.filter((c) => K.termKey(c) <= K.curKey());
+      P.cpOffs = [...new Set(cps.map((c) => c.offering_id))];
+      step(1, P.students.length + ' students');
+      return Promise.all([
+        db.rest('ergon_v_class_roster?offering_id=' + I(P.mine.map((c) => c.offering_id)) + '&select=offering_id,student_no').catch(() => []),
+        db.rest('course_offerings?offering_id=' + I(P.cpOffs) + '&select=offering_id,course_id,course_base_id,section,semester,year,title,courses(title)')
+      ]);
+    }).then(([roster, rated]) => {
+      P.roster = roster;
+      const offs = rated.filter((o) => K.termKey(o) <= K.curKey());
+      step(2, offs.length + (offs.length === 1 ? ' course' : ' courses') + ' with ratings');
+      return Promise.all(offs.map((o) => K.offering(o).catch(() => null)));
+    }).then((list) => {
+      P.S = list.filter(Boolean);
+      P.byOff = {}; P.S.forEach((S) => { P.byOff[S.o.offering_id] = S; });
+      step(3);
+      this.P = P;
+    }).catch((e) => { this.err = 'Could not load the students: ' + e.message; })
+      .then(() => { this.busy = false; this.setState({}); });
+  }
+
+  // one student's courses (every offering they are on the roster of), once per student
+  loadStudent(no) {
+    const db = ARETE.db;
+    this.stuBusy[no] = true;
+    db.rest('ergon_v_class_roster?student_no=eq.' + encodeURIComponent(no) + '&select=offering_id')
+      .then((r) => db.rest('course_offerings?offering_id=' + db.inList([...new Set(r.map((x) => x.offering_id))]) +
+        '&select=offering_id,course_id,course_base_id,section,semester,year,title,courses(title)'))
+      .then((offs) => { this.stuC[no] = offs.filter((o) => ARETE.course.termKey(o) <= ARETE.course.curKey()); })
+      .catch((e) => { this.stuC[no] = { error: e.message }; })
+      .then(() => { this.stuBusy[no] = false; this.setState({}); });
+  }
+
+  // ---------- role menu (same as the other pages) ----------
   roleMenu(role) {
-    const R = [['Course faculty', 'DA321, DA200 this term'], ['Program chair', 'Data Science and AI'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const R = [['Course faculty', 'Your advisees and your students'], ['Program chair', 'Majors and minors of your program'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const me = ARETE.db.me || { name: '' };
     return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
       menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
-      isFac: role === 'Course faculty', isChairR: role === 'Program chair', isInst: role === 'Institution · IR / Dean of OAA', notInst: role !== 'Institution · IR / Dean of OAA',
-      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
+      meName: me.name, meEmail: me.email || '',
+      meRole: ['Professor', me.isChair ? 'Program Chair' : '', (me.program || [])[0] || ''].filter(Boolean).join(' \u00b7 '),
+      meInitials: me.name.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase(),
+      isInst: role === R[2][0], notInst: role !== R[2][0],
+      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false, who: null }),
         style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
   }
-  constructor(props) { super(props); this.state = { role: null, menu: false, who: 'mine', view: 'PLO', set: 'DS', open: {}, defs: {} }; }
+
   renderVals() {
     const role = this.state.role ?? 'Course faculty', RM = this.roleMenu(role);
-    const C2 = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D' };
-    const who = this.state.who, all = who === 'all';
-    const L = [
-      ['Lee Seoyeon', 'PPPPPE', 'Advisee · DA204, DA321', true], ['Oh Chaewon', 'EPPEPE', 'Advisee · DA321', true], ['Song Yejin', 'EPPPPP', 'Advisee · DA321', true],
-      ['Seo Hayoung', 'PPPPEP', 'Advisee · not in your courses', true], ['Ryu Gun', 'PDPPPP', 'Advisee · not in your courses', true],
-      ['Kim Minjun', 'PPPPPE', 'DA321'], ['Park Jiwoo', 'EPPPPE', 'DA321'], ['Choi Yuna', 'PPPDDP', 'DA321'], ['Jung Hyunwoo', 'PDPPPP', 'DA321'], ['Kang Haeun', 'EEPPPE', 'DA321'],
-      ['Yoon Dohyun', 'PPPDPP', 'DA321'], ['Han Sumin', 'DPPPPP', 'DA321'], ['Lim Jaehyun', 'PPPPPP', 'DA321'], ['Shin Taeyang', 'PDPPDP', 'DA321'], ['Kwon Nari', 'PPPPPE', 'DA321'],
-      ['Bae Junho', 'PPPDPP', 'DA321'], ['Hwang Dain', 'PPEPPE', 'DA204'], ['Moon Siwoo', 'PPPPPE', 'DA204'], ['Jang Eunbi', 'PPEPPE', 'DA204']
-    ];
-    const chairV = role === 'Program chair';
-    const inTerm = chairV ? ((x) => L.indexOf(x) % 4 === 3) : ((x) => x[2].indexOf('DA321') >= 0);
-    const isMine = chairV ? ((x) => L.indexOf(x) % 4 !== 3) : ((x) => x[3]);
-    const shown = all ? L : who === 'term' ? L.filter(inTerm) : L.filter(isMine);
-    const list = shown.map((x) => ({ id: x[0], meta: chairV ? (L.indexOf(x) % 4 === 3 ? 'DS & AI minor' : 'DS & AI major') : x[2],
-      sq: x[1].split('').map((k) => 'display: block; width: 10px; height: 10px; background: ' + C2[k]),
-      row: 'display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 24px; ' + (x[0] === 'Lee Seoyeon' ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '') }));
-    const tg = 'flex: 1; min-height: 40px; padding: 0 10px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ';
-    const on = tg + 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111', off = tg + 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF';
-    const extra = { list: list, isMine: who === 'mine', isTerm: who === 'term', isAll: all, tgMine: who === 'mine' ? on : off, tgTerm: who === 'term' ? on : off, tgAll: all ? on : off,
-      nTerm: String(L.filter(inTerm).length), showTerm: () => this.setState({ who: 'term' }),
-      nMine: String(L.filter(isMine).length), lab1: chairV ? 'Majors' : 'Advisees', lab2: chairV ? 'Minors' : 'This term', nAll: String(L.length),
-      showMine: () => this.setState({ who: 'mine' }), showAll: () => this.setState({ who: 'all' }),
-      listNote: who === 'term' ? 'Students in your Fall 2026 courses (DA321; DA200 roster not loaded). Squares = PLO1–6 progress; Lee Seoyeon from pilot ratings, others illustrative; names fictional.' : all ? 'Your advisees first, then every student in a course you teach or taught, once each. Squares = PLO1–6 progress; Lee Seoyeon from pilot ratings, others illustrative; names fictional.'
-        : 'Advisor 1 or 2 in Telos. Squares = PLO1–6 progress; Lee Seoyeon from pilot ratings, others illustrative; names fictional.' };
+    const base = Object.assign(RM, { msg: '', ready: false, ld: null, list: [], whoBtns: [], nShown: '', listNote: '', q: this.state.q,
+      find: (e) => this.setState({ q: e.target.value }) });
+    if (!ARETE.db.signedIn()) return Object.assign(base, { msg: 'Please sign in.' });
+    if (this.err) return Object.assign(base, { msg: this.err });
+    if (this.P && this.P.version !== (ARETE.course.version || 0) && !this.busy) this.P = null;   // ratings changed on another page
+    if (!this.P) {
+      if (!this.busy) this.load();
+      const STEPS = ['Reading the students', 'Finding your courses and rosters', 'Gathering ratings', 'Computing results'];
+      const i = this.step || 0, pct = Math.round((i + 0.5) / STEPS.length * 100);
+      return Object.assign(base, { ld: { label: STEPS[i] + (this.stepExtra ? ' · ' + this.stepExtra : '') + '…', count: 'Step ' + (i + 1) + ' of ' + STEPS.length, pct: pct, fill: 'width: ' + pct + '%',
+        steps: STEPS.map((t, j) => ({ t: t, c: j < i ? 'done' : j === i ? 'now' : '', mark: j < i ? '✓' : '' })) } });
+    }
+    return Object.assign(base, this.studentVals(this.P, role));
+  }
 
-    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D' };
-    const view = this.state.view, isIlo = view === 'ILO', ns = false, isIf = false, ph = false;
-    const ORD = { N: 1, D: 2, P: 3, E: 4 }, NM = { E: 'E', P: 'P', D: 'D', N: 'NI' };
-    // course: [code, title, term, group, formative, DS&AI PLO results, A-point PLOs, ILO results, ILO cells that count for the judgement, NS course]
-    const K = [
-      ['IF101', 'Critical thinking', 'Fall 2024', 'ifr', false, {}, [], { 1: 'P' }, [1]],
-      ['IF113', 'Creative thinking', 'Fall 2024', 'ifr', false, {}, [], { 2: 'P' }, [2]],
-      ['IF111', 'Self-directed learning', 'Fall 2024', 'ifr', false, {}, [], { 3: 'E' }, [3]],
-      ['IF112', 'Communication', 'Spring 2025', 'ifr', false, {}, [], { 4: 'P' }, [4]],
-      ['IF103', 'Diversity & empathy', 'Spring 2025', 'ifr', false, {}, [], { 5: 'D' }, [5]],
-      ['IF106', 'Sustainability', 'Spring 2025', 'ifr', false, {}, [], { 6: 'P' }, [6]],
-      ['[IF elective]', '', 'Spring 2025', 'ifr', false, {}, [], { 2: 'P' }, []],
-      ['[DS & AI course]', '', 'Spring 2025', 'm1', false, { 2: 'P', 5: 'P', 6: 'P' }, [], null, []],
-      ['DA200', '[course title]', 'Fall 2025', 'm1', false, { 1: 'P', 2: 'P', 4: 'P', 5: 'P' }, [], null, []],
-      ['DA204', 'Exploring Data Ecosystems', 'Spring 2026', 'm1', false, { 1: 'P', 3: 'E', 4: 'P', 6: 'E' }, [1, 4], null, [1, 4]],
-      ['DA321', 'Data Analytics and Visualization', 'Fall 2026', 'm1', true, { 1: 'P', 2: 'P', 3: 'P', 4: 'P', 5: 'P', 6: 'E' }, [1, 2, 3, 4], null, []],
-      ['[NS course]', '', 'Fall 2025', 'm2', false, {}, [], { 1: 'P', 6: 'P' }, [1, 6], true],
-      ['[NS course]', '', 'Spring 2026', 'm2', false, {}, [], { 2: 'E', 5: 'P' }, [2, 5], true],
-      ['[General elective]', '', 'Spring 2026', 'ge', false, {}, [], { 4: 'P' }, []]
-    ];
-    const G = [
-      ['ifr', 'Innovation Foundations', 'required six and electives · IF PLOs → ILOs'],
-      ['m1', 'Major 1 · Data Science and AI', 'DS & AI PLOs · only program A-points count for the judgement'],
-      ['m2', 'Major 2 · Natural Sciences', 'NS PLOs, judged by Natural Sciences'],
-      ['ge', 'General electives', 'offering program’s PLOs → ILOs'],
-      ['fp', 'Field practice · Global', 'its own PLOs → ILOs · rubric and rater to define'],
-      ['cap', 'Capstone', 'Year 4 · its own PLOs → ILOs'],
-      ['air', 'AIR Projects', 'its own PLOs → ILOs · rubric to define']
-    ];
-    // DS & AI PLOs: outcome_plos (program DA, catalog 2026); other programs' PLOs are not loaded yet
-    const DA = [['Critical Thinking', 'The ability to identify the assumptions, limitations, and biases embedded in data, algorithms, and AI systems, and to critically evaluate the validity and societal implications of AI outputs through evidence-based reasoning.'],
-      ['Creative Thinking', 'The ability to design unprecedented solutions using data and AI technologies, devising novel approaches to complex socio-technical problems beyond the boundaries of established methodologies.'],
-      ['Self-directed Learning', 'The ability to set one\u2019s own learning direction in the rapidly evolving fields of AI and data science, and to autonomously explore, acquire, and apply new tools and methodologies.'],
-      ['Communication & Collaboration', 'The ability to clearly communicate data-analysis results and AI systems to both technical and non-technical audiences, and to lead data-driven collaboration within multidisciplinary teams.'],
-      ['Diversity & Empathy', 'The ability to recognize the differential impacts of AI and data systems on diverse populations, and to practice inclusive, equitable AI design and decision-making.'],
-      ['Global Harmony & Sustainability', 'The ability to understand the global societal and environmental impacts of AI and data technologies, and to practice responsible AI governance for a sustainable digital future.']];
-    // ILO titles: outcome_ilos; institution-wide definition text is not in the database yet
-    const ILOT = ['Critical thinking', 'Creative thinking', 'Self-directed learning', 'Communication & collaboration', 'Diversity & empathy', 'Global harmony & sustainability'];
-    const iloDef = (n) => '[Taejae definition of ' + ILOT[n - 1] + ', not in outcome_ilos yet]';
-    const iloDefs = [1, 2, 3, 4, 5, 6].map((n) => ({ code: 'ILO' + n, title: ILOT[n - 1], def: iloDef(n) }));
-    const PROG = { ifr: 'Innovation Foundations', m1: 'Data Science and AI', m2: 'Natural Sciences', ge: 'offering program', air: 'AIR Project', fp: 'Global field practice', cap: 'Capstone' };
-    const defsOf = (gk) => [1, 2, 3, 4, 5, 6].map((n) => gk === 'm1' ? { code: 'PLO' + n, title: DA[n - 1][0], def: DA[n - 1][1] }
-      : { code: 'PLO' + n, title: '[' + PROG[gk] + ' PLO' + n + ']', def: '[definition from ' + PROG[gk] + ', not loaded]' });
-    const headOf = (gk) => [1, 2, 3, 4, 5, 6].map((n) => {
-      if (isIlo) return { t: 'ILO' + n, tip: 'ILO' + n + ' \u00b7 ' + ILOT[n - 1] + ': ' + iloDef(n) };
-      const d = defsOf(gk)[n - 1];
-      return { t: 'PLO' + n, tip: d.code + ' \u00b7 ' + d.title + ': ' + d.def };
+  studentVals(P, role) {
+    const K = ARETE.course, COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D' };
+    const now = new Date(), acadYear = now.getMonth() + 1 >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+    const yearOf = (s) => { const m = /\((\d{4})\)/.exec(s.cohort || ''); return m ? acadYear - Number(m[1]) + 1 : null; };
+    const code = (o) => o.course_id + (o.section && !String(o.course_id).endsWith('-' + o.section) ? '-' + o.section : '');
+    const titleOf = (o) => o.title || (o.courses && o.courses.title) || '';
+    const chair = role === 'Program chair';
+    const myProg = (P.progs.find((p) => p.is_chair) || P.progs[0] || null);
+
+    // the programs with PLOs in Arete, by name (student records hold program names)
+    const progByName = {}; P.progs.forEach((p) => { progByName[p.name] = p; });
+    const plosOf = (pc) => P.plos.filter((p) => p.program_code === pc).sort((a, b) => a.plo_code.localeCompare(b.plo_code, undefined, { numeric: true }));
+    const mapOf = {}; P.cm.forEach((c) => { (mapOf[c.course_base_id] = mapOf[c.course_base_id] || {})[c.plo_id] = c.levels || ''; });
+
+    // one course's result on one PLO for one student: progress = latest formative ratings, record = summative
+    const courseRes = (S, no, ploId, record) => {
+      if (!S || !S.students.some((x) => x.no === no)) return null;
+      const cps = S.cps.slice().sort(K.cpOrder).filter((k) => record ? k.kind === 'summative' : k.reading === 'progress');
+      const r = K.outcome(S, K.pick(S, no, cps), ploId, false);
+      return r ? r.lv : null;
+    };
+    const vote = (lvs) => lvs.length ? K.wmed(lvs.map((l) => ({ lv: l, w: 1 }))) : null;
+    // a student's progress on a program's PLOs: every rated course on the map, one vote per course
+    const progress = (no, pc) => plosOf(pc).map((p) => vote(P.S.filter((S) => mapOf[S.o.course_base_id] && mapOf[S.o.course_base_id][p.plo_id] != null)
+      .map((S) => courseRes(S, no, p.plo_id, false)).filter(Boolean)));
+
+    // ---- the list ----
+    const inMine = {}, inTerm = {};
+    P.roster.forEach((r) => {
+      const o = P.mine.find((c) => c.offering_id === r.offering_id); if (!o) return;
+      const no = String(r.student_no);
+      (inMine[no] = inMine[no] || new Set()).add(code(o));
+      if (K.termKey(o) === K.curKey()) (inTerm[no] = inTerm[no] || new Set()).add(code(o));
     });
-    const cols = isIlo ? [1, 2, 3, 4, 5, 6].map((n) => 'ILO' + n) : [1, 2, 3, 4, 5, 6].map((n) => 'PLO' + n);
-    const val = (k, n) => {
-      if (isIlo) { const m = k[7] || k[5]; return m[n] || ''; }
-      if (k[3] !== 'm1') return '';
-      return k[5][n] || '';
-    };
-    const cellS = (l, form, ph) => ph ? { t: '[ ]', a: false, style: 'font-size: 12px; color: #9A9A9A' }
-      : !l ? { t: '·', a: false, style: 'color: #C8C8C8' }
-      : { t: NM[l], a: false, style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 28px; box-sizing: border-box; font-size: 13px; font-weight: 600; ' +
-        (form ? 'color: ' + COL[l] + '; background: #FFFFFF; border: 2px dashed ' + COL[l] : 'color: #FFFFFF; background: ' + COL[l]) };
-    const med = (v) => {
-      if (!v.length) return null;
-      const s2 = v.slice().sort((a, b) => ORD[a] - ORD[b]);
-      return s2[Math.floor((s2.length - 1) / 2)];
-    };
-    const subChip = (l) => l ? { t: NM[l], style: 'display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 28px; font-size: 13px; font-weight: 700; color: #FFFFFF; background: ' + COL[l] }
-      : { t: '—', style: 'font-size: 13px; color: #8A8A8A' };
-    const rows = [];
-    G.forEach((g) => {
-      if (isIlo) return;
-      const ks = K.filter((k) => k[3] === g[0]);
-      const feeds = ks.some((k) => cols.some((c, i) => val(k, i + 1))) || (!isIlo && ks.length > 0);
-      const open = this.state.open[g[0]] !== false;
-      const dOpen = !!this.state.defs[g[0]];
-      rows.push({ isGroup: true, hasDefs: !isIlo && ks.length > 0, defsOpen: dOpen, defsLabel: dOpen ? 'Hide PLO Definitions' : 'Show PLO Definitions',
-        toggleDefs: () => { const d = Object.assign({}, this.state.defs); d[g[0]] = !dOpen; this.setState({ defs: d }); },
+    const inProg = (s) => myProg && (s.major1 === myProg.name || s.major2 === myProg.name || s.minor === myProg.name);
+    const sets = chair
+      ? [['majors', 'Majors', (s) => myProg && (s.major1 === myProg.name || s.major2 === myProg.name)], ['minors', 'Minors', (s) => myProg && s.minor === myProg.name], ['all', 'All', inProg]]
+      : [['advisees', 'Advisees', (s) => s.advisee], ['term', 'This term', (s) => !!inTerm[s.no]], ['all', 'All', (s) => s.advisee || !!inMine[s.no]]];
+    const who = sets.some((x) => x[0] === this.state.who) ? this.state.who : sets[0][0];
+    const fn = sets.find((x) => x[0] === who)[2];
+    const q = (this.state.q || '').trim().toLowerCase();
+    let shown = P.students.filter(fn).filter((s) => !q || s.name.toLowerCase().includes(q) || s.no.includes(q))
+      .sort((a, b) => (b.advisee - a.advisee) || a.name.localeCompare(b.name));
+    const bOn = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111', bOff = 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF';
+    const whoBtns = sets.map((x) => ({ t: x[1], n: String(P.students.filter(x[2]).length), on: who === x[0], s: who === x[0] ? bOn : bOff, pick: () => this.setState({ who: x[0] }) }));
+
+    // the selected student: the one chosen on any page if listed, else the first with ratings
+    const rated = (no) => P.S.some((S) => S.rated.has(no));
+    let sel = this.state.stu || K.sel.stu;
+    if (!shown.some((s) => s.no === sel)) sel = (shown.find((s) => rated(s.no)) || shown[0] || {}).no || null;
+    const sqS = (l) => 'background: ' + (l ? COL[l] : '#ECECEC');
+    const list = shown.map((s) => {
+      const pg = myProg ? progress(s.no, myProg.code) : [];
+      const meta = chair ? [s.major1 === myProg.name ? '1st major' : s.major2 === myProg.name ? '2nd major' : 'Minor', yearOf(s) ? 'Year ' + yearOf(s) : ''].filter(Boolean).join(' \u00b7 ')
+        : [s.advisee ? 'Advisee' : '', inTerm[s.no] ? [...inTerm[s.no]].join(', ') : inMine[s.no] ? 'past: ' + [...inMine[s.no]].join(', ') : s.advisee ? 'not in your courses' : ''].filter(Boolean).join(' \u00b7 ');
+      return { key: s.no, name: ARETE.who(s.no, s.name), short: String(ARETE.who(s.no, s.name) || '').split(' ')[0], no: ARETE.sno(s.no), meta: meta,
+        sq: pg.some(Boolean) ? pg.map((r) => sqS(r && r.lv)) : [], sqTip: pg.some(Boolean) ? 'Progress on ' + plosOf(myProg.code).map((p) => p.plo_code).join(', ') : '',
+        cur: s.no === sel ? 'true' : false, s: s.no === sel ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '',
+        pick: () => { K.sel.stu = s.no; this.setState({ stu: s.no }); } };
+    });
+    const out = { list: list, whoBtns: whoBtns, nShown: String(shown.length),
+      pickDd: (e) => { K.sel.stu = e.target.value; this.setState({ stu: e.target.value }); },
+      listNote: chair ? 'Enrolled students of ' + (myProg ? myProg.name : 'your program') + '. Squares = progress on each PLO.'
+        : who === 'advisees' ? 'Advisor 1 or 2 in Telos. Squares = progress on each ' + (myProg ? myProg.code : '') + ' PLO.'
+        : who === 'term' ? 'Students in your courses this term.' : 'Your advisees first, then everyone in a course you teach or taught.' };
+    if (!sel) return Object.assign(out, { msg: q ? 'No student matches “' + this.state.q + '”.' : 'No students in this list.' });
+
+    const s = P.students.find((x) => x.no === sel);
+    const C = this.stuC[sel];
+    if (!C) { if (!this.stuBusy[sel]) this.loadStudent(sel); return Object.assign(out, { msg: 'Loading ' + ARETE.who(s.no, s.name) + '’s courses…' }); }
+    if (C.error) return Object.assign(out, { msg: 'Could not load the courses: ' + C.error });
+
+    // ---- sections: one per program of the student with PLOs in Arete, then other courses ----
+    const offs = C.slice().sort((a, b) => K.termKey(a) - K.termKey(b) || code(a).localeCompare(code(b)));
+    const used = new Set();
+    const chip = (l, form) => 'position: relative; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 28px; box-sizing: border-box; font-size: 13px; font-weight: 600; ' +
+      (form ? 'color: ' + COL[l] + '; background: #FFFFFF; border: 2px dashed ' + COL[l] : 'color: #FFFFFF; background: ' + COL[l]);
+    const subChip = (r) => r ? { t: r.lv, tip: r.lv + (r.tie ? ' (tie with ' + r.tie + ')' : ''), style: 'display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 28px; font-size: 13px; font-weight: 700; color: #FFFFFF; background: ' + COL[r.lv] }
+      : { t: '—', tip: '', style: 'font-size: 13px; color: #8A8A8A' };
+    const subRow = (top, bottom, label, note, cells) => ({ label: label, note: note, cells: cells,
+      ls: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px 12px; background: #F3EFF7; font-size: 13px; font-weight: 600; color: #2E1648' + (top ? '; border-top: 1px solid #2E1648' : ''),
+      ns: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px; background: #F3EFF7; font-size: 12px; color: #444444' + (top ? '; border-top: 1px solid #2E1648' : ''),
+      cs: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px; background: #F3EFF7; text-align: center' + (top ? '; border-top: 1px solid #2E1648' : '') });
+    const band = (dark) => 'display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 28px; padding: 10px 14px; color: #FFFFFF; background: ' + (dark ? '#2E1648' : '#77707F');
+    const secs = [];
+    const roles = [['major1', 'Major 1'], ['major2', 'Major 2'], ['minor', 'Minor']].filter(([k]) => s[k]);
+    roles.forEach(([k, kind]) => {
+      const pr = progByName[s[k]], plos = pr ? plosOf(pr.code) : [];
+      if (!plos.length) { secs.push({ kind: kind, title: s[k], meta: 'PLOs not in Arete yet', band: band(false), hasRows: false, empty: 'Read by ' + s[k] + ' once its PLOs and curriculum map are in Arete.', hasDefs: false, defsOpen: false }); return; }
+      const rows = offs.filter((o) => mapOf[o.course_base_id] && plos.some((p) => mapOf[o.course_base_id][p.plo_id] != null)).map((o) => {
+        used.add(o.offering_id);
+        const S = P.byOff[o.offering_id];
+        return { code: code(o), title: titleOf(o), term: o.semester + ' ' + o.year, cells: plos.map((p) => {
+          const lvl = mapOf[o.course_base_id][p.plo_id], isA = lvl != null && /A/.test(lvl);
+          if (lvl == null) return { t: '', a: false, tip: '', style: '' };
+          const rec = courseRes(S, s.no, p.plo_id, true), pg = rec ? null : courseRes(S, s.no, p.plo_id, false);
+          if (rec || pg) return { t: rec || pg, a: isA, tip: p.plo_code + ' · ' + (rec ? 'summative' : 'progress, formative') + (isA ? ' · A-point' : ''), style: chip(rec || pg, !rec) };
+          return { t: '', a: isA, tip: p.plo_code + ' · on the map (' + lvl + '), no ratings yet', style: 'position: relative; display: inline-block; width: 40px; height: 28px; box-sizing: border-box; box-shadow: inset 0 0 0 1px #D4D4D4' };
+        }) };
+      });
+      const prog = plos.map((p) => vote(rows.length ? offs.filter((o) => used.has(o.offering_id) && mapOf[o.course_base_id] && mapOf[o.course_base_id][p.plo_id] != null)
+        .map((o) => courseRes(P.byOff[o.offering_id], s.no, p.plo_id, false)).filter(Boolean) : []));
+      const judg = plos.map((p) => vote(offs.filter((o) => mapOf[o.course_base_id] && /A/.test(mapOf[o.course_base_id][p.plo_id] || ''))
+        .map((o) => courseRes(P.byOff[o.offering_id], s.no, p.plo_id, true)).filter(Boolean)));
+      const grad = plos.map(() => ({ t: '', tip: 'fixed at graduation', style: 'display: inline-block; width: 40px; height: 28px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }));
+      const dOpen = !!this.state.defs[k];
+      secs.push({ kind: kind, title: s[k], meta: rows.length + (rows.length === 1 ? ' course' : ' courses') + ' on the ' + pr.code + ' map', band: band(rows.length > 0),
+        hasDefs: true, defsOpen: dOpen, defsLabel: (dOpen ? 'Hide' : 'Show') + ' PLO Definitions',
         defsBtn: 'margin-left: auto; min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
-        kind: g[0] === 'air' ? 'Optional' : 'Requirement', title: g[1], meta: (ks.length ? ks.length + (ks.length === 1 ? ' course' : ' courses') + ' · ' : '') + g[2], open: open,
-        fold: () => { const o = Object.assign({}, this.state.open); o[g[0]] = !open; this.setState({ open: o }); },
-        foldLabel: (open ? 'Hide' : 'Show') + ' ' + g[1],
-        chev: 'display: block; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg)',
-        bandStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 16px; padding: 10px 14px 10px 8px; color: #FFFFFF; background: ' + (feeds ? '#2E1648' : '#77707F') });
-      const gV = cols.map(() => []), gR = cols.map(() => []);
-      ks.forEach((k) => cols.forEach((c, i) => {
-        const l = val(k, i + 1); if (!l) return;
-        gV[i].push(l);
-        if (isIlo ? k[8].indexOf(i + 1) >= 0 : (!k[4] && k[6].indexOf(i + 1) >= 0)) gR[i].push(l);
-      }));
-      if (!open) return;
-      if (ks.length) {
-        if (!isIlo && this.state.defs[g[0]]) rows.push({ isDefs: true, defs: defsOf(g[0]) });
-        rows.push({ isHead: true, cols: headOf(g[0]) });
-        ks.forEach((k) => rows.push({ isCourse: true, code: k[0], title: k[1], term: k[2] + (k[4] ? ' · formative' : ''),
-          cells: cols.map((c, i) => { const x = cellS(val(k, i + 1), k[4], !isIlo && k[3] !== 'm1'); x.a = !isIlo && !ph && k[6].indexOf(i + 1) >= 0; return x; }) }));
-        {
-          const sub = (top, bottom) => ({ labStyle: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px 28px; background: #F3EFF7; font-size: 13px; font-weight: 600; color: #2E1648' + (top ? '; border-top: 1px solid #2E1648' : ''),
-            noteStyle: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px; background: #F3EFF7; font-size: 12px; color: #444444' + (top ? '; border-top: 1px solid #2E1648' : ''),
-            cellStyle: 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (bottom ? 10 : 4) + 'px; background: #F3EFF7; text-align: center' + (top ? '; border-top: 1px solid #2E1648' : '') });
-          const gradC = () => cols.map(() => ({ t: '', style: 'display: inline-block; width: 40px; height: 28px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }));
-          rows.push(Object.assign(sub(true, false), { isSub: true, label: 'Subtotal', note: 'Progress (formative)', cells: gV.map((v) => subChip(med(v))) }));
-          rows.push(Object.assign(sub(false, false), { isSub: true, label: '', note: 'Judgement to date · Program A-point only', cells: gR.map((v) => subChip(med(v))) }));
-          rows.push(Object.assign(sub(false, true), { isSub: true, label: '', note: 'At graduation', cells: gradC() }));
-        }
-      } else rows.push({ isNote: true, text: 'No rated results yet' });
+        toggleDefs: () => { const d = Object.assign({}, this.state.defs); d[k] = !dOpen; this.setState({ defs: d }); },
+        defs: plos.map((p) => ({ code: p.plo_code, title: p.title, def: p.definition || '' })),
+        cols: plos.map((p) => ({ t: p.plo_code, tip: p.plo_code + ' · ' + p.title + (p.definition ? ': ' + p.definition : '') })),
+        grid: 'display: grid; grid-template-columns: minmax(240px, 1.6fr) 110px repeat(' + plos.length + ', minmax(56px, 1fr)); align-items: center; min-width: ' + (360 + plos.length * 60) + 'px',
+        hasRows: rows.length > 0, rows: rows, empty: rows.length ? '' : 'No courses on the ' + pr.code + ' map yet.',
+        subs: rows.length ? [subRow(true, false, 'Progress', 'every rated course on the map, one vote each', prog.map(subChip)),
+          subRow(false, false, 'Judgement to date', 'summative results from A-point courses', judg.map(subChip)),
+          subRow(false, true, 'At graduation', 'fixed as the record', grad)] : [] });
     });
-    const big = (l) => l ? 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; font-size: 15px; font-weight: 700; color: #FFFFFF; background: ' + COL[l]
-      : 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; box-sizing: border-box; font-size: 15px; color: #8A8A8A; background: #FFFFFF; box-shadow: inset 0 0 0 1px #CFCFCF';
-    const G6 = [1, 2, 3, 4, 5, 6];
-    const cellsOf = (v, unit) => v.map((x) => { const l = med(x); return { lv: l ? NM[l] : '—', big: big(l), n: x.length ? x.length + unit : (unit === ' summative' ? 'waits' : 'no evidence') }; });
-    const gradCells = () => G6.map(() => ({ lv: '', n: '', big: 'display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }));
-    const phCells = () => G6.map(() => ({ lv: '[ ]', n: 'maps not loaded', big: 'display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 32px; box-sizing: border-box; font-size: 13px; color: #8A8A8A; background: #FFFFFF; box-shadow: inset 0 0 0 1px #CFCFCF' }));
-    const threeRows = (pv, jv, judgNoteTxt) => [
-      { label: 'Progress (formative)', note: 'every course, one vote each · read each term', cells: pv },
-      { label: 'Judgement to date', note: judgNoteTxt, cells: jv },
-      { label: 'At graduation', note: 'fixed as the record', cells: gradCells() }];
-    const dV = G6.map(() => []), dR = G6.map(() => []);
-    K.filter((k) => k[3] === 'm1').forEach((k) => G6.forEach((n) => { const l = k[5][n]; if (!l) return; dV[n - 1].push(l); if (!k[4] && k[6].indexOf(n) >= 0) dR[n - 1].push(l); }));
-    const iV = [1, 2, 3, 4, 5, 6].map(() => []), iR = [1, 2, 3, 4, 5, 6].map(() => []);
-    K.forEach((k) => { const m = k[7] || k[5]; [1, 2, 3, 4, 5, 6].forEach((n) => { if (!m[n]) return; iV[n - 1].push(m[n]); if (k[8].indexOf(n) >= 0) iR[n - 1].push(m[n]); }); });
-    const colVals = iV, recVals = iR;
-    const grad = iV.map(() => ({ big: 'display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }));
-    const prog = colVals.map((v) => { const l = med(v); return { lv: l ? NM[l] : '—', big: big(l), n: v.length ? v.length + (v.length === 1 ? ' course' : ' courses') : 'no evidence' }; });
-    const judg = recVals.map((v) => { const l = med(v); return { lv: l ? NM[l] : '—', big: big(l), n: v.length ? v.length + ' summative' : 'waits' }; });
-    const onT = 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111';
-    const tab = (sel) => 'padding: 0 0 4px; border: none; background: transparent; font-family: inherit; font-size: 13px; cursor: pointer; color: #111111; border-bottom: 2px solid ' + (sel ? '#111111' : 'transparent') + '; font-weight: ' + (sel ? 600 : 400);
-    const pCols = G6.map((n) => 'PLO' + n);
-    const resGroups = isIlo
-      ? [{ title: 'Six core competencies', meta: 'every requirement, through each program’s PLOs', cols: G6.map((n) => ({ t: 'ILO' + n, tip: 'ILO' + n + ' \u00b7 ' + ILOT[n - 1] + ': ' + iloDef(n) })),
-          rows: threeRows(cellsOf(iV, ' courses'), cellsOf(iR, ' summative'), 'Program A-point only') }]
-      : [{ title: 'Innovation Foundations', meta: 'Required', cols: headOf('ifr'), rows: threeRows(phCells(), phCells(), 'Program A-point only') },
-         { title: 'Data Science and AI', meta: 'Major 1', cols: headOf('m1'), rows: threeRows(cellsOf(dV, ' courses'), cellsOf(dR, ' summative'), 'Program A-point only') },
-         { title: 'Natural Sciences', meta: 'Major 2', cols: headOf('m2'), rows: threeRows(phCells(), phCells(), 'Program A-point only') },
-         { title: 'Global field practice', meta: 'Required', cols: [], rows: [] },
-         { title: 'Capstone', meta: 'Required', cols: [], rows: [] },
-         { title: 'AIR Projects', meta: 'Optional', cols: [], rows: [] }];
-    resGroups.forEach((g) => { g.full = g.rows.length > 0; g.empty = !g.full; });
-    const iOpen = !!this.state.defs.ilo;
-    const TERMS = ['Fall 2024', 'Spring 2025', 'Fall 2025', 'Spring 2026', 'Fall 2026'];
-    const termRows = [1, 2, 3, 4, 5, 6].map((n) => ({ code: 'ILO' + n, name: ILOT[n - 1], tip: 'ILO' + n + ' \u00b7 ' + ILOT[n - 1] + ': ' + iloDef(n), cells: TERMS.map((t, ti) => {
-      const upto = K.filter((k) => TERMS.indexOf(k[2]) <= ti && (k[7] || k[5])[n]).map((k) => (k[7] || k[5])[n]);
-      const isNew = K.some((k) => k[2] === t && (k[7] || k[5])[n]);
-      const l = med(upto);
-      return { t: l ? NM[l] : '', dot: isNew,
-        style: l ? 'position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 30px; font-size: 13px; font-weight: 700; color: #FFFFFF; background: ' + COL[l]
-          : 'position: relative; display: inline-block; width: 44px; height: 30px; box-sizing: border-box; border: 1px dashed #DDDDDD' };
-    }) }));
-    const main = {
-      isPlo: !isIlo, isIlo: isIlo, tgPlo: isIlo ? '' : onT, tgIlo: isIlo ? onT : '',
-      showPlo: () => this.setState({ view: 'PLO' }), showIlo: () => this.setState({ view: 'ILO' }),
-      isDs: !ph, isNs: ns, isIf: isIf, tabDs: tab(!ph), tabNs: tab(ns), tabIf: tab(isIf), showIf: () => this.setState({ set: 'IF' }), showDs: () => this.setState({ set: 'DS' }), showNs: () => this.setState({ set: 'NS' }),
-      terms: TERMS, termRows: termRows, iloDefs: iloDefs, iloDefsOpen: iOpen, iloDefsLabel: iOpen ? 'Hide ILO Definitions' : 'Show ILO Definitions',
-      toggleIloDefs: () => { const d = Object.assign({}, this.state.defs); d.ilo = !iOpen; this.setState({ defs: d }); },
-      iloDefsBtn: 'margin-left: auto; min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (iOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'), termGrid: 'display: grid; grid-template-columns: minmax(260px, 1.6fr) repeat(' + TERMS.length + ', minmax(90px, 1fr)); align-items: center; min-width: 760px', secTitle: isIlo ? 'ILO summary' : 'Courses taken, by graduation requirement', resGroups: resGroups, cols: cols, iloCols: [1, 2, 3, 4, 5, 6].map((n) => 'ILO' + n), rows: rows, prog: prog, judg: judg, grad: grad,
-      setNote: isIlo ? 'one set for the student, every requirement through its program’s PLOs' : 'Each section is read on its own program’s PLOs · [ ] = that program’s maps not loaded',
-      resTitle: isIlo ? 'ILO results' : 'PLO results',
-      resNote: isIlo ? 'all programs together' : 'one set for each program in the student’s requirements',
-      judgNote: 'Program A-point only',
-    };
-    return Object.assign(RM, extra, main);
+    const rest = offs.filter((o) => !used.has(o.offering_id));
+    if (rest.length) secs.push({ kind: 'Other', title: 'Other courses', meta: 'not on a curriculum map in Arete yet', band: band(false), hasDefs: false, defsOpen: false,
+      cols: [], grid: 'display: grid; grid-template-columns: minmax(240px, 1fr) 110px; align-items: center',
+      hasRows: true, rows: rest.map((o) => ({ code: code(o), title: titleOf(o), term: o.semester + ' ' + o.year, cells: [] })), subs: [], empty: '' });
+    if (!secs.length) secs.push({ kind: '', title: 'Courses', meta: '', band: band(false), hasRows: false, empty: 'No courses found for this student.', hasDefs: false, defsOpen: false });
+
+    const y = yearOf(s);
+    return Object.assign(out, {
+      ready: true,
+      stu: { name: ARETE.who(s.no, s.name), no: ARETE.sno(s.no),
+        meta: [y ? 'Year ' + y : '', s.advisee ? 'Your advisee' : '', offs.length + (offs.length === 1 ? ' course' : ' courses') + ' taken'].filter(Boolean).join(' \u00b7 '),
+        programs: roles.map(([k, kind]) => kind + ': ' + s[k]).join(' \u00b7 ') || 'No declared major yet' },
+      secs: secs,
+      foot: 'Each course gives one result per PLO: solid = summative, dashed = latest formative (progress). Progress takes the median of every rated course on the map, one vote per course; the judgement to date uses summative results from A-point courses only.'
+    });
   }
 }
 return Component;

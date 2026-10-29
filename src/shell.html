@@ -186,12 +186,13 @@ body{margin:0;background:#FFFFFF}
     var frag = document.createDocumentFragment();
     if (current === 'signin') { frag.appendChild(document.importNode(tpl.content, true)); app.replaceChildren(frag); return; }
     else render(tpl.content.childNodes, [ARETE.globals(), pages[current].inst.renderVals()], frag);
-    var y = window.scrollY;
+    var y = window.scrollY, ae = document.activeElement, fid = ae && ae.id && ae.tagName === 'INPUT' ? ae.id : null, s0 = fid ? ae.selectionStart : null, s1 = fid ? ae.selectionEnd : null;
     app.replaceChildren(frag);
     window.scrollTo(0, y);
+    if (fid) { var n = document.getElementById(fid); if (n) { n.focus(); try { n.setSelectionRange(s0, s1); } catch (e) {} } }
   }
 
-  var LIVE = { al0: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al1: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
