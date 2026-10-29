@@ -136,7 +136,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 18px">
 <span class="lbl">Reading</span>
-<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{readings}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></sc-for></span>
+<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{readMain}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></sc-for><sc-if value="{{readCps.length}}"><span class="lbl" style="align-self: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid #CFCFCF">By checkpoint</span><sc-for list="{{readCps}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></sc-for></sc-if></span>
 <span style="margin-left: auto; display: flex; gap: 10px; align-items: center">
 <button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button>
 <span role="group" aria-label="Outcome set" style="display: flex"><button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button><button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button></span>
@@ -342,8 +342,10 @@ class Component extends DCLogic {
     const poolCps = reading === 'progress' ? progCps : reading === 'record' ? recCps : cps.filter((k) => k.checkpoint_id === reading);
     const pools = {}; S.students.forEach((s) => { pools[s.no] = K.pick(S, s.no, poolCps); });
     const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #2E1648; color: #FFFFFF; font-weight: 600' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF');
-    const readings = [{ id: 'progress', t: 'Progress' }].concat(rated.map((k) => ({ id: k.checkpoint_id, t: k.label }))).concat(recCps.length ? [{ id: 'record', t: 'Record' }] : [])
-      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const cpN = {}; cps.forEach((k, i) => { cpN[k.checkpoint_id] = i + 1; });
+    const readings = [{ id: 'progress', t: 'Progress', tip: 'latest rating of each criterion, checkpoints counted in progress' }].concat(recCps.length ? [{ id: 'record', t: 'Record', tip: 'summative checkpoints' }] : [])
+      .concat(rated.map((k) => ({ id: k.checkpoint_id, t: 'CP' + cpN[k.checkpoint_id], tip: 'CP' + cpN[k.checkpoint_id] + ' ' + k.label + ' · on its own' })))
+      .map((g) => ({ t: g.t, id: g.id, tip: g.tip, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
     const formative = reading !== 'record' && !(typeof reading === 'number' && (cps.find((k) => k.checkpoint_id === reading) || {}).kind === 'summative');
 
     // class distribution of one outcome over the students
@@ -420,13 +422,13 @@ class Component extends DCLogic {
       ready: true, legend: [ARETE.LEG.levels('no evidence yet')],
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: S.students.length + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
-      readings: readings, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
+      readMain: readings.filter((g) => typeof g.id !== 'number'), readCps: readings.filter((g) => typeof g.id === 'number'), isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
       defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', toggleDefs: () => this.setState({ defsOpen: !dOpen }),
       defs: defs.map((d) => Object.assign({ titleStyle: isClo ? 'display: none' : 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' }, d)),
       defsGrid: 'display: grid; grid-template-columns: 80px ' + (isClo ? '' : '220px ') + '1fr',
       resTitle: 'Course ' + (isClo ? 'CLO' : 'PLO') + ' results',
-      resSub: (reading === 'progress' ? 'Progress: latest rating of each criterion' : reading === 'record' ? 'Record: summative checkpoints' : (curCp ? curCp.label + ' on its own' : '')) + ' · ' + withEv + ' of ' + S.students.length + ' students with ratings',
+      resSub: (reading === 'progress' ? 'Progress: latest rating of each criterion' : reading === 'record' ? 'Record: summative checkpoints' : (curCp ? 'CP' + cpN[curCp.checkpoint_id] + ' ' + curCp.label + ' on its own' : '')) + ' · ' + withEv + ' of ' + S.students.length + ' students with ratings',
       resHead: resHead, resRows: resRows,
       resGrid: 'display: grid; grid-template-columns: minmax(120px, 0.8fr) minmax(220px, 2fr) 70px 110px 120px minmax(130px, 1fr); align-items: center; min-width: 760px',
       cpHead: cpHead, cpRows: cpRows, cpGrid: 'display: grid; grid-template-columns: 120px repeat(' + Math.max(cps.length, 1) + ', minmax(110px, 1fr)); min-width: ' + (120 + cps.length * 110) + 'px',

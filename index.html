@@ -399,11 +399,24 @@ body{margin:0;background:#FFFFFF}
 <div>
 <h2 id="st-h" style="margin: 0; font-weight: 300; font-size: 34px; letter-spacing: -0.01em">{{stu.name}} <span style="font-size: 16px; color: #6B6B6B">{{stu.no}}</span></h2>
 </div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button>
 <div role="group" aria-label="Outcome set" style="display: flex">
 <button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button>
 <button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
 </div>
 </div>
+</div>
+<template data-if="defsOpen">
+<div style="box-shadow: inset 0 0 0 1px #2E1648">
+<div style="{{defsGrid}}">
+<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">Title</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
+<template data-for="defs" data-as="d">
+<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+</template>
+</div>
+</div>
+</template>
 
 <div>
 <div class="sh" style="margin-bottom: 0"><h2>Assessment methods with a rubric</h2></div>
@@ -415,17 +428,6 @@ body{margin:0;background:#FFFFFF}
 <div style="{{r.bandStyle}}">
 <input type="checkbox" id="{{r.cid}}" checked="{{r.on}}" onChange="{{r.toggle}}" aria-label="{{r.incLabel}}" style="width: 20px; height: 20px; margin: 0; accent-color: #FFFFFF; flex: none">
 <label for="{{r.cid}}" style="cursor: pointer; flex: 1 1 320px"><span style="display: block; font-size: 15px; font-weight: 600">{{r.title}}</span><span style="display: block; margin-top: 2px; font-size: 13px; opacity: 0.85">{{r.meta}}</span></label>
-<button type="button" onClick="{{r.toggleDefs}}" aria-expanded="{{r.defsOpen}}" style="{{r.defsBtn}}">{{r.defsLabel}}</button>
-</div>
-</template>
-<template data-if="r.isDefs">
-<div style="grid-column: 1 / -1; margin: 4px 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
-<div style="{{defsGrid}}">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">Title</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<template data-for="defs" data-as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
-</template>
-</div>
 </div>
 </template>
 <template data-if="r.isHead">
@@ -458,7 +460,7 @@ body{margin:0;background:#FFFFFF}
 <span style="font-size: 12px; opacity: 0.8">Result</span>
 <span style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
 <span role="group" aria-label="Reading" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
-<template data-for="readings" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></template>
+<template data-for="readMain" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></template><template data-if="readCps.length"><span style="align-self: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.4); font-size: 12px; opacity: 0.8">By checkpoint</span><template data-for="readCps" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></template></template>
 </span>
 </div>
 <span style="padding: 10px 0 10px 14px; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span>
@@ -580,7 +582,12 @@ body{margin:0;background:#FFFFFF}
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">{{stu.name}} <span style="font-size: 16px; color: #6B6B6B">{{stu.no}}</span></h1>
 <span style="font-size: 13px; color: #6B6B6B">{{stu.meta}}</span>
 </div>
-<div style="margin-top: 6px; font-size: 14px; color: #444444">{{stu.programs}}</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-top: 6px"><span style="font-size: 14px; color: #444444">{{stu.programs}}</span><template data-if="hasDefs"><button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button></template></div>
+<template data-if="defsOpen">
+<div style="margin-top: 14px; box-shadow: inset 0 0 0 1px #2E1648"><div style="display: grid; grid-template-columns: 90px 240px 1fr">
+<template data-for="defs" data-as="d"><span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span></template>
+</div></div>
+</template>
 
 
 <template data-for="secs" data-as="g">
@@ -588,13 +595,7 @@ body{margin:0;background:#FFFFFF}
 <span style="font-size: 12px; opacity: 0.8">{{g.kind}}</span>
 <h2 style="margin: 0; font-size: 15px; font-weight: 600">{{g.title}}</h2>
 <span style="font-size: 13px; opacity: 0.85">{{g.meta}}</span>
-<template data-if="g.hasDefs"><button type="button" onClick="{{g.toggleDefs}}" aria-expanded="{{g.defsOpen}}" style="{{g.defsBtn}}">{{g.defsLabel}}</button></template>
 </div>
-<template data-if="g.defsOpen">
-<div style="box-shadow: inset 0 0 0 1px #2E1648"><div style="display: grid; grid-template-columns: 70px 220px 1fr">
-<template data-for="g.defs" data-as="d"><span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span></template>
-</div></div>
-</template>
 <template data-if="g.hasRows">
 <div style="overflow-x: auto"><div style="{{g.grid}}">
 <span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Course</span>
@@ -701,7 +702,7 @@ body{margin:0;background:#FFFFFF}
 </div>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 18px">
 <span class="lbl">Reading</span>
-<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="readings" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></template></span>
+<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="readMain" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></template><template data-if="readCps.length"><span class="lbl" style="align-self: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid #CFCFCF">By checkpoint</span><template data-for="readCps" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></template></template></span>
 <span style="margin-left: auto; display: flex; gap: 10px; align-items: center">
 <button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button>
 <span role="group" aria-label="Outcome set" style="display: flex"><button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button><button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button></span>
@@ -2062,16 +2063,11 @@ class Component extends DCLogic {
     const rows = [];
     S.methods.forEach((m) => {
       const on = inc(m.rubric_id), withR = m.cps.filter((k) => Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|'))).length;
-      const mOpen = !!this.state.defsM[m.rubric_id];
       rows.push({ isMethod: true, title: m.name, cid: 'inc-' + m.rubric_id, on: on, incLabel: 'Pool ' + m.name + ' into the results',
         meta: [m.scope, m.share ? m.share + '% of grade' : '', m.crits.length + ' criteria', m.cps.length ? withR + ' of ' + m.cps.length + (m.cps.length === 1 ? ' checkpoint' : ' checkpoints') + ' with ratings' : 'no checkpoints yet', on ? '' : 'not pooled'].filter(Boolean).join(' · '),
         toggle: () => { const n = Object.assign({}, this.state.inc); n[m.rubric_id] = !on; this.setState({ inc: n }); },
-        defsOpen: mOpen, defsLabel: (mOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions',
-        toggleDefs: () => { const d = Object.assign({}, this.state.defsM); d[m.rubric_id] = !mOpen; this.setState({ defsM: d }); },
-        defsBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (mOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
         bandStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 18px; padding: 12px 14px; color: #FFFFFF; background: ' + (on ? '#2E1648' : '#77707F') });
       if (!on) return;
-      if (mOpen) rows.push({ isDefs: true });
       rows.push({ isHead: true });
       if (!m.cps.length) { rows.push({ isNote: true, text: 'No checkpoints set up for this method yet.' }); return; }
       m.cps.forEach((k) => {
@@ -2128,8 +2124,9 @@ class Component extends DCLogic {
     });
     const rec = cols.map((col) => { const r = outcome(record, col); return r ? { lv: r.lv, big: big(r.lv) } : { lv: '', big: 'display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }; });
     const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #FFFFFF; color: #2E1648; font-weight: 600' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)');
-    const readings = [{ t: 'Progress', id: 'progress' }].concat(ratedCps.map((k) => ({ t: k.label, id: k.checkpoint_id })))
-      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const cpN = {}; S.cps.slice().sort(ARETE.course.cpOrder).forEach((k, i) => { cpN[k.checkpoint_id] = i + 1; });
+    const readings = [{ t: 'Progress', id: 'progress', tip: 'latest rating of each criterion, checkpoints counted in progress' }].concat(ratedCps.map((k) => ({ t: 'CP' + cpN[k.checkpoint_id], id: k.checkpoint_id, tip: 'CP' + cpN[k.checkpoint_id] + ' ' + k.label + ' · on its own' })))
+      .map((g) => ({ t: g.t, id: g.id, tip: g.tip, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
     const curCp = reading === 'progress' ? null : ratedCps.find((k) => k.checkpoint_id === reading);
 
     // workbook peek
@@ -2142,6 +2139,7 @@ class Component extends DCLogic {
     const nStu = S.students.length;
     return {
       ready: true, legend: [ARETE.LEG.levels()],
+      defsOpen: !!this.state.defsOpen, defsLabel: (this.state.defsOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', toggleDefs: () => this.setState({ defsOpen: !this.state.defsOpen }),
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: nStu + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
       wb: wb, studentCount: nStu ? '· ' + nStu : '',
@@ -2154,9 +2152,9 @@ class Component extends DCLogic {
         s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: { name: ARETE.who(stu.no, stu.name), no: ARETE.sno(stu.no) }, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
-      cols: cols, rows: rows, res: res, rec: rec, readings: readings,
+      cols: cols, rows: rows, res: res, rec: rec, readMain: readings.filter((g) => g.id === 'progress'), readCps: readings.filter((g) => g.id !== 'progress'),
       resTitle: isClo ? 'CLO results' : 'PLO results',
-      readLabel: reading === 'progress' ? 'Progress' : curCp.label,
+      readLabel: reading === 'progress' ? 'Progress' : 'CP' + cpN[curCp.checkpoint_id] + ' ' + curCp.label,
       readSub: reading === 'progress' ? 'latest rating of each criterion, checkpoints counted in progress' : 'this checkpoint on its own',
       readNote: 'black line = 50% of the weight · % = share of weight at Proficient or above · N/O left out',
       defs: defs.map((d) => Object.assign({ titleStyle: hasTitle ? 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' : 'display: none' }, d)),
@@ -2744,11 +2742,7 @@ class Component extends DCLogic {
       const judg = plos.map((p) => vote(offs.filter((o) => mapOf[o.course_base_id] && /A/.test(mapOf[o.course_base_id][p.plo_id] || ''))
         .map((o) => courseRes(P.byOff[o.offering_id], s.no, p.plo_id, true)).filter(Boolean)));
       const grad = plos.map(() => ({ t: '', tip: 'fixed at graduation', style: 'display: inline-block; width: 40px; height: 28px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }));
-      const dOpen = !!this.state.defs[k];
       secs.push({ kind: kind, title: s[k], meta: rows.length + (rows.length === 1 ? ' course' : ' courses') + ' on the ' + pr.code + ' map', band: band(rows.length > 0),
-        hasDefs: true, defsOpen: dOpen, defsLabel: (dOpen ? 'Hide' : 'Show') + ' PLO Definitions',
-        defsBtn: 'margin-left: auto; min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
-        toggleDefs: () => { const d = Object.assign({}, this.state.defs); d[k] = !dOpen; this.setState({ defs: d }); },
         defs: plos.map((p) => ({ code: p.plo_code, title: p.title, def: p.definition || '' })),
         cols: plos.map((p) => ({ t: p.plo_code, tip: p.plo_code + ' · ' + p.title + (p.definition ? ': ' + p.definition : '') })),
         grid: 'display: grid; grid-template-columns: minmax(240px, 1.6fr) 110px repeat(' + plos.length + ', minmax(56px, 1fr)); align-items: center; min-width: ' + (360 + plos.length * 60) + 'px',
@@ -2765,6 +2759,9 @@ class Component extends DCLogic {
 
     const y = yearOf(s);
     return Object.assign(out, {
+      hasDefs: secs.some((g) => g.defs), defsOpen: !!this.state.defsOpen && secs.some((g) => g.defs),
+      defsLabel: (this.state.defsOpen ? 'Hide' : 'Show') + ' PLO Definitions', toggleDefs: () => this.setState({ defsOpen: !this.state.defsOpen }),
+      defs: secs.filter((g) => g.defs).flatMap((g, i, a) => g.defs.map((d) => ({ code: a.length > 1 ? g.title.split(' ')[0] + ' ' + d.code : d.code, title: d.title, def: d.def }))),
       ready: true, legend: [ARETE.LEG.levels(), { t: 'Course cells', items: [
         { s: 'border: 1.5px dashed #111111', t: 'formative (progress); solid = summative' }, { s: 'background: #111111; color: #FFFFFF', c: 'A', t: 'A-point' },
         { s: 'box-shadow: inset 0 0 0 1px #D4D4D4', t: 'on the map, no ratings yet' }, { s: 'border: 1.5px dashed #9C8FB0', t: 'fixed at graduation' }] }],
@@ -2886,8 +2883,10 @@ class Component extends DCLogic {
     const poolCps = reading === 'progress' ? progCps : reading === 'record' ? recCps : cps.filter((k) => k.checkpoint_id === reading);
     const pools = {}; S.students.forEach((s) => { pools[s.no] = K.pick(S, s.no, poolCps); });
     const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #2E1648; color: #FFFFFF; font-weight: 600' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF');
-    const readings = [{ id: 'progress', t: 'Progress' }].concat(rated.map((k) => ({ id: k.checkpoint_id, t: k.label }))).concat(recCps.length ? [{ id: 'record', t: 'Record' }] : [])
-      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const cpN = {}; cps.forEach((k, i) => { cpN[k.checkpoint_id] = i + 1; });
+    const readings = [{ id: 'progress', t: 'Progress', tip: 'latest rating of each criterion, checkpoints counted in progress' }].concat(recCps.length ? [{ id: 'record', t: 'Record', tip: 'summative checkpoints' }] : [])
+      .concat(rated.map((k) => ({ id: k.checkpoint_id, t: 'CP' + cpN[k.checkpoint_id], tip: 'CP' + cpN[k.checkpoint_id] + ' ' + k.label + ' · on its own' })))
+      .map((g) => ({ t: g.t, id: g.id, tip: g.tip, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
     const formative = reading !== 'record' && !(typeof reading === 'number' && (cps.find((k) => k.checkpoint_id === reading) || {}).kind === 'summative');
 
     // class distribution of one outcome over the students
@@ -2964,13 +2963,13 @@ class Component extends DCLogic {
       ready: true, legend: [ARETE.LEG.levels('no evidence yet')],
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: S.students.length + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
-      readings: readings, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
+      readMain: readings.filter((g) => typeof g.id !== 'number'), readCps: readings.filter((g) => typeof g.id === 'number'), isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
       defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', toggleDefs: () => this.setState({ defsOpen: !dOpen }),
       defs: defs.map((d) => Object.assign({ titleStyle: isClo ? 'display: none' : 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' }, d)),
       defsGrid: 'display: grid; grid-template-columns: 80px ' + (isClo ? '' : '220px ') + '1fr',
       resTitle: 'Course ' + (isClo ? 'CLO' : 'PLO') + ' results',
-      resSub: (reading === 'progress' ? 'Progress: latest rating of each criterion' : reading === 'record' ? 'Record: summative checkpoints' : (curCp ? curCp.label + ' on its own' : '')) + ' · ' + withEv + ' of ' + S.students.length + ' students with ratings',
+      resSub: (reading === 'progress' ? 'Progress: latest rating of each criterion' : reading === 'record' ? 'Record: summative checkpoints' : (curCp ? 'CP' + cpN[curCp.checkpoint_id] + ' ' + curCp.label + ' on its own' : '')) + ' · ' + withEv + ' of ' + S.students.length + ' students with ratings',
       resHead: resHead, resRows: resRows,
       resGrid: 'display: grid; grid-template-columns: minmax(120px, 0.8fr) minmax(220px, 2fr) 70px 110px 120px minmax(130px, 1fr); align-items: center; min-width: 760px',
       cpHead: cpHead, cpRows: cpRows, cpGrid: 'display: grid; grid-template-columns: 120px repeat(' + Math.max(cps.length, 1) + ', minmax(110px, 1fr)); min-width: ' + (120 + cps.length * 110) + 'px',

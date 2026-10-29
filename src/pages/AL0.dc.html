@@ -212,11 +212,24 @@ button{font-family:inherit;cursor:pointer}
 <div>
 <h2 id="st-h" style="margin: 0; font-weight: 300; font-size: 34px; letter-spacing: -0.01em">{{stu.name}} <span style="font-size: 16px; color: #6B6B6B">{{stu.no}}</span></h2>
 </div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button>
 <div role="group" aria-label="Outcome set" style="display: flex">
 <button type="button" class="tg" onClick="{{showClo}}" aria-pressed="{{isClo}}" style="{{tgClo}}">CLO</button>
 <button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
 </div>
 </div>
+</div>
+<sc-if value="{{defsOpen}}">
+<div style="box-shadow: inset 0 0 0 1px #2E1648">
+<div style="{{defsGrid}}">
+<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">Title</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
+<sc-for list="{{defs}}" as="d">
+<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
 
 <div>
 <div class="sh" style="margin-bottom: 0"><h2>Assessment methods with a rubric</h2></div>
@@ -228,17 +241,6 @@ button{font-family:inherit;cursor:pointer}
 <div style="{{r.bandStyle}}">
 <input type="checkbox" id="{{r.cid}}" checked="{{r.on}}" onChange="{{r.toggle}}" aria-label="{{r.incLabel}}" style="width: 20px; height: 20px; margin: 0; accent-color: #FFFFFF; flex: none">
 <label for="{{r.cid}}" style="cursor: pointer; flex: 1 1 320px"><span style="display: block; font-size: 15px; font-weight: 600">{{r.title}}</span><span style="display: block; margin-top: 2px; font-size: 13px; opacity: 0.85">{{r.meta}}</span></label>
-<button type="button" onClick="{{r.toggleDefs}}" aria-expanded="{{r.defsOpen}}" style="{{r.defsBtn}}">{{r.defsLabel}}</button>
-</div>
-</sc-if>
-<sc-if value="{{r.isDefs}}">
-<div style="grid-column: 1 / -1; margin: 4px 0 6px; box-shadow: inset 0 0 0 1px #2E1648">
-<div style="{{defsGrid}}">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="{{defsTitleHead}}">Title</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<sc-for list="{{defs}}" as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="{{d.titleStyle}}">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
-</sc-for>
-</div>
 </div>
 </sc-if>
 <sc-if value="{{r.isHead}}">
@@ -271,7 +273,7 @@ button{font-family:inherit;cursor:pointer}
 <span style="font-size: 12px; opacity: 0.8">Result</span>
 <span style="font-size: 16px; font-weight: 600">{{resTitle}}</span>
 <span role="group" aria-label="Reading" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
-<sc-for list="{{readings}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></sc-for>
+<sc-for list="{{readMain}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></sc-for><sc-if value="{{readCps.length}}"><span style="align-self: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.4); font-size: 12px; opacity: 0.8">By checkpoint</span><sc-for list="{{readCps}}" as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" title="{{g.tip}}" style="{{g.s}}">{{g.t}}</button></sc-for></sc-if>
 </span>
 </div>
 <span style="padding: 10px 0 10px 14px; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span><span style="padding: 10px 0; background: #F3EFF7"></span>
@@ -432,16 +434,11 @@ class Component extends DCLogic {
     const rows = [];
     S.methods.forEach((m) => {
       const on = inc(m.rubric_id), withR = m.cps.filter((k) => Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|'))).length;
-      const mOpen = !!this.state.defsM[m.rubric_id];
       rows.push({ isMethod: true, title: m.name, cid: 'inc-' + m.rubric_id, on: on, incLabel: 'Pool ' + m.name + ' into the results',
         meta: [m.scope, m.share ? m.share + '% of grade' : '', m.crits.length + ' criteria', m.cps.length ? withR + ' of ' + m.cps.length + (m.cps.length === 1 ? ' checkpoint' : ' checkpoints') + ' with ratings' : 'no checkpoints yet', on ? '' : 'not pooled'].filter(Boolean).join(' · '),
         toggle: () => { const n = Object.assign({}, this.state.inc); n[m.rubric_id] = !on; this.setState({ inc: n }); },
-        defsOpen: mOpen, defsLabel: (mOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions',
-        toggleDefs: () => { const d = Object.assign({}, this.state.defsM); d[m.rubric_id] = !mOpen; this.setState({ defsM: d }); },
-        defsBtn: 'min-height: 36px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (mOpen ? 'background: #FFFFFF; color: #2E1648' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)'),
         bandStyle: 'grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 18px; padding: 12px 14px; color: #FFFFFF; background: ' + (on ? '#2E1648' : '#77707F') });
       if (!on) return;
-      if (mOpen) rows.push({ isDefs: true });
       rows.push({ isHead: true });
       if (!m.cps.length) { rows.push({ isNote: true, text: 'No checkpoints set up for this method yet.' }); return; }
       m.cps.forEach((k) => {
@@ -498,8 +495,9 @@ class Component extends DCLogic {
     });
     const rec = cols.map((col) => { const r = outcome(record, col); return r ? { lv: r.lv, big: big(r.lv) } : { lv: '', big: 'display: inline-block; width: 48px; height: 32px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' }; });
     const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #FFFFFF; color: #2E1648; font-weight: 600' : 'background: transparent; color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6)');
-    const readings = [{ t: 'Progress', id: 'progress' }].concat(ratedCps.map((k) => ({ t: k.label, id: k.checkpoint_id })))
-      .map((g) => ({ t: g.t, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
+    const cpN = {}; S.cps.slice().sort(ARETE.course.cpOrder).forEach((k, i) => { cpN[k.checkpoint_id] = i + 1; });
+    const readings = [{ t: 'Progress', id: 'progress', tip: 'latest rating of each criterion, checkpoints counted in progress' }].concat(ratedCps.map((k) => ({ t: 'CP' + cpN[k.checkpoint_id], id: k.checkpoint_id, tip: 'CP' + cpN[k.checkpoint_id] + ' ' + k.label + ' · on its own' })))
+      .map((g) => ({ t: g.t, id: g.id, tip: g.tip, on: reading === g.id, s: rBtn(reading === g.id), pick: () => this.setState({ reading: g.id }) }));
     const curCp = reading === 'progress' ? null : ratedCps.find((k) => k.checkpoint_id === reading);
 
     // workbook peek
@@ -512,6 +510,7 @@ class Component extends DCLogic {
     const nStu = S.students.length;
     return {
       ready: true, legend: [ARETE.LEG.levels()],
+      defsOpen: !!this.state.defsOpen, defsLabel: (this.state.defsOpen ? 'Hide ' : 'Show ') + (isClo ? 'CLO' : 'PLO') + ' Definitions', toggleDefs: () => this.setState({ defsOpen: !this.state.defsOpen }),
       course: { title: S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || ''), term: S.term,
         meta: nStu + ' students' + (S.lastDate ? ' · ratings uploaded up to ' + fmtDate(S.lastDate) : ' · no ratings yet') },
       wb: wb, studentCount: nStu ? '· ' + nStu : '',
@@ -524,9 +523,9 @@ class Component extends DCLogic {
         s: s.no === stuNo ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : '', pick: () => { ARETE.course.sel.stu = s.no; this.setState({ stu: s.no }); } })),
       stu: { name: ARETE.who(stu.no, stu.name), no: ARETE.sno(stu.no) }, isClo: isClo, isPlo: !isClo, tgClo: isClo ? tgOn : '', tgPlo: isClo ? '' : tgOn,
       showClo: () => this.setState({ set: 'CLO' }), showPlo: () => this.setState({ set: 'PLO' }),
-      cols: cols, rows: rows, res: res, rec: rec, readings: readings,
+      cols: cols, rows: rows, res: res, rec: rec, readMain: readings.filter((g) => g.id === 'progress'), readCps: readings.filter((g) => g.id !== 'progress'),
       resTitle: isClo ? 'CLO results' : 'PLO results',
-      readLabel: reading === 'progress' ? 'Progress' : curCp.label,
+      readLabel: reading === 'progress' ? 'Progress' : 'CP' + cpN[curCp.checkpoint_id] + ' ' + curCp.label,
       readSub: reading === 'progress' ? 'latest rating of each criterion, checkpoints counted in progress' : 'this checkpoint on its own',
       readNote: 'black line = 50% of the weight · % = share of weight at Proficient or above · N/O left out',
       defs: defs.map((d) => Object.assign({ titleStyle: hasTitle ? 'padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5' : 'display: none' }, d)),
