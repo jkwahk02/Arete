@@ -550,7 +550,13 @@ class Component extends DCLogic {
       // README
       const rd = wb.addWorksheet('README', { properties: { tabColor: { argb: 'FF502579' } } });
       rd.getColumn(1).width = 14; rd.getColumn(2).width = 100;
-      const line = (a, b, f) => { const r = rd.addRow([a, b]); r.font = f || font(); r.getCell(2).alignment = { wrapText: true, vertical: 'top' }; return r; };
+      // a heading (nothing in column B) spans both columns so it is never cut off
+      const line = (a, b, f) => {
+        const r = b ? rd.addRow([a, b]) : rd.addRow([a]);
+        r.font = f || font();
+        if (b) r.getCell(2).alignment = { wrapText: true, vertical: 'top' }; else if (a) rd.mergeCells(r.number, 1, r.number, 2);
+        return r;
+      };
       line(title + ' · ' + S.term, '', font({ bold: true, size: 13 }));
       line(any ? 'Ratings workbook · exported from Arete with the ratings stored so far' : 'Ratings workbook · template (no ratings stored yet)', '', font({ color: { argb: 'FF6B6B6B' } }));
       line('', '');
@@ -567,7 +573,8 @@ class Component extends DCLogic {
       line('Checkpoints', '', font({ bold: true }));
       S.methods.forEach((m) => {
         const cps = m.cps.slice().sort(K.cpOrder);
-        line(m.name, cps.length ? '' : 'no checkpoints set up yet', font({ bold: true, color: { argb: 'FF502579' } }));
+        line(m.item, '', font({ bold: true, color: { argb: 'FF502579' } }));
+        if (!cps.length) line('', 'no checkpoints set up yet');
         cps.forEach((k) => line('', k.label + ' · ' + when(k) + ' · ' + k.kind + (k.reading === 'own' ? ' · own reading only' : '') + ' · ' +
           S.inUse[k.checkpoint_id].map((c) => c.code).join(', ')));
       });
