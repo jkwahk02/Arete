@@ -387,6 +387,7 @@ class Component extends DCLogic {
     if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    if (this.data[off] && !this.data[off].error && !ARETE.course._cache[off] && !this.busy[off]) delete this.data[off];   // changed on another page
     const S = this.data[off];
     if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
     if (S.error) return Object.assign(base, { msg: S.error });
@@ -627,7 +628,7 @@ class Component extends DCLogic {
         .then((c) => { n += typeof c === 'number' ? c : (c.added || 0) + (c.changed || 0) + (c.removed || 0); });
     });
     steps.reduce((p, f) => p.then(f), Promise.resolve())
-      .then(() => { const off = this.state.off; delete this.data[off]; this.cpCount = this.cpCount || {}; this.cpCount[off] = (this.cpCount[off] || 0) + imp.groups.filter((g) => !g.k).length;
+      .then(() => { const off = this.state.off; delete this.data[off]; ARETE.course.forget(off); this.cpCount = this.cpCount || {}; this.cpCount[off] = (this.cpCount[off] || 0) + imp.groups.filter((g) => !g.k).length;
         this.setState({ imp: { stage: 'done', file: imp.file, msg: n + ' ratings changed in Arete. They are highlighted below; each can be undone.' }, reading: null, recentOpen: true }); })
       .catch((ex) => this.setState({ imp: Object.assign({}, imp, { stage: 'error', msg: 'Upload stopped: ' + ex.message + '. Checkpoints saved before the error are kept.' }) }));
   }
@@ -636,7 +637,7 @@ class Component extends DCLogic {
     const off = this.state.off;
     this.setState({ undoMsg: 'Undoing…' });
     ARETE.db.rpc(fn, args)
-      .then(() => { delete this.data[off]; this.setState({ undoMsg: '' }); })
+      .then(() => { delete this.data[off]; ARETE.course.forget(off); this.setState({ undoMsg: '' }); })
       .catch((ex) => this.setState({ undoMsg: ex.message.replace(/^\d+ /, '').replace(/^.*"message":"([^"]+)".*$/, '$1') }));
   }
 

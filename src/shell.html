@@ -27,6 +27,30 @@ body{margin:0;background:#FFFFFF}
 .si-err{margin:0;min-height:18px;font-size:13px;color:#B42318}
 .si-f button[disabled]{opacity:.6;cursor:default}
 </style>
+<style>
+/* loading screen: a slim stepped progress bar, the current step, and a shimmer of the page to come */
+.ld{max-width:880px;padding:40px 40px 80px}
+.ld-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-family:Inter,system-ui,sans-serif}
+.ld-step{font-size:15px;color:#111111;font-weight:500}
+.ld-count{font-size:12px;color:#6B6B6B;font-variant-numeric:tabular-nums}
+.ld-track{position:relative;height:4px;margin-top:12px;border-radius:4px;background:#EEE9F4;overflow:hidden}
+.ld-fill{position:absolute;inset:0 auto 0 0;border-radius:4px;background:linear-gradient(90deg,#502579,#8A5CC2);transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.ld-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:ld-sheen 1.2s ease-in-out infinite}
+.ld-steps{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;padding:0;list-style:none;font-family:Inter,system-ui,sans-serif;font-size:12px}
+.ld-steps li{display:flex;align-items:center;gap:6px;color:#9A9A9A;transition:color .3s}
+.ld-steps li.done{color:#502579}
+.ld-steps li.now{color:#111111;font-weight:500}
+.ld-dot{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex:none}
+.ld-steps li.done .ld-dot{background:#502579;box-shadow:none;color:#FFFFFF}
+.ld-steps li.now .ld-dot{animation:ld-pulse 1s ease-in-out infinite}
+.ld-sk{margin-top:34px;display:grid;gap:12px}
+.ld-sk span{display:block;height:14px;border-radius:4px;background:linear-gradient(90deg,#F2F0F5 25%,#E9E4F0 50%,#F2F0F5 75%);background-size:200% 100%;animation:ld-shimmer 1.4s linear infinite}
+.ld-sk span.band{height:40px;background-image:linear-gradient(90deg,#3A2156 25%,#4A2C6B 50%,#3A2156 75%)}
+@keyframes ld-sheen{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@keyframes ld-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes ld-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@media (prefers-reduced-motion:reduce){.ld-fill,.ld-fill::after,.ld-sk span,.ld-steps li.now .ld-dot{animation:none;transition:none}}
+</style>
 <style id="page-css"></style>
 </head>
 <body>
@@ -45,7 +69,7 @@ body{margin:0;background:#FFFFFF}
 <label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
 <p class="si-err" id="si-err" role="alert"></p>
 <button type="submit" id="si-go">Sign in</button>
-<p class="si-note">AL0 Assessment and AL2 Course read live data. The other pages still show the design with sample data.</p>
+<p class="si-note">AL0, AL2 and AL3 read live data. The other pages still show the design with sample data.</p>
 </form>
 </div>
 </main>
@@ -133,7 +157,7 @@ body{margin:0;background:#FFFFFF}
     window.scrollTo(0, y);
   }
 
-  var LIVE = { al0: true, al2: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -159,6 +183,9 @@ body{margin:0;background:#FFFFFF}
     },
     start: function () {
       window.addEventListener('hashchange', route);
+      // while the sign-in is restored, show the loader rather than a blank page
+      document.getElementById('app').innerHTML = '<div class="ld" role="status" aria-live="polite"><div class="ld-top"><span class="ld-step">Opening Arete…</span></div>' +
+        '<div class="ld-track"><span class="ld-fill" style="width: 30%"></span></div><div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 90%"></span><span style="width: 80%"></span><span style="width: 86%"></span></div></div>';
       ARETE.db.restore().then(route);
     },
     submitSignIn: function (e) {
@@ -302,8 +329,23 @@ ARETE.db = window.ARETE_DB;
         });
     },
 
-    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    // one course, loaded once per session and shared by every page; forget(off) after a change
+    _cache: {},
     offering: function (o) {
+      var key = o.offering_id;
+      if (!C._cache[key]) C._cache[key] = C._load(o).catch(function (e) { delete C._cache[key]; throw e; });
+      return C._cache[key];
+    },
+    version: 0,   // goes up whenever a course's ratings change, so pages holding older data reload
+    forget: function (off) { delete C._cache[off]; C.version++; },
+    // the signed-in user's programs (code, name, is_chair), once per session
+    myPrograms: function () {
+      if (!C._progs) C._progs = ARETE.db.rpc('outcome_my_programs', {}).catch(function (e) { C._progs = null; throw e; });
+      return C._progs;
+    },
+
+    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    _load: function (o) {
       var db = ARETE.db, I = db.inList, off = o.offering_id, soft = function (p) { return db.rest(p).catch(function () { return null; }); };
       var D = { off: off, course: o };
       return Promise.all([

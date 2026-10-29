@@ -27,6 +27,30 @@ body{margin:0;background:#FFFFFF}
 .si-err{margin:0;min-height:18px;font-size:13px;color:#B42318}
 .si-f button[disabled]{opacity:.6;cursor:default}
 </style>
+<style>
+/* loading screen: a slim stepped progress bar, the current step, and a shimmer of the page to come */
+.ld{max-width:880px;padding:40px 40px 80px}
+.ld-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-family:Inter,system-ui,sans-serif}
+.ld-step{font-size:15px;color:#111111;font-weight:500}
+.ld-count{font-size:12px;color:#6B6B6B;font-variant-numeric:tabular-nums}
+.ld-track{position:relative;height:4px;margin-top:12px;border-radius:4px;background:#EEE9F4;overflow:hidden}
+.ld-fill{position:absolute;inset:0 auto 0 0;border-radius:4px;background:linear-gradient(90deg,#502579,#8A5CC2);transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.ld-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:ld-sheen 1.2s ease-in-out infinite}
+.ld-steps{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;padding:0;list-style:none;font-family:Inter,system-ui,sans-serif;font-size:12px}
+.ld-steps li{display:flex;align-items:center;gap:6px;color:#9A9A9A;transition:color .3s}
+.ld-steps li.done{color:#502579}
+.ld-steps li.now{color:#111111;font-weight:500}
+.ld-dot{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex:none}
+.ld-steps li.done .ld-dot{background:#502579;box-shadow:none;color:#FFFFFF}
+.ld-steps li.now .ld-dot{animation:ld-pulse 1s ease-in-out infinite}
+.ld-sk{margin-top:34px;display:grid;gap:12px}
+.ld-sk span{display:block;height:14px;border-radius:4px;background:linear-gradient(90deg,#F2F0F5 25%,#E9E4F0 50%,#F2F0F5 75%);background-size:200% 100%;animation:ld-shimmer 1.4s linear infinite}
+.ld-sk span.band{height:40px;background-image:linear-gradient(90deg,#3A2156 25%,#4A2C6B 50%,#3A2156 75%)}
+@keyframes ld-sheen{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@keyframes ld-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes ld-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@media (prefers-reduced-motion:reduce){.ld-fill,.ld-fill::after,.ld-sk span,.ld-steps li.now .ld-dot{animation:none;transition:none}}
+</style>
 <style id="page-css"></style>
 </head>
 <body>
@@ -45,7 +69,7 @@ body{margin:0;background:#FFFFFF}
 <label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
 <p class="si-err" id="si-err" role="alert"></p>
 <button type="submit" id="si-go">Sign in</button>
-<p class="si-note">AL0 Assessment and AL2 Course read live data. The other pages still show the design with sample data.</p>
+<p class="si-note">AL0, AL2 and AL3 read live data. The other pages still show the design with sample data.</p>
 </form>
 </div>
 </main>
@@ -807,12 +831,12 @@ body{margin:0;background:#FFFFFF}
 </nav>
 <div style="position: relative">
 <button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
-<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">JK</span><span class="me-name">Jiyoung Kwahk</span><span class="pill">Faculty</span>
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span><span class="me-name">{{meName}}</span><span class="pill">Faculty</span>
 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
 </button>
 <template data-if="menuOpen">
 <div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
-<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">Jiyoung Kwahk</div><div style="margin-top: 2px; font-size: 12px; color: #444444">Professor · Program Chair · Data Science &amp; AI</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">{{meName}}</div><div style="margin-top: 2px; font-size: 12px; color: #444444">{{meRole}}</div><div style="margin-top: 2px; font-size: 12px; color: #6B6B6B">{{meEmail}}</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
 <template data-for="roleItems" data-as="ri">
 <button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
 </template>
@@ -822,222 +846,86 @@ body{margin:0;background:#FFFFFF}
 </div>
 </header>
 
-<main>
-<div style="padding: 28px 40px 24px; border-bottom: 1px solid #E6E6E6">
-<div class="lbl">AL3 · Program</div>
-<h1 style="margin: 6px 0 0; font-weight: 300; font-size: clamp(32px, 3.4vw, 48px); line-height: 1.05; letter-spacing: -0.02em">Data Science and AI</h1>
+<main style="display: flex; flex-direction: column">
+<template data-if="ld">
+<div class="ld" role="status" aria-live="polite">
+<div class="ld-top"><span class="ld-step">{{ld.label}}</span><span class="ld-count">{{ld.count}}</span></div>
+<div class="ld-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ld.pct}}" aria-label="Loading the program"><span class="ld-fill" style="{{ld.fill}}"></span></div>
+<ol class="ld-steps"><template data-for="ld.steps" data-as="x"><li class="{{x.c}}"><span class="ld-dot">{{x.mark}}</span>{{x.t}}</li></template></ol>
+<div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 92%"></span><span style="width: 84%"></span><span style="width: 88%"></span><span style="width: 76%"></span><span style="width: 90%"></span><span style="width: 70%"></span></div>
+</div>
+</template>
+<template data-if="msg">
+<div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
+</template>
+<template data-if="ready">
+<div style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
+<span class="lbl">AL3 · Program</span>
+<h1 style="margin: 0; font-weight: 300; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em">{{prog.name}}</h1>
+<span style="margin-left: auto; padding: 3px 10px; font-size: 12px; box-shadow: inset 0 0 0 1px #CFCFCF; color: #444444">{{prog.mode}}</span>
 </div>
 <div style="display: flex; flex-wrap: wrap; align-items: stretch">
-<aside aria-label="Program students" style="flex: 1 1 240px; max-width: 290px; box-sizing: border-box; padding: 24px 0 40px; border-right: 1px solid #E6E6E6">
-<div style="margin: 0 0 0 24px; border-left: 2px solid #2E1648">
-<div style="padding: 0 24px 0 14px; font-size: 14px; font-weight: 500">Students <span class="lbl">· Oct 2026</span></div>
-<div style="padding: 10px 24px 10px 14px; display: flex; align-items: baseline; gap: 10px"><span style="font-weight: 300; font-size: 44px; line-height: 1">63</span><span style="font-size: 13px; color: #444444">declared · majors and minors</span></div>
-<template data-for="tree" data-as="t">
-<template data-if="t.isTop"><div style="margin: 14px 24px 2px 14px; border-top: 1px solid #111111"></div></template>
-<template data-if="t.isGroup">
-<button type="button" onClick="{{t.toggle}}" aria-expanded="{{t.open}}" style="{{t.rowStyle}}">
-<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#111111" stroke-width="2" style="{{t.chev}}"><path d="M6 3l5 5-5 5"></path></svg>
-<span style="{{t.labStyle}}">{{t.label}}</span>
-<span style="{{t.barWrap}}"><span style="{{t.bar}}"></span></span>
-<span style="{{t.numStyle}}">{{t.n}}</span>
-</button>
+<aside aria-label="Students of the program" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
+<div style="padding: 0 24px 4px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; color: #6B6B6B">· {{pop.total}} declared</span></div>
+<p class="lbl" style="margin: 0 24px 10px; line-height: 1.5">enrolled, each counted once</p>
+<template data-for="pop.groups" data-as="g">
+<button type="button" class="pop" onClick="{{g.toggle}}" aria-expanded="{{g.open}}" style="{{g.s}}"><span>{{g.label}}</span><span style="font-variant-numeric: tabular-nums">{{g.n}}</span></button>
+<template data-if="g.open"><template data-for="g.names" data-as="x"><div style="padding: 4px 24px 4px 44px; font-size: 13px; color: #444444">{{x}}</div></template></template>
+<template data-if="g.note"><div style="padding: 0 24px 6px 36px; font-size: 12px; color: #6B6B6B">{{g.note}}</div></template>
 </template>
-<template data-if="t.isStudent">
-<a href="#al1" style="{{t.rowStyle}}"><span style="font-size: 13px">{{t.label}}</span><span style="margin-left: auto; font-size: 11px; color: #6B6B6B">{{t.meta}}</span></a>
-</template>
-<template data-if="t.isNote"><div style="{{t.rowStyle}}">{{t.label}}</div></template>
-</template>
-</div>
-<div style="margin: 22px 24px 0">
-<div class="lbl" style="margin-bottom: 8px">By year · column width = students in that year</div>
-<div style="display: flex; height: 150px; gap: 2px">
-<template data-for="mosaic" data-as="m">
-<div style="{{m.col}}">
-<template data-for="m.segs" data-as="g"><span title="{{g.tip}}" style="{{g.style}}">{{g.t}}</span></template>
-</div>
-</template>
-</div>
-<div style="display: flex; gap: 2px; margin-top: 6px">
-<template data-for="mosaic" data-as="m"><span style="{{m.lab}}">{{m.year}} · {{m.n}}</span></template>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: #444444">
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #3F3F46"></span>1st major</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #8C8C96"></span>2nd major</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #D4D4D9"></span>minor</span>
-</div>
-</div>
-<p class="lbl" style="margin: 20px 24px 0; line-height: 1.5">Enrolled only, from the students table; names are fictional. A double major counts once here and once in the other program.</p>
 </aside>
-<div style="flex: 999 1 720px; min-width: 0; padding: 32px 40px 100px; display: flex; flex-direction: column; gap: 48px">
-
-<div>
-<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
-<div>
-<div class="lbl">AL3 · declared majors, each once per PLO · read each term, decide each year</div>
-<h2 style="margin: 8px 0 0; font-weight: 300; font-size: 28px; line-height: 1.1; letter-spacing: -0.01em">Term reading <span style="color: #6B6B6B">· end of Fall 2026</span></h2>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
-<template data-if="isFaculty"><span style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF">Read only</span></template>
-<button type="button" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}" style="{{defsBtn}}">{{defsLabel}}</button>
-<div role="group" aria-label="Outcome set" style="display: flex">
-<button type="button" class="tg" onClick="{{showPlo}}" aria-pressed="{{isPlo}}" style="{{tgPlo}}">PLO</button>
-<button type="button" class="tg" onClick="{{showIlo}}" aria-pressed="{{isIlo}}" style="{{tgIlo}}">ILO</button>
-</div>
-</div>
+<div style="flex: 999 1 640px; min-width: 0; padding: 24px 40px 100px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+<span class="lbl">Reading</span>
+<span role="group" aria-label="Reading" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="readings" data-as="g"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="{{g.s}}">{{g.t}}</button></template></span>
+<span style="margin-left: auto"><button type="button" class="xb" onClick="{{toggleDefs}}" aria-expanded="{{defsOpen}}">{{defsLabel}}</button></span>
 </div>
 <template data-if="defsOpen">
-<div style="box-shadow: inset 0 0 0 1px #2E1648; margin-top: 16px">
-<div style="display: grid; grid-template-columns: 70px 240px 1fr">
-<span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Code</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">{{defsKind}}</span><span style="padding: 8px 12px; font-size: 12px; color: #6B6B6B; border-bottom: 1px solid #E6DEF0">Definition</span>
-<template data-for="defs" data-as="d">
-<span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span>
-</template>
-</div>
-</div>
-</template>
-</div>
-
-<template data-if="isIlo">
-<section aria-labelledby="al-h">
-<div class="sh"><h2 id="al-h">How DS &amp; AI reaches the ILOs</h2></div>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px 24px; margin-top: 12px">
-<template data-for="align" data-as="a">
-<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #EEEEEE">
-<span title="{{a.ploTip}}" style="padding: 4px 10px; font-size: 13px; font-weight: 600; box-shadow: inset 0 0 0 1px #2E1648; color: #2E1648">{{a.plo}}</span>
-<span aria-hidden="true" style="color: #9A9A9A">→</span>
-<span title="{{a.iloTip}}" style="padding: 4px 10px; font-size: 13px; font-weight: 600; background: #2E1648; color: #FFFFFF">{{a.ilo}}</span>
-<span style="font-size: 13px; color: #444444">{{a.name}}</span>
-</div>
-</template>
-</div>
-</section>
-
-<section aria-labelledby="ilo-h">
-<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 14px; background: #2E1648; color: #FFFFFF">
-<span style="font-size: 12px; opacity: 0.8">Result</span>
-<span id="ilo-h" style="font-size: 16px; font-weight: 600">What DS &amp; AI courses send to the ILOs</span>
-<span style="font-size: 13px; opacity: 0.85">every student who took a DS &amp; AI course, once · results from DS &amp; AI courses only</span>
-</div>
-<div style="overflow-x: auto; background: #F3EFF7">
-<div style="display: grid; grid-template-columns: 240px minmax(220px, 1fr) 100px 110px 120px 110px; gap: 0 18px; align-items: center; min-width: 1000px; padding: 0 14px">
-<span class="lbl" style="padding: 10px 0">ILO</span><span class="lbl" style="padding: 10px 0">Students in DS &amp; AI courses · % P or above</span><span class="lbl" style="padding: 10px 0">Majors</span><span class="lbl" style="padding: 10px 0">Non-majors</span><span class="lbl" style="padding: 10px 0">Institution</span><span class="lbl" style="padding: 10px 0">vs institution</span>
-<template data-for="iloRows" data-as="r">
-<span title="{{r.tip}}" style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: block; font-size: 15px; font-weight: 600">{{r.code}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{r.name}}</span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; height: 12px; background: #FFFFFF; position: relative"><span style="{{r.bar}}"></span><span aria-hidden="true" style="{{r.instMark}}"></span></span><span style="width: 40px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums">{{r.pct}}</span></span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px; font-variant-numeric: tabular-nums">{{r.maj}}</span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px; font-variant-numeric: tabular-nums">{{r.non}}</span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px; color: #444444; font-variant-numeric: tabular-nums">{{r.inst}}</span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px"><span style="{{r.vsStyle}}">{{r.vs}}</span></span>
-</template>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 4px 14px 14px; font-size: 12px; color: #444444">
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #55555F"></span>students in DS &amp; AI courses at P or above (E or P)</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 0; height: 14px; border-left: 2px solid #111111"></span>institution, all students (AL4)</span>
-</div>
-</div>
-</section>
-
-<section aria-labelledby="req-h">
-<div class="sh"><h2 id="req-h">Requests from the institution</h2></div>
-<div style="display: grid; grid-template-columns: 110px 1fr 220px 170px; align-items: center">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">ILO</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Request</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Our A-point courses</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111; text-align: right">Status</span>
-<template data-for="reqs" data-as="q">
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; font-weight: 600">{{q.ilo}}</span>
-<span style="padding: 14px 12px 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; line-height: 1.45">{{q.text}}</span>
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444">{{q.courses}}</span>
-<span style="padding: 14px 0; border-bottom: 1px solid #EEEEEE; text-align: right"><span style="padding: 3px 9px; font-size: 12px; font-weight: 600; color: #8A3A0A; box-shadow: inset 0 0 0 1px #8A3A0A">{{q.status}}</span></span>
-</template>
-</div>
-<p style="margin: 14px 0 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">A major’s full ILO set, including IF, the other major and electives, is read per student in AL1 and across all students in AL4.</p>
-</section>
-</template>
-<template data-if="isPlo">
-<section aria-labelledby="res-h">
-<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 14px; background: #2E1648; color: #FFFFFF">
-<span style="font-size: 12px; opacity: 0.8">Result</span>
-<span id="res-h" style="font-size: 16px; font-weight: 600">Program PLO results</span>
-<span style="font-size: 13px; opacity: 0.85">each major once, from their judgement to date · grey = no A-point result yet</span>
-</div>
-<div style="background: #F3EFF7; padding: 0 14px">
-<div style="display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0 2px; font-size: 12px; color: #444444"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #0077B6"></span>Exemplary</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #2EA043"></span>Proficient</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #ED7D31"></span>Developing</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #C0504D"></span>Needs Improvement</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #D9D9D9"></span>no A-point result yet</span></div>
-</div>
-<div style="overflow-x: auto; background: #F3EFF7">
-<div style="display: grid; grid-template-columns: 220px minmax(300px, 1fr) 130px 90px 110px; gap: 0 20px; align-items: center; min-width: 960px; padding: 0 14px">
-<span class="lbl" style="padding: 10px 0">PLO</span><span class="lbl" style="padding: 10px 0">49 majors</span><span class="lbl" style="padding: 10px 0">% P or above</span><span class="lbl" style="padding: 10px 0; display: flex; align-items: center; gap: 8px">Standard<template data-if="showEdit"><button type="button" onClick="{{startEdit}}" style="min-height: 28px; padding: 0 10px; border: none; background: transparent; font-size: 12px; color: #111111; box-shadow: inset 0 0 0 1px #9C8FB0; cursor: pointer">Edit</button></template><template data-if="editing"><button type="button" onClick="{{stopEdit}}" style="min-height: 28px; padding: 0 10px; border: none; background: #111111; color: #FFFFFF; font-size: 12px; cursor: pointer">Save</button><button type="button" onClick="{{stopEdit}}" style="min-height: 28px; padding: 0 10px; border: none; background: transparent; font-size: 12px; color: #444444; cursor: pointer">Cancel</button></template></span><span class="lbl" style="padding: 10px 0">Check</span>
-<template data-for="rows" data-as="r">
-<span title="{{r.tip}}" style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: block; font-size: 15px; font-weight: 600">{{r.code}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{r.name}}</span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8"><span style="display: flex; height: 26px"><template data-for="r.segs" data-as="g"><span class="seg" style="{{g.style}}">{{g.t}}</span></template></span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-variant-numeric: tabular-nums"><span style="display: block; font-size: 15px; font-weight: 700; color: #2E1648">{{r.pct}}</span><span style="display: block; font-size: 12px; color: #6B6B6B">{{r.frac}}</span></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px; color: #444444"><template data-if="notEditing">≥ {{r.std}}%</template><template data-if="editing"><span style="display: inline-flex; align-items: center; gap: 4px">≥ <input type="text" value="{{r.std}}" aria-label="{{r.stdLabel}}" style="width: 48px; min-height: 36px; box-sizing: border-box; padding: 0 6px; border: 1px solid #9C8FB0; background: #FFFFFF; font-size: 14px; color: #111111"> %</span></template></span>
-<span style="padding: 14px 0; border-top: 1px solid #DCD3E8; font-size: 14px"><span style="{{r.checkStyle}}">{{r.check}}</span></span>
-</template>
-</div>
-</div>
-</section>
-
-<section aria-labelledby="cov-h">
-<div class="sh"><h2 id="cov-h">Evidence this year · A-point courses</h2></div>
-<div style="display: flex; flex-wrap: wrap; gap: 14px 24px; margin: 12px 0 4px; font-size: 12px; color: #444444">
-<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; background: #2E1648"></span>ratings uploaded</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; box-sizing: border-box; border: 1.5px solid #2E1648"></span>offered this term · rubric ready</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; box-sizing: border-box; border: 1.5px dashed #111111"></span>offered · no rubric yet</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-block; width: 18px; height: 14px; background: #ECECEC"></span>not offered this term</span>
-</div>
-<div style="display: grid; grid-template-columns: 220px 1fr 160px; align-items: center">
-<template data-for="cov" data-as="c">
-<span title="{{c.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px"><span style="font-weight: 600">{{c.code}}</span> <span style="color: #6B6B6B">{{c.name}}</span></span>
-<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; display: flex; flex-wrap: wrap; gap: 6px"><template data-for="c.courses" data-as="k"><span style="{{k.style}}">{{k.t}}</span></template></span>
-<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; text-align: right"><span style="{{c.gapStyle}}">{{c.gap}}</span></span>
-</template>
-</div>
-</section>
-
-<section aria-labelledby="grad-h">
-<div class="sh"><h2 id="grad-h">Graduating class · August 2027</h2></div>
-<div style="display: grid; grid-template-columns: 220px minmax(300px, 1fr) 260px; gap: 0 20px; align-items: center">
-<span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">PLO</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">14 graduating majors</span><span class="lbl" style="padding: 10px 0; border-bottom: 1px solid #111111">Still possible before graduation</span>
-<template data-for="grad" data-as="g">
-<span title="{{g.tip}}" style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 14px; font-weight: 600">{{g.code}}</span>
-<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE"><span style="display: flex; height: 22px"><template data-for="g.segs" data-as="s"><span class="seg" style="{{s.style}}">{{s.t}}</span></template></span></span>
-<span style="padding: 12px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; color: #444444">{{g.ahead}}</span>
-</template>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 14px 24px; margin-top: 12px; font-size: 12px; color: #444444">
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #55555F"></span>at Proficient or above (E or P)</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #D4D4D9"></span>below Proficient (D or NI)</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; background: #EFEFF1"></span>no A-point result yet</span>
-</div>
-</section>
-
-<section aria-labelledby="loop-h">
-<div class="sh"><h2 id="loop-h">Closing the loop</h2></div>
-<div style="margin-top: 16px">
-<div class="lbl" style="margin-bottom: 10px">On watch · no flag sent yet</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px">
-<template data-for="flags" data-as="f">
-<a href="#al2" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; box-shadow: inset 0 0 0 1px #E0E0E0">
-<span><span style="display: block; font-size: 14px; font-weight: 600">{{f.course}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{f.why}}</span></span>
-<span style="{{f.stateStyle}}">{{f.state}}</span>
-</a>
-</template>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 28px">
-<div class="step"><span class="lbl">1 · Last year’s decision · 2025–26</span><span style="font-size: 15px">[Decision recorded for 2025–26]</span></div>
-<div class="step"><span class="lbl">2 · Carried out</span><span style="font-size: 15px">[What changed in the curriculum map, courses or standards]</span></div>
-<div class="step" style="background: #F3EFF7"><span class="lbl">3 · This year’s evidence</span><span style="font-size: 15px">PLO3 and PLO6 on watch after Fall 2026; Spring 2027 adds DA204, DA432</span></div>
-<div class="step" style="box-shadow: inset 0 0 0 2px #2E1648">
-<span class="lbl">4 · Decision 2026–27 · after Spring 2027</span>
-<template data-if="isChair"><label for="dec" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #6B6B6B">Curriculum map, courses, standards<textarea id="dec" rows="3" placeholder="Recorded once a year" style="padding: 10px; border: 1px solid #CFCFCF; font-size: 14px; color: #111111; resize: vertical"></textarea></label></template>
-<template data-if="isFaculty"><span style="font-size: 15px">Not recorded yet · the program chair records it</span></template>
-</div>
-</div>
-</section>
+<div style="margin-top: 14px; box-shadow: inset 0 0 0 1px #2E1648"><div style="display: grid; grid-template-columns: 80px 220px 1fr">
+<template data-for="defs" data-as="d"><span style="padding: 9px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #F0ECF5">{{d.code}}</span><span style="padding: 9px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #F0ECF5">{{d.title}}</span><span style="padding: 9px 12px; font-size: 13px; line-height: 1.5; color: #444444; border-bottom: 1px solid #F0ECF5">{{d.def}}</span></template>
+</div></div>
 </template>
 
-<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6B6B6B; max-width: 900px">A-point courses: DS &amp; AI curriculum map (outcome_curriculum_map). Head counts: students table, October 2026. Ratings, shares, the graduating-class split and flag states are illustrative. Standards are provisional (Self-Study Table 15).</p>
+<section aria-labelledby="res-h" style="margin-top: 22px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
+<span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">Program PLO results · majors</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
+</div>
+<div style="overflow-x: auto"><div style="display: grid; grid-template-columns: minmax(200px, 1.3fr) minmax(220px, 2fr) 70px 110px 90px minmax(130px, 1fr); align-items: center; min-width: 820px">
+<span class="cellh">PLO</span><span class="cellh">Majors by result</span><span class="cellh" style="text-align: right">% P+</span><span class="cellh" style="text-align: right">With evidence</span><span class="cellh" style="text-align: right">Standard</span><span class="cellh">{{judgeHead}}</span>
+<template data-for="resRows" data-as="r">
+<span class="cell" title="{{r.tip}}"><span style="font-weight: 600">{{r.code}}</span> <span style="color: #6B6B6B">{{r.title}}</span></span>
+<span class="cell"><span class="bar"><template data-for="r.segs" data-as="g"><span title="{{g.tip}}" style="{{g.s}}">{{g.t}}</span></template></span></span>
+<span class="cell" style="text-align: right; font-weight: 600; font-variant-numeric: tabular-nums">{{r.pp}}</span>
+<span class="cell" style="text-align: right; color: #6B6B6B; font-variant-numeric: tabular-nums">{{r.n}}</span>
+<span class="cell" style="text-align: right; font-variant-numeric: tabular-nums">{{r.std}}</span>
+<span class="cell" style="{{r.js}}">{{r.judge}}</span>
+</template>
+</div></div>
+<p class="lbl" style="margin: 10px 0 0; line-height: 1.6">{{resNote}}</p>
+</section>
+
+<section aria-labelledby="ev-h" class="sec">
+<div class="sh"><h2 id="ev-h">Evidence this term · A-point courses</h2><span class="lbl">{{evNote}}</span></div>
+<div style="overflow-x: auto"><div style="display: grid; grid-template-columns: minmax(200px, 1.2fr) minmax(380px, 3fr); min-width: 600px">
+<template data-for="ev" data-as="e">
+<span class="cell" title="{{e.tip}}"><span style="font-weight: 600">{{e.code}}</span> <span style="color: #6B6B6B">{{e.title}}</span></span>
+<span class="cell" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="e.courses" data-as="c"><span title="{{c.tip}}" style="{{c.s}}">{{c.t}}</span></template></span>
+</template>
+</div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12px; color: #444444"><template data-for="evKey" data-as="k"><span style="display: flex; align-items: center; gap: 6px"><span style="{{k.s}}">{{k.c}}</span>{{k.t}}</span></template></div>
+</section>
+
+<section aria-labelledby="gr-h" class="sec">
+<div class="sh"><h2 id="gr-h">Graduating class · {{grad.when}}</h2><span class="lbl">{{grad.note}}</span></div>
+<div style="overflow-x: auto"><div style="{{grad.grid}}">
+<span class="cellh">Major</span><template data-for="grad.head" data-as="h"><span class="cellh" style="text-align: center">{{h}}</span></template>
+<template data-for="grad.rows" data-as="r"><span class="cell">{{r.name}} <span style="font-size: 12px; color: #6B6B6B">{{r.role}}</span></span><template data-for="r.cells" data-as="x"><span class="cell" style="text-align: center"><span style="{{x.s}}">{{x.t}}</span></span></template></template>
+</div></div>
+<template data-if="grad.empty"><p style="margin: 8px 0 0; font-size: 14px; color: #6B6B6B">{{grad.empty}}</p></template>
+</section>
 </div>
 </div>
+</template>
 </main>
 </div>
 </template>
@@ -1395,10 +1283,9 @@ button{font-family:inherit;cursor:pointer}
 <style type="text/x-page-css" data-page="al3">
 body{margin:0;background:#FFFFFF}
 a{color:inherit;text-decoration:none}
-button,input,textarea{font-family:inherit}
-button{cursor:pointer}
+button{font-family:inherit;cursor:pointer}
 .lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
-.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid #111111}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
 .sh h2{margin:0;font-weight:500;font-size:15px}
 .nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
 /* suite header (same as Telos, TaeSylla, Ergon, Paideia) */
@@ -1416,10 +1303,34 @@ button{cursor:pointer}
   .me-name,.pill{display:none}
 }
 .nav a:hover{color:#502579}
-.seg{display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;font-weight:600;color:#FFFFFF;overflow:hidden}
-.big{font-weight:300;font-size:34px;letter-spacing:-0.01em;line-height:1}
-.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px;cursor:pointer}
-.step{padding:18px;box-shadow:inset 0 0 0 1px #E0E0E0;display:flex;flex-direction:column;gap:8px;min-height:150px}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.xb[aria-disabled="true"]{color:#9A9A9A;cursor:default}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
+.rail{display:block;width:100%;padding:12px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.rail:hover{background:#FAF8FC}
+.stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.stu:hover{background:#FAF8FC}
+.bar{display:flex;height:14px;background:#F0F0EE}
+.sec{margin-top:48px}
+.cell{padding:9px 12px 9px 0;border-bottom:1px solid #EEEEEE;font-size:13px}
+.cellh{padding:8px 12px 8px 0;border-bottom:1px solid #111111;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+.pop{display:flex;justify-content:space-between;gap:10px;width:100%;padding:7px 24px;border:none;background:transparent;text-align:left;font-family:inherit;font-size:13px;color:#111111;cursor:pointer}
+.pop:hover{background:#FAF8FC}
+/* course column: full width on wide screens; on narrower ones only the course codes show,
+   and the column opens over the page on hover or keyboard focus */
+.crs{flex:0 0 280px;width:280px;box-sizing:border-box;border-right:1px solid #E6E6E6;position:relative}
+.crs-in{padding:24px 0 40px;background:#FFFFFF}
+.grp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1279px){
+  .crs{flex:0 0 92px;width:92px}
+  .crs-in{position:absolute;top:0;left:0;bottom:0;width:92px;overflow-x:hidden;overflow-y:auto;z-index:6;transition:width .15s ease,box-shadow .15s ease}
+  .crs:hover .crs-in,.crs:focus-within .crs-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .crs:not(:hover):not(:focus-within) .rail-more,.crs:not(:hover):not(:focus-within) .grp-sub{display:none !important}
+  .crs:not(:hover):not(:focus-within) .rail{padding:10px 14px !important}
+  .crs:not(:hover):not(:focus-within) .grp{margin-left:14px !important;margin-right:10px !important;padding-left:0 !important;font-size:11px !important}
+}
 </style>
 <style type="text/x-page-css" data-page="al4">
 body{margin:0;background:#FFFFFF}
@@ -1528,7 +1439,7 @@ button{cursor:pointer}
     window.scrollTo(0, y);
   }
 
-  var LIVE = { al0: true, al2: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { al0: true, al2: true, al3: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }
@@ -1554,6 +1465,9 @@ button{cursor:pointer}
     },
     start: function () {
       window.addEventListener('hashchange', route);
+      // while the sign-in is restored, show the loader rather than a blank page
+      document.getElementById('app').innerHTML = '<div class="ld" role="status" aria-live="polite"><div class="ld-top"><span class="ld-step">Opening Arete…</span></div>' +
+        '<div class="ld-track"><span class="ld-fill" style="width: 30%"></span></div><div class="ld-sk" aria-hidden="true"><span class="band"></span><span style="width: 90%"></span><span style="width: 80%"></span><span style="width: 86%"></span></div></div>';
       ARETE.db.restore().then(route);
     },
     submitSignIn: function (e) {
@@ -1697,8 +1611,23 @@ ARETE.db = window.ARETE_DB;
         });
     },
 
-    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    // one course, loaded once per session and shared by every page; forget(off) after a change
+    _cache: {},
     offering: function (o) {
+      var key = o.offering_id;
+      if (!C._cache[key]) C._cache[key] = C._load(o).catch(function (e) { delete C._cache[key]; throw e; });
+      return C._cache[key];
+    },
+    version: 0,   // goes up whenever a course's ratings change, so pages holding older data reload
+    forget: function (off) { delete C._cache[off]; C.version++; },
+    // the signed-in user's programs (code, name, is_chair), once per session
+    myPrograms: function () {
+      if (!C._progs) C._progs = ARETE.db.rpc('outcome_my_programs', {}).catch(function (e) { C._progs = null; throw e; });
+      return C._progs;
+    },
+
+    // one course: design, maps, checkpoints, roster, ratings, latest upload, reviews
+    _load: function (o) {
       var db = ARETE.db, I = db.inList, off = o.offering_id, soft = function (p) { return db.rest(p).catch(function () { return null; }); };
       var D = { off: off, course: o };
       return Promise.all([
@@ -2007,6 +1936,7 @@ class Component extends DCLogic {
     if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    if (this.data[off] && !this.data[off].error && !ARETE.course._cache[off] && !this.busy[off]) delete this.data[off];   // changed on another page
     const S = this.data[off];
     if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
     if (S.error) return Object.assign(base, { msg: S.error });
@@ -2247,7 +2177,7 @@ class Component extends DCLogic {
         .then((c) => { n += typeof c === 'number' ? c : (c.added || 0) + (c.changed || 0) + (c.removed || 0); });
     });
     steps.reduce((p, f) => p.then(f), Promise.resolve())
-      .then(() => { const off = this.state.off; delete this.data[off]; this.cpCount = this.cpCount || {}; this.cpCount[off] = (this.cpCount[off] || 0) + imp.groups.filter((g) => !g.k).length;
+      .then(() => { const off = this.state.off; delete this.data[off]; ARETE.course.forget(off); this.cpCount = this.cpCount || {}; this.cpCount[off] = (this.cpCount[off] || 0) + imp.groups.filter((g) => !g.k).length;
         this.setState({ imp: { stage: 'done', file: imp.file, msg: n + ' ratings changed in Arete. They are highlighted below; each can be undone.' }, reading: null, recentOpen: true }); })
       .catch((ex) => this.setState({ imp: Object.assign({}, imp, { stage: 'error', msg: 'Upload stopped: ' + ex.message + '. Checkpoints saved before the error are kept.' }) }));
   }
@@ -2256,7 +2186,7 @@ class Component extends DCLogic {
     const off = this.state.off;
     this.setState({ undoMsg: 'Undoing…' });
     ARETE.db.rpc(fn, args)
-      .then(() => { delete this.data[off]; this.setState({ undoMsg: '' }); })
+      .then(() => { delete this.data[off]; ARETE.course.forget(off); this.setState({ undoMsg: '' }); })
       .catch((ex) => this.setState({ undoMsg: ex.message.replace(/^\d+ /, '').replace(/^.*"message":"([^"]+)".*$/, '$1') }));
   }
 
@@ -2646,6 +2576,7 @@ class Component extends DCLogic {
     if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    if (this.data[off] && !this.data[off].error && !ARETE.course._cache[off] && !this.busy[off]) delete this.data[off];   // changed on another page
     const S = this.data[off];
     if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
     if (S.error) return Object.assign(base, { msg: S.error });
@@ -2775,7 +2706,7 @@ class Component extends DCLogic {
   saveReview(method, id, body) {
     const off = this.state.off, db = ARETE.db;
     const done = method === 'POST' ? db.post('outcome_course_reviews', body) : db.patch('outcome_course_reviews?review_id=eq.' + id, body);
-    done.then(() => { delete this.data[off]; this.setState({ crMsg: '' }); }, (e) => this.setState({ crMsg: 'Could not save: ' + e.message }));
+    done.then(() => { delete this.data[off]; ARETE.course.forget(off); this.setState({ crMsg: '' }); }, (e) => this.setState({ crMsg: 'Could not save: ' + e.message }));
   }
 }
 return Component;
@@ -2783,129 +2714,177 @@ return Component;
 
 ARETE.page("al3", "AL3 Program", {}, function (DCLogic) {
 class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { role: 'Program chair', menu: false, reading: null, defsOpen: false, open: {} };
+    this.P = null; this.busy = false; this.err = null;
+  }
+
+  // ---------- loading: the program, its students, A-point courses and their ratings ----------
+  load() {
+    const db = ARETE.db, K = ARETE.course, I = db.inList;
+    this.busy = true;
+    const step = (i, extra) => { this.step = i; this.stepExtra = extra || ''; this.setState({}); };
+    const P = { version: K.version || 0 };
+    step(0);
+    // the program and the students in parallel (students do not depend on the program)
+    Promise.all([K.myPrograms(), db.rest('students?status=eq.Enrolled&select=id,name_en,cohort,major1,major2,minor')]).then(([progs, students]) => {
+      P.prog = progs.find((p) => p.is_chair) || progs[0];
+      if (!P.prog) throw new Error('You are not in a program in faculty_profiles.');
+      const name = P.prog.name;
+      P.students = students.filter((s) => !/\(test\)/i.test(s.name_en || '') && (s.major1 === name || s.major2 === name || s.minor === name))
+        .map((s) => ({ no: String(s.id), name: s.name_en, cohort: s.cohort, role: s.major1 === name ? 'first' : s.major2 === name ? 'second' : 'minor' }));
+      step(1, P.students.length + ' students');
+      const code = encodeURIComponent(P.prog.code);
+      return Promise.all([
+        db.rest('outcome_plos?program_code=eq.' + code + '&is_active=eq.true&select=plo_id,plo_code,title,definition,performance_standard_pct&order=plo_code.asc'),
+        db.rest('outcome_curriculum_map?select=course_base_id,plo_id,levels,outcome_plos!inner(program_code)&outcome_plos.program_code=eq.' + code)
+      ]);
+    }).then(([plos, cm]) => {
+      P.plos = plos; P.cm = cm;
+      P.aCells = cm.filter((c) => /A/.test(c.levels));
+      const bases = [...new Set(P.aCells.map((c) => c.course_base_id))].map((b) => '"' + b + '"');
+      step(2, bases.length + ' A-point courses');
+      // offerings with their checkpoints and rubrics in one request, course titles alongside
+      return Promise.all([
+        db.rest('course_offerings?course_base_id=' + I(bases) + '&select=offering_id,course_id,course_base_id,section,semester,year,title,professor,courses(title),outcome_checkpoints(checkpoint_id),outcome_rubrics(rubric_id)&order=year.desc'),
+        db.rest('courses?course_id=' + I(bases) + '&select=course_id,title')
+      ]);
+    }).then(([offs, courses]) => {
+      P.courseTitle = {}; courses.forEach((c) => { P.courseTitle[c.course_id] = c.title; });
+      P.offs = offs.filter((o) => K.termKey(o) <= K.curKey());
+      P.cpOff = new Set(P.offs.filter((o) => (o.outcome_checkpoints || []).length).map((o) => o.offering_id));
+      P.rubOff = new Set(P.offs.filter((o) => (o.outcome_rubrics || []).length).map((o) => o.offering_id));
+      const withCp = P.offs.filter((o) => P.cpOff.has(o.offering_id));
+      step(3, withCp.length + (withCp.length === 1 ? ' course' : ' courses') + ' with ratings');
+      // full course data only for offerings that have checkpoints (shared with AL0/AL2, so often already loaded)
+      return Promise.all(withCp.map((o) => K.offering(o).catch(() => null)));
+    }).then((list) => {
+      P.S = list.filter(Boolean);
+      step(4);
+      this.P = P;
+    }).catch((e) => { this.err = 'Could not load the program: ' + e.message; })
+      .then(() => { this.busy = false; this.setState({}); });
+  }
+
+  // ---------- role menu (same as the other pages) ----------
   roleMenu(role) {
-    const R = [['Course faculty', 'DA321, DA200 this term'], ['Program chair', 'Data Science and AI'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const R = [['Course faculty', 'Your courses'], ['Program chair', 'Courses of your program'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const me = ARETE.db.me || { name: '' };
     return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
       menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
-      isFac: role === 'Course faculty', isChairR: role === 'Program chair', isInst: role === 'Institution · IR / Dean of OAA', notInst: role !== 'Institution · IR / Dean of OAA',
+      meName: me.name, meEmail: me.email || '',
+      meRole: ['Professor', me.isChair ? 'Program Chair' : '', (me.program || [])[0] || ''].filter(Boolean).join(' \u00b7 '),
+      meInitials: me.name.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase(),
+      isInst: role === R[2][0], notInst: role !== R[2][0],
       roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
         style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
   }
-  constructor(props) { super(props); this.state = { role: null, menu: false, defsOpen: false, editing: false, view: 'PLO' }; }
+
   renderVals() {
     const role = this.state.role ?? 'Program chair', RM = this.roleMenu(role);
-    const isChair = role === 'Program chair';
-    const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', N: '#C0504D', G: '#D9D9D9' };
-    const DEF = [["Critical Thinking", "The ability to identify the assumptions, limitations, and biases embedded in data, algorithms, and AI systems, and to critically evaluate the validity and societal implications of AI outputs through evidence-based reasoning."], ["Creative Thinking", "The ability to design unprecedented solutions using data and AI technologies, devising novel approaches to complex socio-technical problems beyond the boundaries of established methodologies."], ["Self-directed Learning", "The ability to set one’s own learning direction in the rapidly evolving fields of AI and data science, and to autonomously explore, acquire, and apply new tools and methodologies."], ["Communication & Collaboration", "The ability to clearly communicate data-analysis results and AI systems to both technical and non-technical audiences, and to lead data-driven collaboration within multidisciplinary teams."], ["Diversity & Empathy", "The ability to recognize the differential impacts of AI and data systems on diverse populations, and to practice inclusive, equitable AI design and decision-making."], ["Global Harmony & Sustainability", "The ability to understand the global societal and environmental impacts of AI and data technologies, and to practice responsible AI governance for a sustainable digital future."]];
-    const tip = (i) => 'PLO' + (i + 1) + ' · ' + DEF[i][0] + ': ' + DEF[i][1];
-    // program result: majors' judgement to date (deck slide f3-program; illustrative ratings)
-    const R = [['PLO1', 9, 21, 7, 1, 75], ['PLO2', 6, 15, 8, 1, 70], ['PLO3', 5, 11, 5, 1, 80], ['PLO4', 8, 19, 8, 1, 75], ['PLO5', 3, 8, 3, 0, 70], ['PLO6', 2, 6, 4, 0, 70]];
-    const rows = R.map((r, i) => {
-      const n = r[1] + r[2] + r[3] + r[4], pp = r[1] + r[2], pct = Math.round(pp / n * 100), g = 49 - n;
-      const seg = (k, c) => c ? { t: c >= 3 ? String(c) : '', style: 'width: ' + (c / 49 * 100) + '%; background: ' + COL[k] + (k === 'G' ? '; color: #555555' : '') } : null;
-      return { code: r[0], name: DEF[i][0], tip: tip(i), segs: [seg('E', r[1]), seg('P', r[2]), seg('D', r[3]), seg('N', r[4]), seg('G', g)].filter(Boolean),
-        pct: pct + '%', frac: pp + ' of ' + n + ' judged', std: r[5], stdLabel: r[0] + ' standard of performance', check: pct >= r[5] ? 'Meets' : 'Watch',
-        checkStyle: 'font-weight: 700; color: ' + (pct >= r[5] ? '#111111' : '#6B5A00') };
+    const base = Object.assign(RM, { msg: '', ready: false, ld: null });
+    if (!ARETE.db.signedIn()) return Object.assign(base, { msg: 'Please sign in.' });
+    if (this.err) return Object.assign(base, { msg: this.err });
+    if (this.P && this.P.version !== (ARETE.course.version || 0) && !this.busy) this.P = null;   // ratings changed on another page
+    if (!this.P) {
+      if (!this.busy) this.load();
+      const STEPS = ['Finding your program', 'Reading the students', 'Mapping A-point courses', 'Gathering ratings', 'Computing PLO results'];
+      const i = this.step || 0, pct = Math.round((i + 0.5) / STEPS.length * 100);
+      return Object.assign(base, { ld: { label: STEPS[i] + (this.stepExtra ? ' · ' + this.stepExtra : '') + '…', count: 'Step ' + (i + 1) + ' of ' + STEPS.length, pct: pct, fill: 'width: ' + pct + '%',
+        steps: STEPS.map((t, j) => ({ t: t, c: j < i ? 'done' : j === i ? 'now' : '', mark: j < i ? '✓' : '' })) } });
+    }
+    return Object.assign(base, this.programVals(this.P, role));
+  }
+
+  programVals(P, role) {
+    const K = ARETE.course, COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D' }, LV = ['NI', 'D', 'P', 'E'];
+    const now = new Date(), acadYear = now.getMonth() + 1 >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+    const yearOf = (s) => { const m = /\((\d{4})\)/.exec(s.cohort || ''); return m ? acadYear - Number(m[1]) + 1 : null; };
+    const majors = P.students.filter((s) => s.role !== 'minor');
+    const isA = (base, ploId) => P.aCells.some((c) => c.course_base_id === base && c.plo_id === ploId);
+
+    // each major's course result on each A-point PLO, then one vote per course
+    const judge = this.state.reading === 'progress' ? false : this.state.reading === 'judgement' ? true : null;
+    const courseResults = (stuNo, plo, record) => P.S.filter((S) => isA(S.o.course_base_id, plo.plo_id) && S.students.some((x) => x.no === stuNo)).map((S) => {
+      const cps = S.cps.slice().sort(K.cpOrder).filter((k) => record ? k.kind === 'summative' : k.reading === 'progress');
+      const r = K.outcome(S, K.pick(S, stuNo, cps), plo.plo_id, false);
+      return r ? r.lv : null;
+    }).filter(Boolean);
+    const studentLevel = (stuNo, plo, record) => { const lv = courseResults(stuNo, plo, record); return lv.length ? K.wmed(lv.map((l) => ({ lv: l, w: 1 }))) : null; };
+    const anyJudgement = majors.some((s) => P.plos.some((p) => studentLevel(s.no, p, true)));
+    const record = judge === null ? anyJudgement : judge;
+    const rBtn = (on) => 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (on ? 'background: #2E1648; color: #FFFFFF; font-weight: 600' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF');
+    const readings = [['judgement', 'Judgement to date', true], ['progress', 'Progress', false]].map((g) => ({ t: g[1], on: record === g[2], s: rBtn(record === g[2]), pick: () => this.setState({ reading: g[0] }) }));
+
+    const levels = {}; majors.forEach((s) => { levels[s.no] = {}; P.plos.forEach((p) => { const r = studentLevel(s.no, p, record); if (r) levels[s.no][p.plo_id] = r.lv; }); });
+    const resRows = P.plos.map((p) => {
+      const n = { E: 0, P: 0, D: 0, NI: 0 }; majors.forEach((s) => { const l = levels[s.no][p.plo_id]; if (l) n[l]++; });
+      const tot = n.E + n.P + n.D + n.NI, pp = tot ? Math.round((n.E + n.P) / tot * 100) : null;
+      const std = p.performance_standard_pct != null ? Number(p.performance_standard_pct) : null, meets = std != null && pp != null ? pp >= std : null;
+      return { code: p.plo_code, title: p.title, tip: p.definition || '', pp: pp == null ? '—' : pp + '%', n: tot ? tot + ' / ' + majors.length : 'not yet judged',
+        std: std != null ? std + '%' : '—',
+        segs: LV.filter((l) => n[l]).map((l) => ({ t: n[l] / tot >= 0.08 ? String(n[l]) : '', tip: l + ': ' + n[l], s: 'display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #FFFFFF; width: ' + (n[l] / tot * 100) + '%; background: ' + COL[l] })),
+        judge: meets == null ? '—' : record ? (meets ? 'Meets' : 'Below standard') : (meets ? 'On track' : 'Watch'),
+        js: 'padding: 9px 12px 9px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px; ' + (meets === false ? 'color: #8A3A0A; font-weight: 600' : meets ? 'color: #1F6B35; font-weight: 600' : 'color: #6B6B6B') };
     });
-    // curriculum map A-points (outcome_curriculum_map, DS & AI)
-    const AP = { 1: ['DA201', 'DA204', 'DA311', 'DA321', 'DA322', 'DA332', 'DA333', 'DA411', 'DA431', 'DA432', 'XD231'], 2: ['DA200', 'DA311', 'DA321', 'DA332', 'DA411', 'DA431', 'DA433', 'DA434', 'XD232'],
-      3: ['DA200', 'DA321', 'DA432'], 4: ['DA201', 'DA204', 'DA321', 'DA322', 'DA333', 'DA433', 'XD231'], 5: ['DA200', 'DA433', 'XD232'], 6: ['DA200', 'DA333', 'DA432'] };
-    const FALL = ['DA200', 'DA201', 'DA321', 'DA322', 'DA333', 'DA411', 'DA433', 'DA434', 'XD232'];
-    const stOf = (c) => c === 'DA321' ? 'conf' : c === 'DA322' ? 'norub' : FALL.indexOf(c) >= 0 ? 'ready' : 'off';
-    const chip = (st) => 'display: inline-flex; align-items: center; height: 26px; padding: 0 9px; box-sizing: border-box; font-size: 12px; font-weight: 600; ' + ({
-      conf: 'background: #2E1648; color: #FFFFFF', ready: 'border: 1.5px solid #2E1648; color: #2E1648', norub: 'border: 1.5px dashed #111111; color: #111111', off: 'background: #ECECEC; color: #6B6B6B' })[st];
-    const cov = [1, 2, 3, 4, 5, 6].map((n) => {
-      const cs = AP[n], here = cs.filter((c) => ['conf', 'ready'].indexOf(stOf(c)) >= 0).length, miss = cs.filter((c) => stOf(c) === 'norub');
-      return { code: 'PLO' + n, name: DEF[n - 1][0], tip: tip(n - 1), courses: cs.map((c) => ({ t: c + (stOf(c) === 'norub' ? ' · no rubric' : ''), style: chip(stOf(c)) })),
-        gap: here + ' of ' + cs.length + ' running with a rubric' + (miss.length ? ' · rubric missing' : ''),
-        gapStyle: here === 0 || miss.length ? 'font-weight: 700; color: #8A3A0A' : 'color: #444444' };
+
+    // A-point courses of each PLO and their state this term
+    const curKey = K.curKey(), cur = P.offs.filter((o) => K.termKey(o) === curKey);
+    const ratedOff = new Set(P.S.filter((S) => Object.keys(S.R).length).map((S) => S.o.offering_id));
+    const ST = { rated: ['Ratings in', 'background: #2E1648; color: #FFFFFF'], rubric: ['Running with rubric', 'background: #F3EFF7; color: #2E1648'], norubric: ['No rubric', 'background: #FFFFFF; color: #8A3A0A; box-shadow: inset 0 0 0 1px #ED7D31'], off: ['Not offered this term', 'background: #FFFFFF; color: #9A9A9A; box-shadow: inset 0 0 0 1px #DDDDDD'] };
+    const chipS = 'padding: 3px 9px; font-size: 12px; font-weight: 600; ';
+    const ev = P.plos.map((p) => ({ code: p.plo_code, title: p.title, tip: p.definition || '',
+      courses: [...new Set(P.aCells.filter((c) => c.plo_id === p.plo_id).map((c) => c.course_base_id))].sort().map((b) => {
+        const os = cur.filter((o) => o.course_base_id === b);
+        const st = !os.length ? 'off' : os.some((o) => ratedOff.has(o.offering_id)) ? 'rated' : os.some((o) => P.rubOff.has(o.offering_id)) ? 'rubric' : 'norubric';
+        return { t: b, tip: b + ' ' + (P.courseTitle[b] || '') + ' · ' + ST[st][0], s: chipS + ST[st][1] };
+      }) }));
+    const evKey = Object.values(ST).map((v) => ({ c: '', t: v[0], s: chipS + v[1] + '; display: inline-block; width: 18px; height: 14px; padding: 0' }));
+
+    // population (left column): first major, second major, minor, each by year of study
+    const groups = [];
+    [['first', 'First major'], ['second', 'Second major'], ['minor', 'Minor']].forEach(([k, label]) => {
+      const list = P.students.filter((s) => s.role === k);
+      const open = !!this.state.open[k];
+      groups.push({ label: label, n: list.length, open: open, names: [], note: '', s: 'font-weight: 600',
+        toggle: () => { const o = Object.assign({}, this.state.open); o[k] = !open; this.setState({ open: o }); } });
+      if (!open) return;
+      const years = {}; list.forEach((s) => { const y = yearOf(s); (years[y] = years[y] || []).push(s); });
+      Object.keys(years).sort((a, b) => b - a).forEach((y) => {
+        const key = k + y, o2 = !!this.state.open[key];
+        groups.push({ label: (y === 'null' ? 'Year ?' : 'Year ' + y), n: years[y].length, open: o2, s: 'padding-left: 40px; color: #444444',
+          names: years[y].map((s) => s.name).sort(), note: '',
+          toggle: () => { const o = Object.assign({}, this.state.open); o[key] = !o2; this.setState({ open: o }); } });
+      });
+      groups[groups.length - 1].note = k === 'minor' ? 'reported apart, not in the program judgement' : 'counted in the program judgement';
     });
-    // graduating class (illustrative split of the 14 Year-4 majors)
-    const GC = { P: '#55555F', D: '#D4D4D9', G: '#EFEFF1' };
-    const GS = [[9, 2, 3], [7, 2, 5], [4, 2, 8], [8, 2, 4], [3, 0, 11], [3, 2, 9]];
-    const grad = GS.map((g, i) => {
-      const n = i + 1, fallLeft = AP[n].filter((c) => FALL.indexOf(c) >= 0 && c.charAt(2) === '4'), spring = AP[n].filter((c) => ['DA431', 'DA432'].indexOf(c) >= 0);
-      const parts = []; if (fallLeft.length) parts.push('Fall term end: ' + fallLeft.join(', ')); if (spring.length) parts.push('Spring 2027: ' + spring.join(', '));
-      return { code: 'PLO' + n, tip: tip(i), ahead: parts.length ? parts.join(' · ') : 'No Year-4 A-point left · ' + g[2] + ' cannot be judged yet',
-        segs: [['P', g[0]], ['D', g[1]], ['G', g[2]]].filter((x) => x[1]).map((x) => ({ t: String(x[1]), style: 'width: ' + (x[1] / 14 * 100) + '%; background: ' + GC[x[0]] + (x[0] !== 'P' ? '; color: #333333' : '') })) };
-    });
-    // flags to this term's A-point courses for the PLOs below standard
-    const below = rows.filter((r) => r.check !== 'Meets').map((r) => parseInt(r.code.slice(3), 10));
-    const byCourse = {};
-    below.forEach((n) => AP[n].filter((c) => FALL.indexOf(c) >= 0).forEach((c) => { (byCourse[c] = byCourse[c] || []).push('PLO' + n); }));
-    const STATE = {};
-    const flags = Object.keys(byCourse).map((c) => ({ course: c, why: byCourse[c].join(', ') + ' below standard this term',
-      state: 'Flag if still below after Spring 2027', stateStyle: 'padding: 3px 9px; font-size: 12px; font-weight: 600; ' + 'color: #6B6B6B; box-shadow: inset 0 0 0 1px #CFCFCF' }));
-    // left rail: program population, drilling down to student lists (names fictional; counts real)
-    const FAM = ['Kim', 'Lee', 'Park', 'Choi', 'Jung', 'Kang', 'Cho', 'Yoon', 'Jang', 'Lim', 'Han', 'Oh', 'Seo', 'Shin', 'Kwon', 'Hwang', 'Ahn', 'Song', 'Yoo', 'Hong'];
-    const GIV = ['Minjun', 'Seoyeon', 'Jiwoo', 'Haeun', 'Dohyun', 'Yuna', 'Junho', 'Sumin', 'Taeyang', 'Nari', 'Yejin', 'Siwoo', 'Dain', 'Eunbi', 'Hayoung', 'Gun', 'Jaehyun', 'Chaewon', 'Hyunwoo', 'Minseo', 'Jiho', 'Subin', 'Yerin', 'Doyoon'];
-    const nameOf = (i) => FAM[(i * 7) % FAM.length] + ' ' + GIV[(i * 11 + 3) % GIV.length];
-    const majors = Array.from({ length: 49 }, (_, i) => ({ name: nameOf(i), year: i < 14 ? 4 : i < 25 ? 3 : 2, first: ((i * 17) % 49) < 27 }));
-    majors[3].name = 'Lee Seoyeon';
-    const minors = Array.from({ length: 14 }, (_, i) => ({ name: nameOf(i + 60), year: [2, 3, 4][i % 3] }));
-    const ro = Object.assign({ m1: true, m2: true, min: true }, this.state.rail || {});
-    const tg = (k) => () => { const o = Object.assign({}, ro); o[k] = !ro[k]; this.setState({ rail: o }); };
-    const tree = [];
-    const grp = (k, label, n, depth, max, top) => {
-      const open = !!ro[k], can = n > 0;
-      tree.push({ isGroup: true, isTop: false, open: open, toggle: can ? tg(k) : null, label: label, n: String(n),
-        rowStyle: 'display: flex; align-items: center; gap: 8px; width: 100%; min-height: 34px; padding: 4px 24px 4px ' + (14 + depth * 16) + 'px; border: none; background: ' + (open && depth === 0 ? '#F7F7F5' : 'transparent') + '; text-align: left; cursor: ' + (can ? 'pointer' : 'default'),
-        chev: 'flex: none; transition: transform 150ms ease; transform: rotate(' + (open ? 90 : 0) + 'deg); visibility: ' + (can ? 'visible' : 'hidden'),
-        labStyle: 'flex: none; width: ' + (depth === 0 ? 120 : 92) + 'px; font-size: ' + (depth === 0 ? 14 : 13) + 'px; font-weight: ' + (depth === 0 ? 600 : 400) + '; color: #111111',
-        barWrap: 'flex: 1',
-        bar: 'display: none',
-        numStyle: 'flex: none; width: 26px; text-align: right; font-size: ' + (depth === 0 ? 16 : 13) + 'px; font-weight: 600; font-variant-numeric: tabular-nums; color: #111111' });
-      if (top) tree[tree.length - 1].isTop = true;
-      return open;
-    };
-    const stu = (list, depth, metaOf) => list.forEach((x) => tree.push({ isStudent: true, label: x.name, meta: metaOf(x),
-      rowStyle: 'display: flex; align-items: center; gap: 8px; padding: 5px 24px 5px ' + (34 + depth * 16) + 'px' }));
-    const note = (t, depth) => tree.push({ isNote: true, label: t, rowStyle: 'padding: 5px 24px 5px ' + (34 + depth * 16) + 'px; font-size: 13px; color: #6B6B6B' });
-    const byYear = (key, list, depth, metaOf) => {
-      [4, 3, 2].forEach((y) => { const l = list.filter((x) => x.year === y); if (grp(key + y, 'Year ' + y, l.length, depth, list.length)) stu(l, depth, metaOf); });
-      note('Year 1 · not declared yet', depth);
-    };
-    if (grp('m1', 'First major', 27, 0, 0, true)) { note('counted in the program’s judgement', 0); byYear('a', majors.filter((x) => x.first), 1, () => ''); }
-    if (grp('m2', 'Second major', 22, 0, 0, true)) { note('counted in the program’s judgement', 0); byYear('b', majors.filter((x) => !x.first), 1, () => ''); }
-    if (grp('min', 'Minor', 14, 0, 0, true)) { note('reported apart, not in the judgement', 0); byYear('c', minors, 1, () => ''); }
-    const yearsX = [2, 3, 4];
-    const cnt = (y) => [majors.filter((x) => x.first && x.year === y).length, majors.filter((x) => !x.first && x.year === y).length, minors.filter((x) => x.year === y).length];
-    const tot = yearsX.reduce((a, y) => a + cnt(y).reduce((p, q) => p + q, 0), 0);
-    const MC = ['#3F3F46', '#8C8C96', '#D4D4D9'], MN = ['1st major', '2nd major', 'minor'];
-    const mosaic = yearsX.map((y) => { const c = cnt(y), n = c[0] + c[1] + c[2];
-      return { year: 'Year ' + y, n: n, col: 'display: flex; flex-direction: column-reverse; width: ' + (n / tot * 100) + '%',
-        lab: 'width: ' + (n / tot * 100) + '%; font-size: 11px; color: #444444; text-align: center; white-space: nowrap',
-        segs: c.map((k, i) => ({ t: k >= 3 ? String(k) : '', tip: 'Year ' + y + ' \u00b7 ' + MN[i] + ': ' + k,
-          style: 'display: flex; align-items: center; justify-content: center; height: ' + (k / n * 100) + '%; background: ' + MC[i] + '; font-size: 11px; font-weight: 600; color: ' + (i === 2 ? '#333333' : '#FFFFFF') })) }; });
-    const isIlo = this.state.view === 'ILO';
-    const ILOT = ['Critical Thinking', 'Creative Thinking', 'Self-directed Learning', 'Communication & Collaboration', 'Diversity & Empathy', 'Global Harmony & Sustainability'];
-    // institution share at P+ (AL4, weighted by year 73/58/21/22); DS & AI course results (illustrative)
-    const YR = [[61, 70, 76, 82], [55, 64, 71, 77], [58, 66, 72, 80], [63, 72, 79, 86], [50, 57, 60, 61], [48, 54, 57, 58]], W = [73, 58, 21, 22];
-    const inst = YR.map((v) => Math.round(v.reduce((a2, x, k) => a2 + x * W[k], 0) / 174));
-    const ALL = [77, 69, 72, 74, 74, 64], MAJ = [79, 70, 73, 75, 79, 67], NON = [72, 66, 70, 71, 63, 58];
-    const iloRows = ILOT.map((t, i) => { const d = ALL[i] - inst[i];
-      return { code: 'ILO' + (i + 1), name: t, tip: 'ILO' + (i + 1) + ' \u00b7 ' + t + ': [Taejae definition, not in outcome_ilos yet]',
-        pct: ALL[i] + '%', maj: MAJ[i] + '%', non: NON[i] + '%', inst: inst[i] + '%', vs: (d >= 0 ? '+' : '') + d + ' pts', vsStyle: 'font-weight: 600; color: ' + (d < 0 ? '#8A3A0A' : '#111111'),
-        bar: 'position: absolute; left: 0; top: 0; bottom: 0; width: ' + ALL[i] + '%; background: #55555F',
-        instMark: 'position: absolute; top: -4px; bottom: -4px; left: ' + inst[i] + '%; border-left: 2px solid #111111' }; });
-    const align = DEF.map((d, i) => ({ plo: 'PLO' + (i + 1), ilo: 'ILO' + (i + 1), name: ILOT[i], ploTip: 'PLO' + (i + 1) + ' \u00b7 ' + d[0] + ': ' + d[1], iloTip: 'ILO' + (i + 1) + ' \u00b7 ' + ILOT[i] }));
-    const reqs = [
-      { ilo: 'ILO5', text: 'Diversity & empathy barely moves from Year 1 to Year 4 (+11 pts). Review how PLO5 is assessed and taught at its A-points.', courses: AP[5].join(', '), status: 'Raised at the yearly reading' },
-      { ilo: 'ILO6', text: 'Global harmony & sustainability barely moves (+10 pts). Review PLO6 at its A-points.', courses: AP[6].join(', '), status: 'Response due · 2026–27' }];
+
+    // graduating class: Year 4 majors and their judgement to date on each PLO
+    const y4 = majors.filter((s) => yearOf(s) === 4).sort((a, b) => a.name.localeCompare(b.name));
+    const grad = { when: 'August ' + (acadYear + 1), head: P.plos.map((p) => p.plo_code),
+      grid: 'display: grid; grid-template-columns: minmax(200px, 1.4fr) repeat(' + P.plos.length + ', minmax(56px, 1fr)); min-width: ' + (220 + P.plos.length * 60) + 'px',
+      note: y4.length + ' Year-4 majors · judgement to date from A-point courses',
+      rows: y4.map((s) => ({ name: s.name, role: s.role === 'first' ? '1st' : '2nd', cells: P.plos.map((p) => { const r = studentLevel(s.no, p, true);
+        return r ? { t: r.lv, s: 'display: inline-block; min-width: 26px; padding: 2px 4px; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + COL[r.lv] } : { t: '·', s: 'color: #C8C8C8' }; }) })),
+      empty: y4.length ? '' : 'No Year-4 majors.' };
+
     const dOpen = !!this.state.defsOpen;
-    return Object.assign(RM, {
-      tree: tree, mosaic: mosaic, iloRows: iloRows, align: align, reqs: reqs, isIlo: isIlo, isPlo: !isIlo,
-      tgPlo: isIlo ? '' : 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111', tgIlo: isIlo ? 'background: #111111; color: #FFFFFF; box-shadow: inset 0 0 0 1px #111111' : '',
-      showPlo: () => this.setState({ view: 'PLO' }), showIlo: () => this.setState({ view: 'ILO' }), defsKind: isIlo ? 'ILO' : 'PLO',
-      role: role, isChair: isChair, isFaculty: !isChair, editing: isChair && this.state.editing, notEditing: !(isChair && this.state.editing), showEdit: isChair && !this.state.editing,
-      startEdit: () => this.setState({ editing: true }), stopEdit: () => this.setState({ editing: false }), rows: rows, cov: cov, grad: grad, flags: flags,
-      mode: isChair ? 'You can edit standards and record decisions' : 'Read only',
-      modeStyle: 'padding: 6px 12px; font-size: 12px; font-weight: 600; ' + (isChair ? 'color: #FFFFFF; background: #502579' : 'color: #502579; box-shadow: inset 0 0 0 1px #502579'),
-      stds: R.map((r) => ({ code: r[0], v: r[5] + '%', aria: r[0] + ' standard of performance' })),
-      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide ' : 'Show ') + (isIlo ? 'ILO' : 'PLO') + ' Definitions', defs: isIlo ? ILOT.map((t, i) => ({ code: 'ILO' + (i + 1), title: t, def: '[Taejae definition, not in outcome_ilos yet]' })) : DEF.map((d, i) => ({ code: 'PLO' + (i + 1), title: d[0], def: d[1] })),
-      toggleDefs: () => this.setState({ defsOpen: !dOpen }),
-      defsBtn: 'min-height: 40px; padding: 0 12px; border: none; font-family: inherit; font-size: 13px; cursor: pointer; ' + (dOpen ? 'background: #2E1648; color: #FFFFFF' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF')
-    });
+    const nCourses = P.S.length;
+    return {
+      ready: true,
+      prog: { name: P.prog.name, mode: role === 'Program chair' && P.prog.is_chair ? 'Program chair · read only for now' : 'Read only' },
+      pop: { total: P.students.length, groups: groups },
+      readings: readings, judgeHead: record ? 'Judgement' : 'Reading (formative)',
+      resSub: (record ? 'Judgement to date: summative A-point results' : 'Progress: formative A-point results') + ' · each major once · one vote per course',
+      resRows: resRows,
+      resNote: majors.length + ' majors (' + P.students.filter((s) => s.role === 'first').length + ' first, ' + P.students.filter((s) => s.role === 'second').length + ' second). ' +
+        'A major\u2019s PLO level is the median of their A-point course results; % P+ is the share of majors with evidence at Proficient or above. ' + nCourses + (nCourses === 1 ? ' course has' : ' courses have') + ' ratings so far.',
+      evNote: 'curriculum-map A-points by PLO, state this term',
+      ev: ev, evKey: evKey, grad: grad,
+      defsOpen: dOpen, defsLabel: (dOpen ? 'Hide' : 'Show') + ' PLO Definitions', toggleDefs: () => this.setState({ defsOpen: !dOpen }),
+      defs: P.plos.map((p) => ({ code: p.plo_code, title: p.title, def: p.definition || '' }))
+    };
   }
 }
 return Component;

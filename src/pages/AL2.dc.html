@@ -301,6 +301,7 @@ class Component extends DCLogic {
     if (ARETE.course.sel.stu && ARETE.course.sel.stu !== this.state.stu) this.state.stu = ARETE.course.sel.stu;
     const off = this.state.off;
     if (off == null) return Object.assign(base, { msg: 'Choose a course.' });
+    if (this.data[off] && !this.data[off].error && !ARETE.course._cache[off] && !this.busy[off]) delete this.data[off];   // changed on another page
     const S = this.data[off];
     if (!S) { if (!this.busy[off]) this.loadOffering(off); return Object.assign(base, { msg: 'Loading the course…' }); }
     if (S.error) return Object.assign(base, { msg: S.error });
@@ -430,7 +431,7 @@ class Component extends DCLogic {
   saveReview(method, id, body) {
     const off = this.state.off, db = ARETE.db;
     const done = method === 'POST' ? db.post('outcome_course_reviews', body) : db.patch('outcome_course_reviews?review_id=eq.' + id, body);
-    done.then(() => { delete this.data[off]; this.setState({ crMsg: '' }); }, (e) => this.setState({ crMsg: 'Could not save: ' + e.message }));
+    done.then(() => { delete this.data[off]; ARETE.course.forget(off); this.setState({ crMsg: '' }); }, (e) => this.setState({ crMsg: 'Could not save: ' + e.message }));
   }
 }
 </script>
