@@ -162,9 +162,8 @@ button{font-family:inherit;cursor:pointer}
 <div style="{{g.band}}"><span style="font-size: 12px; opacity: 0.8">{{g.kind}}</span><h2 style="margin: 0; font-size: 15px; font-weight: 600">{{g.title}}</h2><span style="font-size: 13px; opacity: 0.85">{{g.meta}}</span></div>
 <sc-if value="{{g.note}}"><p style="margin: 0; padding: 12px 0; font-size: 13px; color: #6B6B6B; border-bottom: 1px solid #EEEEEE">{{g.note}}</p></sc-if>
 <sc-if value="{{g.isTl}}"><div style="overflow-x: auto"><div style="{{g.grid}}">
-<sc-for list="{{g.top}}" as="c"><span style="{{c.s}}">{{c.t}}</span></sc-for>
 <sc-for list="{{g.head}}" as="c"><span title="{{c.tip}}" style="{{c.s}}">{{c.t}}</span></sc-for>
-<sc-for list="{{g.rows}}" as="r"><span style="{{r.hs}}"><span style="display: block; font-weight: 600">{{r.code}}</span><span style="display: block; margin-top: 1px; font-size: 12px; color: #6B6B6B">{{r.title}}</span></span><sc-for list="{{r.cells}}" as="x"><span style="{{x.s}}"><sc-for list="{{x.chips}}" as="e"><span title="{{e.tip}}" style="{{e.s}}"><span style="{{e.cs}}">{{e.code}}</span><sc-if value="{{e.lv}}"><span style="{{e.ls}}">{{e.lv}}</span></sc-if><sc-if value="{{e.a}}"><span style="position: absolute; top: -6px; right: -6px; width: 12px; height: 12px; background: #111111; color: #FFFFFF; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span></sc-if></span></sc-for></span></sc-for><sc-for list="{{r.res}}" as="x"><span style="{{x.cs}}"><span title="{{x.tip}}" style="{{x.style}}">{{x.t}}</span></span></sc-for></sc-for>
+<sc-for list="{{g.rows}}" as="r"><sc-if value="{{r.isLine}}"><span style="{{r.s}}"><span style="{{r.ls}}">{{r.t}}</span></span></sc-if><sc-if value="{{r.isTerm}}"><span style="{{r.hs}}"><span style="display: block; font-weight: 600">{{r.t}}</span><span style="display: block; margin-top: 1px; font-size: 12px; color: #6B6B6B">{{r.sub}}</span></span><sc-for list="{{r.cells}}" as="x"><span style="{{x.s}}"><sc-for list="{{x.sq}}" as="e"><span title="{{e.tip}}" style="{{e.s}}">{{e.lv}}<sc-if value="{{e.a}}"><span style="position: absolute; top: -6px; right: -6px; width: 12px; height: 12px; background: #111111; color: #FFFFFF; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center">A</span></sc-if></span></sc-for></span></sc-for></sc-if><sc-if value="{{r.isSub}}"><span style="{{r.ls}}">{{r.label}} <span style="display: block; margin-top: 2px; font-weight: 400; font-size: 12px; color: #444444">{{r.note}}</span></span><sc-for list="{{r.cells}}" as="x"><span style="{{r.cs}}"><span title="{{x.tip}}" style="{{x.style}}">{{x.t}}</span></span></sc-for></sc-if></sc-for>
 </div></div></sc-if>
 <sc-if value="{{g.isTr}}"><sc-for list="{{g.terms}}" as="t"><div class="trm-row" style="display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid #EEEEEE"><div style="padding: 10px 0; font-size: 13px; font-weight: 600">{{t.t}}<span style="display: block; font-size: 11px; font-weight: 400; color: #6B6B6B">{{t.n}}</span></div><div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0"><sc-for list="{{t.cs}}" as="c"><span style="display: inline-flex; flex-direction: column; gap: 2px; padding: 5px 8px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 12px; max-width: 280px"><span><span style="font-weight: 600">{{c.code}}</span> {{c.title}}</span><sc-if value="{{c.tag}}"><span title="Telos requirement this course satisfies (reference only)" style="align-self: flex-start; padding: 0 6px; border-radius: 8px; background: #F1F1F1; font-size: 10px; color: #555555">{{c.tag}}</span></sc-if></span></sc-for></div></div></sc-for></sc-if>
 </sc-for>
@@ -242,10 +241,25 @@ class Component extends DCLogic {
       .then((r) => { this.rqItems = {}; r.forEach((x) => { this.rqItems[x.id] = x; }); }).catch(() => { this.rqItems = {}; }).then(() => this.setState({}));
     db.rest('student_requirement_courses?student_id=eq.' + encodeURIComponent(no) + '&select=item_id,course_id,term')
       .then((r) => { this.rq[no] = r; }).catch(() => { this.rq[no] = []; }).then(() => this.setState({}));
-    db.rest('ergon_v_class_roster?student_no=eq.' + encodeURIComponent(no) + '&select=offering_id')
-      .then((r) => db.rest('course_offerings?offering_id=' + db.inList([...new Set(r.map((x) => x.offering_id))]) +
-        '&select=offering_id,course_id,course_base_id,section,semester,year,title,courses(title)'))
-      .then((offs) => { this.stuC[no] = offs.filter((o) => ARETE.course.termKey(o) <= ARETE.course.curKey()); })
+    // every course in the student's history ('2024-1' = Fall 2024, '2024-2' = Spring 2025); the offering, where
+    // Arete has one, carries the ratings. Courses with no offering (most terms before Fall 2024) still list.
+    const termOf = (code) => { const m = /^(\d{4})-(\d)$/.exec(code || ''); return m ? (m[2] === '1' ? { semester: 'Fall', year: +m[1] } : { semester: 'Spring', year: +m[1] + 1 }) : null; };
+    let hist = [];
+    db.rest('student_course_history?student_id=eq.' + encodeURIComponent(no) + '&source=in.(registered,graded)&select=course_id,term,section')
+      .then((h) => { hist = h; return db.rest('ergon_v_class_roster?student_no=eq.' + encodeURIComponent(no) + '&select=offering_id'); })
+      .then((r) => Promise.all([
+        db.rest('course_offerings?offering_id=' + db.inList([...new Set(r.map((x) => x.offering_id))]) + '&select=offering_id,course_id,course_base_id,section,semester,year,title,courses(title)'),
+        db.rest('courses?course_id=' + db.inList([...new Set(hist.map((x) => x.course_id))]) + '&select=course_id,title').catch(() => [])]))
+      .then(([offs, cs]) => {
+        const titles = {}; cs.forEach((c) => { titles[c.course_id] = c.title; });
+        const all = offs.slice();
+        hist.forEach((h) => {
+          const t = termOf(h.term); if (!t) return;
+          if (all.some((o) => (o.course_base_id || o.course_id) === h.course_id && o.semester === t.semester && Number(o.year) === t.year)) return;
+          all.push({ offering_id: 'h:' + h.course_id + ':' + h.term, course_id: h.course_id, course_base_id: h.course_id, section: null, semester: t.semester, year: t.year, title: titles[h.course_id] || '' });
+        });
+        this.stuC[no] = all.filter((o) => ARETE.course.termKey(o) <= ARETE.course.curKey());
+      })
       .catch((e) => { this.stuC[no] = { error: e.message }; })
       .then(() => { this.stuBusy[no] = false; this.setState({}); });
   }
@@ -388,40 +402,50 @@ class Component extends DCLogic {
     // ---- timelines: outcomes as rows, the student's terms as columns, the courses that gave evidence in each cell ----
     const termOf = (o) => o.semester + ' ' + o.year;
     const terms = []; offs.forEach((o) => { if (!terms.some((t) => t.t === termOf(o))) terms.push({ t: termOf(o), pre: before(o) }); });
-    const cut = terms.some((t) => t.pre) ? terms.findIndex((t) => !t.pre) : -1;
-    const PRE = '; background: repeating-linear-gradient(135deg, #F6F6F6 0 3px, #FFFFFF 3px 8px)', CUT = '; border-left: 2px solid #502579';
-    const colS = (i, base) => base + (terms[i].pre ? PRE : '') + (i === cut ? CUT : '');
-    const CHIP = 'position: relative; display: inline-flex; align-items: center; height: 22px; box-sizing: border-box; font-size: 11px; font-weight: 600; white-space: nowrap';
-    const LV = 'display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 100%; padding: 0 3px';
+    const PRE = '; background: repeating-linear-gradient(135deg, #F6F6F6 0 3px, #FFFFFF 3px 8px)';
     const KIND = { sum: 'summative', frm: 'progress, formative', pre: 'taken before measurement began (' + startLabel + ')', wait: 'on the map, no ratings yet' };
-    // one course's chip on one outcome: ev = { o, rec, pg, a }
-    const chipOf = (ev, oc) => {
+    // one course's result on one outcome, in the same squares as everywhere in Arete; the course shows on hover
+    const SQ = 'position: relative; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 26px; box-sizing: border-box; font-size: 12px; font-weight: 600';
+    const sqOf = (ev, oc) => {
       const lv = ev.rec || ev.pg, kind = ev.rec ? 'sum' : ev.pg ? 'frm' : before(ev.o) ? 'pre' : 'wait';
-      return { code: code(ev.o), lv: lv || '', a: ev.a, tip: code(ev.o) + ' ' + titleOf(ev.o) + ' \u00b7 ' + oc + ' \u00b7 ' + KIND[kind] + (ev.a ? ' \u00b7 A-point' : ''),
-        s: CHIP + (kind === 'sum' ? '; box-shadow: inset 0 0 0 1px #D0D0D0' : kind === 'frm' ? '; border: 1.5px dashed ' + COL[lv] + '; background: #FFFFFF; color: ' + COL[lv]
-          : kind === 'pre' ? '; background: repeating-linear-gradient(135deg, #E6E6E6 0 2px, #FFFFFF 2px 6px); box-shadow: inset 0 0 0 1px #DDDDDD' : '; box-shadow: inset 0 0 0 1px #CFCFCF'),
-        cs: 'padding: 0 5px; color: ' + (kind === 'pre' ? '#777777' : kind === 'frm' ? 'inherit' : '#333333'),
-        ls: LV + (kind === 'sum' ? '; color: #FFFFFF; background: ' + COL[lv] : '; color: inherit') };
+      return { lv: lv || '', a: ev.a, tip: code(ev.o) + ' ' + titleOf(ev.o) + ' \u00b7 ' + oc + ' \u00b7 ' + (lv ? lv + ', ' : '') + KIND[kind] + (ev.a ? ' \u00b7 A-point' : ''),
+        s: SQ + (kind === 'sum' ? '; color: #FFFFFF; background: ' + COL[lv] : kind === 'frm' ? '; color: ' + COL[lv] + '; background: #FFFFFF; border: 2px dashed ' + COL[lv]
+          : kind === 'pre' ? '; background: repeating-linear-gradient(135deg, #DCDCDC 0 2px, #FFFFFF 2px 6px); box-shadow: inset 0 0 0 1px #D4D4D4' : '; box-shadow: inset 0 0 0 1px #D4D4D4') };
     };
     const GRAD = { t: '', tip: 'fixed at graduation', style: 'display: inline-block; width: 40px; height: 28px; box-sizing: border-box; border: 1.5px dashed #9C8FB0; background: #FFFFFF' };
-    const RS = 'padding: 8px 4px; border-bottom: 1px solid #EEEEEE; background: #F3EFF7; display: flex; align-items: center; justify-content: center';
-    const RSH = 'padding: 10px 4px; border-bottom: 1px solid #111111; background: #F3EFF7; font-size: 11px; font-weight: 600; color: #2E1648; text-align: center; line-height: 1.2';
     const band = (bg) => 'display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-top: 36px; padding: 10px 14px; color: #FFFFFF; background: ' + bg;
-    // rows: [{ code, title, ev: [{ o, rec, pg, a }] }]
-    const timeline = (rows) => ({ isTl: true,
-      grid: 'display: grid; grid-template-columns: minmax(190px, 1.2fr) ' + terms.map(() => 'minmax(96px, 1fr)').join(' ') + ' 72px 72px 72px; min-width: ' + (190 + terms.length * 100 + 216) + 'px; align-items: stretch',
-      top: cut < 0 ? [] : [{ t: '', s: '' }].concat(terms.map((t, i) => ({ t: i === cut ? 'Measurement began' : '', s: 'padding: 0 0 6px 4px; font-size: 11px; font-weight: 600; color: #502579' })), [{ t: '', s: '' }, { t: '', s: '' }, { t: '', s: '' }]),
-      head: [{ t: 'Outcome', tip: '', s: 'position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 0; border-bottom: 1px solid #111111; font-size: 12px; letter-spacing: .04em; color: #6B6B6B' }]
-        .concat(terms.map((t, i) => ({ t: t.t, tip: t.pre ? 'before measurement began' : '', s: colS(i, 'padding: 10px 6px; border-bottom: 1px solid #111111; font-size: 12px; font-weight: 600; text-align: center; white-space: nowrap') })),
-          ['Progress', 'Judgement to date', 'At graduation'].map((t) => ({ t: t, tip: '', s: RSH }))),
-      rows: rows.map((r) => {
-        const pg = vote(r.ev.map((e) => e.pg0).filter(Boolean)), jd = vote(r.ev.filter((e) => e.a).map((e) => e.rec).filter(Boolean));
-        return { code: r.code, title: r.title,
-          hs: 'position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 12px 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px',
-          cells: terms.map((t, i) => ({ s: colS(i, 'padding: 8px 6px; border-bottom: 1px solid #EEEEEE; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 4px'),
-            chips: r.ev.filter((e) => termOf(e.o) === t.t).map((e) => chipOf(e, r.code)) })),
-          res: [subChip(pg), subChip(jd), GRAD].map((x) => Object.assign({ cs: RS }, x)) };
-      }) });
+    // one block: terms as rows, outcomes as columns. cols: [{ code, title, ev: [{ o, rec, pg, pg0, a }] }]
+    const timeline = (cols) => {
+      const tl = terms.filter((t) => cols.some((c) => c.ev.some((e) => termOf(e.o) === t.t)));
+      const LINE = { isLine: true, t: 'Measurement began \u00b7 ' + startLabel,
+        s: 'grid-column: 1 / -1; display: flex; align-items: center; height: 30px; margin-top: 6px; background: linear-gradient(#502579, #502579) 0 50% / 100% 1.5px no-repeat',
+        ls: 'position: sticky; left: 0; padding-right: 10px; background: #FFFFFF; font-size: 12px; font-weight: 600; color: #502579' };
+      const rows = [];
+      let lineDone = !tl.some((t) => t.pre);
+      tl.forEach((t) => {
+        if (!lineDone && !t.pre) { lineDone = true; rows.push(LINE); }
+        const here = offs.filter((o) => termOf(o) === t.t && cols.some((c) => c.ev.some((e) => e.o === o)));
+        rows.push({ isTerm: true, t: t.t, sub: here.map(code).join(' \u00b7 '),
+          hs: 'position: sticky; left: 0; z-index: 1; padding: 10px 12px 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px' + (t.pre ? PRE : '; background: #FFFFFF'),
+          cells: cols.map((c) => ({ s: 'padding: 8px 4px; border-bottom: 1px solid #EEEEEE; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 8px' + (t.pre ? PRE : ''),
+            sq: here.map((o) => c.ev.find((e) => e.o === o)).filter(Boolean).map((e) => sqOf(e, c.code)) })) });
+      });
+      if (!lineDone) rows.push(LINE);
+      if (!tl.length) rows.push({ isLine: true, t: 'No course of this student is on the map yet.', s: 'grid-column: 1 / -1; padding: 12px 0; border-bottom: 1px solid #EEEEEE', ls: 'font-size: 13px; color: #6B6B6B' });
+      [['Progress', 'every rated course, one vote each', (c) => subChip(vote(c.ev.map((e) => e.pg0).filter(Boolean)))],
+        ['Judgement to date', 'summative results from A-point courses', (c) => subChip(vote(c.ev.filter((e) => e.a).map((e) => e.rec).filter(Boolean)))],
+        ['At graduation', 'fixed as the record', () => GRAD]].forEach(([label, note, fn], k) => {
+        const top = k === 0, pad = 'padding: ' + (top ? 10 : 4) + 'px 0 ' + (k === 2 ? 10 : 4) + 'px';
+        rows.push({ isSub: true, label: label, note: note,
+          ls: 'position: sticky; left: 0; z-index: 1; ' + pad + ' 12px; background: #F3EFF7; font-size: 13px; font-weight: 600; color: #2E1648' + (top ? '; border-top: 1px solid #2E1648' : ''),
+          cs: pad + '; display: flex; align-items: center; justify-content: center; background: #F3EFF7' + (top ? '; border-top: 1px solid #2E1648' : ''),
+          cells: cols.map(fn) });
+      });
+      return { isTl: true, rows: rows,
+        grid: 'display: grid; grid-template-columns: minmax(190px, 1.4fr) repeat(' + cols.length + ', minmax(64px, 1fr)); min-width: ' + (190 + cols.length * 70) + 'px; align-items: stretch',
+        head: [{ t: 'Term', tip: '', s: 'position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 0; border-bottom: 1px solid #111111; font-size: 12px; letter-spacing: .04em; color: #6B6B6B' }]
+          .concat(cols.map((c) => ({ t: c.code, tip: c.code + ' \u00b7 ' + c.title, s: 'padding: 10px 4px; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center' }))) };
+    };
 
     // evidence of one course on a set of PLOs (one PLO, or every PLO linked to an ILO): the course's level is the median over them
     const evOf = (o, plos) => {
@@ -461,18 +485,18 @@ class Component extends DCLogic {
       hasDefs: progs.some((g) => g.live), defsOpen: !!this.state.defsOpen && progs.some((g) => g.live),
       defsLabel: (this.state.defsOpen ? 'Hide' : 'Show') + ' PLO Definitions', toggleDefs: () => this.setState({ defsOpen: !this.state.defsOpen }),
       defs: progs.filter((g) => g.live).flatMap((g, i, a) => g.plos.map((p) => ({ code: a.length > 1 ? g.pr.code + ' ' + p.plo_code : p.plo_code, title: p.title, def: p.definition || '' }))),
-      ready: true, legend: [ARETE.LEG.levels(), { t: 'Evidence chips (course and its level on the outcome)', items: [
-        { s: 'box-shadow: inset 0 0 0 1px #D0D0D0', t: 'summative' }, { s: 'border: 1.5px dashed #111111', t: 'formative (progress)' },
+      ready: true, legend: [ARETE.LEG.levels(), { t: 'Course squares (hover for the course)', items: [
+        { s: 'background: #111111', t: 'summative' }, { s: 'border: 1.5px dashed #111111', t: 'formative (progress)' },
         { s: 'background: repeating-linear-gradient(135deg, #CFCFCF 0 2px, #FFFFFF 2px 5px)', t: 'taken before measurement began (Fall 2026)' },
-        { s: 'box-shadow: inset 0 0 0 1px #CFCFCF', t: 'on the map, no ratings yet' }, { s: 'background: #111111; color: #FFFFFF', c: 'A', t: 'A-point' },
+        { s: 'box-shadow: inset 0 0 0 1px #D4D4D4', t: 'on the map, no ratings yet' }, { s: 'background: #111111; color: #FFFFFF', c: 'A', t: 'A-point' },
         { s: 'border: 1.5px dashed #9C8FB0', t: 'fixed at graduation' }] },
-        { t: 'Terms', items: [{ s: 'background: repeating-linear-gradient(135deg, #E4E4E4 0 3px, #FFFFFF 3px 7px)', t: 'before measurement began' }, { s: 'border-left: 2px solid #502579', t: 'measurement began' },
+        { t: 'Terms', items: [{ s: 'background: repeating-linear-gradient(135deg, #E4E4E4 0 3px, #FFFFFF 3px 7px)', t: 'before measurement began' }, { s: 'border-top: 2px solid #502579', t: 'measurement began' },
           { s: 'background: #F1F1F1; border-radius: 7px', t: 'Telos requirement the course satisfies (reference only)' }] }],
       stu: { name: ARETE.who(s.no, s.name), no: ARETE.sno(s.no),
         meta: [y ? 'Year ' + y : '', s.advisee ? 'Your advisee' : '', offs.length + (offs.length === 1 ? ' course' : ' courses') + ' taken'].filter(Boolean).join(' \u00b7 '),
         programs: roles.map(([k, kind]) => kind + ': ' + s[k]).join(' \u00b7 ') || 'No declared major yet' },
       blocks: blocks,
-      foot: 'Each chip is one course\u2019s result on that outcome: solid = summative, dashed = latest formative (progress), hatched = taken before measurement began, outline = on the map, no ratings yet. ILO evidence comes from any course on a program\u2019s curriculum map, through that program\u2019s PLO \u2192 ILO links, so every student has an ILO reading, a self-designed major included. Progress takes the median of every rated course, one vote each; the judgement to date uses summative results from A-point courses only. The grey tag in Courses by term shows which Telos requirement a course satisfies and changes no result.'
+      foot: 'Each square is one course\u2019s result on that outcome, in the order of the course codes under the term; hover a square for the course. Solid = summative, dashed = latest formative (progress), hatched = taken before measurement began, outline = on the map, no ratings yet. ILO evidence comes from any course on a program\u2019s curriculum map, through that program\u2019s PLO \u2192 ILO links, so every student has an ILO reading, a self-designed major included. Progress takes the median of every rated course, one vote each; the judgement to date uses summative results from A-point courses only. The grey tag in Courses by term shows which Telos requirement a course satisfies and changes no result.'
     });
   }
 }
