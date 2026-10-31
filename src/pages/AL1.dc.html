@@ -424,11 +424,15 @@ class Component extends DCLogic {
       let lineDone = !tl.some((t) => t.pre);
       tl.forEach((t) => {
         if (!lineDone && !t.pre) { lineDone = true; rows.push(LINE); }
+        // the term as a heading, then one row per course, so each course's squares line up under the outcomes
         const here = offs.filter((o) => termOf(o) === t.t && cols.some((c) => c.ev.some((e) => e.o === o)));
-        rows.push({ isTerm: true, t: t.t, sub: here.map(code).join(' \u00b7 '),
-          hs: 'position: sticky; left: 0; z-index: 1; padding: 10px 12px 10px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px' + (t.pre ? PRE : '; background: #FFFFFF'),
-          cells: cols.map((c) => ({ s: 'padding: 8px 4px; border-bottom: 1px solid #EEEEEE; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 8px' + (t.pre ? PRE : ''),
-            sq: here.map((o) => c.ev.find((e) => e.o === o)).filter(Boolean).map((e) => sqOf(e, c.code)) })) });
+        rows.push({ isLine: true, t: t.t + (t.pre ? ' \u00b7 before measurement' : ''),
+          s: 'grid-column: 1 / -1; padding: 14px 0 6px; border-bottom: 1px solid #DADADA',
+          ls: 'position: sticky; left: 0; font-size: 13px; font-weight: 600; color: #111111' });
+        here.forEach((o) => rows.push({ isTerm: true, t: code(o), sub: titleOf(o),
+          hs: 'position: sticky; left: 0; z-index: 1; padding: 8px 12px 8px 0; border-bottom: 1px solid #EEEEEE; font-size: 13px' + (t.pre ? PRE : '; background: #FFFFFF'),
+          cells: cols.map((c) => ({ s: 'padding: 6px 4px; border-bottom: 1px solid #EEEEEE; display: flex; align-items: center; justify-content: center' + (t.pre ? PRE : ''),
+            sq: c.ev.filter((e) => e.o === o).map((e) => sqOf(e, c.code)) })) }));
       });
       if (!lineDone) rows.push(LINE);
       if (!tl.length) rows.push({ isLine: true, t: 'No course of this student is on the map yet.', s: 'grid-column: 1 / -1; padding: 12px 0; border-bottom: 1px solid #EEEEEE', ls: 'font-size: 13px; color: #6B6B6B' });
@@ -443,7 +447,7 @@ class Component extends DCLogic {
       });
       return { isTl: true, rows: rows,
         grid: 'display: grid; grid-template-columns: minmax(190px, 1.4fr) repeat(' + cols.length + ', minmax(64px, 1fr)); min-width: ' + (190 + cols.length * 70) + 'px; align-items: stretch',
-        head: [{ t: 'Term', tip: '', s: 'position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 0; border-bottom: 1px solid #111111; font-size: 12px; letter-spacing: .04em; color: #6B6B6B' }]
+        head: [{ t: 'Term · course', tip: '', s: 'position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 0; border-bottom: 1px solid #111111; font-size: 12px; letter-spacing: .04em; color: #6B6B6B' }]
           .concat(cols.map((c) => ({ t: c.code, tip: c.code + ' \u00b7 ' + c.title, s: 'padding: 10px 4px; border-bottom: 1px solid #111111; font-size: 13px; font-weight: 600; text-align: center' }))) };
     };
 
@@ -496,7 +500,7 @@ class Component extends DCLogic {
         meta: [y ? 'Year ' + y : '', s.advisee ? 'Your advisee' : '', offs.length + (offs.length === 1 ? ' course' : ' courses') + ' taken'].filter(Boolean).join(' \u00b7 '),
         programs: roles.map(([k, kind]) => kind + ': ' + s[k]).join(' \u00b7 ') || 'No declared major yet' },
       blocks: blocks,
-      foot: 'Each square is one course\u2019s result on that outcome, in the order of the course codes under the term; hover a square for the course. Solid = summative, dashed = latest formative (progress), hatched = taken before measurement began, outline = on the map, no ratings yet. ILO evidence comes from any course on a program\u2019s curriculum map, through that program\u2019s PLO \u2192 ILO links, so every student has an ILO reading, a self-designed major included. Progress takes the median of every rated course, one vote each; the judgement to date uses summative results from A-point courses only. The grey tag in Courses by term shows which Telos requirement a course satisfies and changes no result.'
+      foot: 'Each square is one course\u2019s result on that outcome; courses are listed under the term they were taken in. Solid = summative, dashed = latest formative (progress), hatched = taken before measurement began, outline = on the map, no ratings yet. ILO evidence comes from any course on a program\u2019s curriculum map, through that program\u2019s PLO \u2192 ILO links, so every student has an ILO reading, a self-designed major included. Progress takes the median of every rated course, one vote each; the judgement to date uses summative results from A-point courses only. The grey tag in Courses by term shows which Telos requirement a course satisfies and changes no result.'
     });
   }
 }
