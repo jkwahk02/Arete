@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AL1 Outcome Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+<!-- Design mockup (2026-10-31), sample students and ratings.
+     AL1 student view in two layers:
+       1. ILOs for every student: evidence from any course on any program's map,
+          through the PLO -> ILO links. The only outcome view for a self-designed major.
+       2. PLOs of each declared program that has them in Arete.
+     Both are timelines: outcomes as rows, the student's terms as columns, the courses
+     that gave evidence in each cell. Terms before measurement are shaded and a line
+     marks where measurement began. Below, the transcript by term with the Telos
+     requirement each course satisfies (reference only). -->
+<style>
+:root{--ink:#111111;--mut:#6B6B6B;--line:#EEEEEE;--brand:#502579;--deep:#2E1648;--soft:#F3EFF7;
+  --E:#0077B6;--P:#2EA043;--D:#ED7D31;--NI:#C0504D}
+body{margin:0;background:#FFFFFF;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+button{font-family:inherit;cursor:pointer}
+.pad{padding:36px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 60px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px))}
+.note{margin:0 0 24px;padding:10px 14px;background:#FFF8E6;font-size:13px;color:#5C4A00;line-height:1.5}
+.lbl{font-size:12px;letter-spacing:.04em;color:var(--mut)}
+h1{margin:6px 0 0;font-weight:300;font-size:clamp(30px,3.2vw,44px);letter-spacing:-.02em}
+h1 small{font-size:16px;color:var(--mut);margin-left:10px}
+.meta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 24px;margin-top:6px;font-size:14px;color:#444444}
+.who{display:flex;gap:0;margin-bottom:22px}
+.who button{min-height:36px;padding:0 12px;border:none;background:transparent;font-size:13px;box-shadow:inset 0 0 0 1px #CFCFCF}
+.who button[aria-pressed="true"]{background:var(--ink);color:#FFFFFF;box-shadow:none}
+.band{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:36px;padding:10px 14px;color:#FFFFFF;background:var(--deep)}
+.band.ilo{background:var(--brand)}
+.band .k{font-size:12px;opacity:.8}
+.band h2{margin:0;font-size:15px;font-weight:600}
+.band .m{font-size:13px;opacity:.85}
+.quiet{margin:0;padding:12px 0;font-size:13px;color:var(--mut);border-bottom:1px solid var(--line)}
+/* timeline */
+.scroll{overflow-x:auto}
+.tl{display:grid;align-items:stretch}
+.tl > *{box-sizing:border-box}
+.rh{position:sticky;left:0;z-index:2;background:#FFFFFF;padding:10px 12px 10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rh b{display:block;font-weight:600}
+.rh span{display:block;margin-top:1px;font-size:12px;color:var(--mut)}
+.th{padding:10px 6px;border-bottom:1px solid var(--ink);font-size:12px;font-weight:600;text-align:center;white-space:nowrap}
+.th.pre,.td.pre{background:repeating-linear-gradient(135deg,#F6F6F6 0 3px,#FFFFFF 3px 8px)}
+.th0{position:sticky;left:0;z-index:2;background:#FFFFFF;padding:10px 0;border-bottom:1px solid var(--ink);font-size:12px;letter-spacing:.04em;color:var(--mut)}
+.td{padding:8px 6px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px}
+.td.cut,.th.cut{border-left:2px solid var(--brand)}
+.rs{padding:8px 4px;border-bottom:1px solid var(--line);background:var(--soft);display:flex;align-items:center;justify-content:center}
+.rsh{padding:10px 4px;border-bottom:1px solid var(--ink);background:var(--soft);font-size:11px;font-weight:600;color:var(--deep);text-align:center;line-height:1.2}
+.cutlbl{font-size:11px;font-weight:600;color:var(--brand);padding:0 0 6px;text-align:left}
+/* evidence chips: course code + its level on that outcome */
+.ch{position:relative;display:inline-flex;align-items:center;height:22px;box-sizing:border-box;font-size:11px;font-weight:600;white-space:nowrap}
+.ch .c{padding:0 5px;color:#333333}
+.ch .l{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:100%;padding:0 3px;color:#FFFFFF}
+.ch.sum{box-shadow:inset 0 0 0 1px #D0D0D0}
+.ch.frm{border:1.5px dashed currentColor;background:#FFFFFF}
+.ch.frm .l{color:inherit}
+.ch.pre{background:repeating-linear-gradient(135deg,#E6E6E6 0 2px,#FFFFFF 2px 6px);box-shadow:inset 0 0 0 1px #DDDDDD}
+.ch.pre .c{color:#777777}
+.ch.wait{box-shadow:inset 0 0 0 1px #CFCFCF}
+.ch .a{position:absolute;top:-6px;right:-6px;width:12px;height:12px;background:var(--ink);color:#FFFFFF;font-size:8px;display:flex;align-items:center;justify-content:center}
+.lv{display:inline-flex;align-items:center;justify-content:center;width:34px;height:24px;font-size:12px;font-weight:700;color:#FFFFFF}
+.grad{display:inline-block;width:34px;height:24px;box-sizing:border-box;border:1.5px dashed #9C8FB0;background:#FFFFFF}
+.dash{font-size:13px;color:#8A8A8A}
+/* transcript */
+.tr{display:grid;grid-template-columns:130px 1fr;border-bottom:1px solid var(--line)}
+.tr .t{padding:10px 0;font-size:13px;font-weight:600}
+.tr .t span{display:block;font-size:11px;font-weight:400;color:var(--mut)}
+.tr .cs{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0}
+.crs{display:inline-flex;flex-direction:column;gap:2px;padding:5px 8px;box-shadow:inset 0 0 0 1px #E0E0E0;font-size:12px;max-width:260px}
+.crs b{font-weight:600}
+.crs .tag{align-self:flex-start;padding:0 6px;border-radius:8px;background:#F1F1F1;font-size:10px;color:#555555}
+.foot{margin:20px 0 0;font-size:13px;line-height:1.6;color:var(--mut);max-width:900px}
+/* legend footer, as on every Arete page */
+.legend{display:flex;flex-wrap:wrap;gap:14px 40px;padding:18px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 28px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));border-top:1px solid #E6E6E6;background:#FAFAF8;font-size:12px;color:#444444}
+.legend-g{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.legend-t{flex-basis:100%;font-size:11px;letter-spacing:.04em;color:var(--mut)}
+.legend-i{display:flex;align-items:center;gap:6px}
+@media (max-width:759px){.tr{grid-template-columns:1fr}.tr .t{padding-bottom:0}}
+</style>
+</head>
+<body>
+<main class="pad">
+<p class="note">Design mockup with sample students and ratings. ILOs for every student, then the PLOs of each declared program that has them, as timelines by term. The transcript below lists every course with the Telos requirement it satisfies, for reference only.</p>
+<div class="who" role="group" aria-label="Sample student" id="who"></div>
+<div class="lbl">AL1 Student · one student across courses</div>
+<h1 id="nm"></h1>
+<div class="meta"><span id="progs"></span><span class="lbl" style="font-size:13px" id="sm"></span></div>
+<div id="out"></div>
+<p class="foot">Each chip is one course’s result on that outcome: solid = summative, dashed = latest formative (progress), hatched = taken before measurement began, outline = on the map, no ratings yet. ILO evidence comes from any course on a program’s curriculum map, through that program’s PLO → ILO links, so every student has an ILO reading, a self-designed major included. Progress takes the median of every rated course, one vote each; the judgement to date uses summative results from A-point courses only.</p>
+</main>
+<footer class="legend" aria-label="Legend" id="legend"></footer>
+
+<script>
+const ILOS = [['ILO1', 'Critical Thinking'], ['ILO2', 'Creative Thinking'], ['ILO3', 'Self-directed Learning'], ['ILO4', 'Communication & Collaboration'], ['ILO5', 'Diversity & Empathy'], ['ILO6', 'Global Harmony & Sustainability']];
+const DA_PLOS = ILOS.map(([c, t], i) => ['PLO' + (i + 1), t, c]);   // DA PLOn links to ILOn
+const START = 'Fall 2026';
+const TERMS = ['Fall 2023', 'Spring 2024', 'Fall 2024', 'Spring 2025', 'Fall 2025', 'Spring 2026', 'Fall 2026'];
+const pre = (t) => TERMS.indexOf(t) < TERMS.indexOf(START);
+const COL = { E: 'var(--E)', P: 'var(--P)', D: 'var(--D)', NI: 'var(--NI)' };
+
+// DA map: '' on the map, 'A' A-point. r: ratings {PLO: [level, 'sum'|'frm']}
+const DA = {
+  DA200: { PLO1: '', PLO2: 'A', PLO3: 'A', PLO4: '', PLO5: 'A', PLO6: 'A' },
+  DA201: { PLO1: 'A', PLO2: '', PLO3: '', PLO4: 'A', PLO5: '', PLO6: '' },
+  DA321: { PLO1: 'A', PLO2: 'A', PLO3: 'A', PLO4: 'A', PLO5: '', PLO6: '' },
+  DA332: { PLO1: 'A', PLO2: 'A', PLO3: '', PLO4: '', PLO5: '', PLO6: '' },
+  DA433: { PLO1: '', PLO2: 'A', PLO4: 'A', PLO5: 'A', PLO6: '' },
+  DA434: { PLO1: '', PLO2: 'A', PLO3: '', PLO4: '', PLO5: '', PLO6: '' },
+  XD232: { PLO1: '', PLO2: 'A', PLO4: '', PLO5: '', PLO6: 'A' },
+};
+const STUDENTS = {
+  double: { name: 'Sample Student A', no: '2023001', meta: 'Year 4 · Your advisee',
+    roles: [['Major 1', 'Data Science and Artificial Intelligence', 'DA'], ['Major 2', 'Humanities and Social Sciences', null]],
+    courses: [
+      ['IF101', 'Innovation Foundation I', 'Fall 2023', 'Innovation Foundation'], ['IF103', 'Innovation Foundation III', 'Fall 2023', 'Innovation Foundation'],
+      ['IF106', 'Innovation Foundation VI', 'Spring 2024', 'Innovation Foundation'], ['IF108', 'Innovation Foundation elective', 'Spring 2024', 'IF elective'],
+      ['DA200', 'Design of AI and Data-driven Services', 'Fall 2024', 'Major 1'], ['HS200', 'Perspectives on Humans and Society', 'Fall 2024', 'Major 2'], ['CV801', 'Civic Project', 'Fall 2024', 'Field Practice'],
+      ['HS212', 'Sample HSS methods course', 'Spring 2025', 'Major 2'], ['GS804', 'Global Study and Engagement', 'Spring 2025', 'Field Practice'],
+      ['HS311', 'Global History II', 'Fall 2025', 'Free elective'], ['HS312', 'Literary and Cultural Connections', 'Fall 2025', 'Major 2'],
+      ['DA201', 'Computational Thinking and Data Literacy', 'Spring 2026', 'Major 1'], ['DA332', 'Vision AI for Detection and Generation', 'Spring 2026', 'Major 1'],
+      ['DA321', 'Data Analytics and Visualization', 'Fall 2026', 'Major 1', { PLO1: ['P', 'frm'], PLO2: ['D', 'frm'], PLO3: ['P', 'frm'], PLO4: ['P', 'frm'] }],
+      ['DA433', 'Affective Computing and Human-Robot Interaction', 'Fall 2026', 'Major 1', { PLO2: ['P', 'frm'], PLO4: ['E', 'frm'], PLO5: ['P', 'frm'] }],
+      ['CV904', 'Civic Project', 'Fall 2026', 'Field Practice']] },
+  self: { name: 'Sample Student B', no: '2023002', meta: 'Year 4 · Your advisee',
+    roles: [['Major 1', 'Self-designed', 'SELF'], ['Major 2', 'Data Science and Artificial Intelligence', 'DA']],
+    courses: [
+      ['IF101', 'Innovation Foundation I', 'Fall 2023', 'Innovation Foundation'], ['IF104', 'Innovation Foundation IV', 'Fall 2023', 'Innovation Foundation'],
+      ['IF106', 'Innovation Foundation VI', 'Spring 2024', 'Innovation Foundation'],
+      ['DA200', 'Design of AI and Data-driven Services', 'Fall 2024', 'Major 2'], ['HS200', 'Perspectives on Humans and Society', 'Fall 2024', 'Major 1'], ['BI200', 'Economics for Business and Policy', 'Fall 2024', 'Major 1'],
+      ['DA202', 'Experimental Design and Statistics', 'Spring 2025', 'Major 2'],
+      ['HS311', 'Global History II', 'Fall 2025', 'Free elective'], ['HS321', 'Domestic Problems and Social Changes', 'Fall 2025', 'Major 1'],
+      ['XD232', 'Applicable Psychology for Human-Centered AI', 'Spring 2026', 'Major 1'], ['HS322', 'Problem Solvers II', 'Spring 2026', 'Major 1'],
+      ['DA321', 'Data Analytics and Visualization', 'Fall 2026', 'Major 2', { PLO1: ['P', 'frm'], PLO2: ['P', 'frm'], PLO3: ['D', 'frm'], PLO4: ['P', 'frm'] }],
+      ['DA433', 'Affective Computing and Human-Robot Interaction', 'Fall 2026', 'Major 2'],
+      ['XD401', 'Sample interdisciplinary course', 'Fall 2026', 'Major 2']] },
+};
+let cur = 'double';
+
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const median = (ls) => { const o = ['NI', 'D', 'P', 'E']; if (!ls.length) return null; const v = ls.map((l) => o.indexOf(l)).sort((a, b) => a - b); return o[v[Math.floor((v.length - 1) / 2)]]; };
+
+// one outcome row's evidence: [{code, term, a, lv, kind}] from courses on the DA map (DA PLOn -> ILOn)
+function evidence(st, plo) {
+  return st.courses.filter((c) => DA[c[0]] && plo in DA[c[0]]).map((c) => {
+    const r = c[4] && c[4][plo];
+    return { code: c[0], title: c[1], term: c[2], a: DA[c[0]][plo] === 'A', lv: r ? r[0] : null, kind: r ? r[1] : pre(c[2]) ? 'pre' : 'wait' };
+  });
+}
+function chip(e, plo) {
+  const tip = `${e.code} ${e.title} · ${plo} · ` + ({ sum: 'summative', frm: 'progress, formative', pre: 'taken before measurement began (' + START + ')', wait: 'on the map, no ratings yet' })[e.kind] + (e.a ? ' · A-point' : '');
+  const lv = e.lv ? `<span class="l" style="${e.kind === 'sum' ? 'background:' + COL[e.lv] : ''}">${e.lv}</span>` : '';
+  return `<span class="ch ${e.kind}" title="${tip}" style="${e.kind === 'frm' ? 'color:' + COL[e.lv] : ''}"><span class="c">${e.code}</span>${lv}${e.a ? '<span class="a">A</span>' : ''}</span>`;
+}
+
+function timeline(st, rows) {
+  // columns: the student's terms only
+  const terms = TERMS.filter((t) => st.courses.some((c) => c[2] === t));
+  const cut = terms.findIndex((t) => !pre(t));
+  const wrap = el('div', 'scroll'), g = el('div', 'tl');
+  g.style.gridTemplateColumns = 'minmax(190px, 1.2fr) ' + terms.map(() => 'minmax(96px, 1fr)').join(' ') + ' 72px 72px 72px';
+  g.style.minWidth = (190 + terms.length * 100 + 216) + 'px';
+  // the line where measurement began, labelled above its column
+  if (cut >= 0) {
+    g.append(el('div', 'th0', '')); g.lastChild.style.border = '0';
+    terms.forEach((t, i) => { const d = el('div', 'cutlbl', i === cut ? 'Measurement began' : ''); g.append(d); });
+    ['', '', ''].forEach(() => g.append(el('div')));
+  }
+  g.append(el('div', 'th0', 'Outcome'));
+  terms.forEach((t, i) => g.append(el('div', 'th' + (pre(t) ? ' pre' : '') + (i === cut ? ' cut' : ''), t)));
+  ['Progress', 'Judgement to date', 'At graduation'].forEach((t) => g.append(el('div', 'rsh', t)));
+  rows.forEach(([code, title, plo]) => {
+    const ev = evidence(st, plo);
+    g.append(el('div', 'rh', `<b>${code}</b><span>${title}</span>`));
+    terms.forEach((t, i) => g.append(el('div', 'td' + (pre(t) ? ' pre' : '') + (i === cut ? ' cut' : ''), ev.filter((e) => e.term === t).map((e) => chip(e, code)).join(''))));
+    const pg = median(ev.filter((e) => e.lv).map((e) => e.lv)), jd = median(ev.filter((e) => e.kind === 'sum' && e.a).map((e) => e.lv));
+    g.append(el('div', 'rs', pg ? `<span class="lv" style="background:${COL[pg]}">${pg}</span>` : '<span class="dash">—</span>'));
+    g.append(el('div', 'rs', jd ? `<span class="lv" style="background:${COL[jd]}">${jd}</span>` : '<span class="dash">—</span>'));
+    g.append(el('div', 'rs', '<span class="grad" title="fixed at graduation"></span>'));
+  });
+  wrap.append(g); return wrap;
+}
+
+function draw() {
+  const st = STUDENTS[cur], out = document.getElementById('out'); out.replaceChildren();
+  document.getElementById('nm').innerHTML = `${st.name}<small>${st.no}</small>`;
+  document.getElementById('progs').textContent = st.roles.map((r) => r[0] + ': ' + r[1]).join(' · ');
+  document.getElementById('sm').textContent = st.meta + ' · ' + st.courses.length + ' courses taken';
+
+  // 1. ILOs, for every student
+  out.append(el('div', 'band ilo', '<span class="k">Every student</span><h2>Institutional Learning Outcomes</h2><span class="m">from every course on a program map, through PLO → ILO links</span>'));
+  out.append(timeline(st, ILOS.map(([c, t]) => [c, t, 'PLO' + c.slice(3)])));
+
+  // 2. each declared program: its PLOs, or a line saying how it is read
+  st.roles.forEach(([kind, name, pc]) => {
+    if (pc === 'DA') {
+      out.append(el('div', 'band', `<span class="k">${kind}</span><h2>${name}</h2><span class="m">PLOs · courses on the DA map</span>`));
+      out.append(timeline(st, DA_PLOS.map(([c, t]) => [c, t, c])));
+    } else if (pc === 'SELF') {
+      out.append(el('div', 'band', `<span class="k">${kind}</span><h2>${name}</h2>`));
+      out.append(el('p', 'quiet', 'A self-designed major has no program PLOs. It is read through the ILOs above.'));
+    } else {
+      out.append(el('div', 'band', `<span class="k">${kind}</span><h2>${name}</h2>`));
+      out.append(el('p', 'quiet', 'PLOs not in Arete yet. Read through the ILOs above until its PLOs and curriculum map are added.'));
+    }
+  });
+
+  // 3. transcript by term
+  out.append(el('div', 'band', '<span class="k">All courses</span><h2>Courses by term</h2><span class="m">grey tag = Telos requirement the course satisfies (reference only)</span>'));
+  out.lastChild.style.background = '#77707F';
+  TERMS.filter((t) => st.courses.some((c) => c[2] === t)).forEach((t) => {
+    const cs = st.courses.filter((c) => c[2] === t);
+    const r = el('div', 'tr', `<div class="t">${t}<span>${cs.length} ${cs.length === 1 ? 'course' : 'courses'}${pre(t) ? ' · before measurement' : ''}</span></div>`);
+    const box = el('div', 'cs');
+    cs.forEach((c) => box.append(el('span', 'crs', `<span><b>${c[0]}</b> ${c[1]}</span><span class="tag">${c[3]}</span>`)));
+    r.append(box); out.append(r);
+  });
+
+  const who = document.getElementById('who'); who.replaceChildren();
+  [['double', 'Double major (DS&AI + HSS)'], ['self', 'Self-designed + DS&AI']].forEach(([k, t]) => {
+    const b = el('button', '', t); b.type = 'button'; b.setAttribute('aria-pressed', cur === k); b.onclick = () => { cur = k; draw(); }; who.append(b);
+  });
+}
+
+function legend() {
+  const sw = (s, c) => `<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;box-sizing:border-box;font-size:9px;font-weight:700;${s}">${c || ''}</span>`;
+  const G = [
+    ['Levels', [['background:var(--E)', 'Exemplary'], ['background:var(--P)', 'Proficient'], ['background:var(--D)', 'Developing'], ['background:var(--NI)', 'Needs Improvement']]],
+    ['Evidence chips', [['box-shadow:inset 0 0 0 1px #D0D0D0', 'summative (level filled)'], ['border:1.5px dashed #111111', 'formative, progress'],
+      ['background:repeating-linear-gradient(135deg,#D8D8D8 0 2px,#FFFFFF 2px 5px)', 'taken before measurement began (' + START + ')'], ['box-shadow:inset 0 0 0 1px #CFCFCF', 'on the map, no ratings yet'],
+      ['background:#111111;color:#FFFFFF', 'A-point', 'A'], ['border:1.5px dashed #9C8FB0', 'fixed at graduation']]],
+  ];
+  const f = document.getElementById('legend');
+  G.forEach(([t, items]) => {
+    const d = el('div', 'legend-g', `<span class="legend-t">${t}</span>`);
+    items.forEach(([s, tx, c]) => d.append(el('span', 'legend-i', sw(s, c) + tx)));
+    f.append(d);
+  });
+}
+legend(); draw();
+</script>
+</body>
+</html>
