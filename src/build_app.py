@@ -18,6 +18,7 @@ PAGES = [  # route, artboard, page title
     ('al2', 'AL2.dc.html', 'AL2 Course'),
     ('al3', 'AL3.dc.html', 'AL3 Program'),
     ('al4', 'AL4.dc.html', 'AL4 Institution'),
+    ('settings', 'Settings.dc.html', 'Settings'),
 ]
 ROUTE_OF = {a: r for r, a, _ in PAGES}
 ROUTE_OF['SignIn.dc.html'] = 'signout'

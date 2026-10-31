@@ -84,7 +84,7 @@ button{font-family:inherit;cursor:pointer}
 <a href="AL3.dc.html" aria-current="page" style="border-bottom-color: #502579; color: #502579; font-weight: 500">AL3 Program</a>
 <a href="AL4.dc.html">AL4 Institution</a>
 <a href="#">About</a>
-<a href="#">Settings</a>
+<a href="Settings.dc.html">Settings</a>
 </nav>
 <button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
 <div style="position: relative">
@@ -211,10 +211,13 @@ class Component extends DCLogic {
       step(1, P.students.length + ' students');
       const code = encodeURIComponent(P.prog.code);
       return Promise.all([
-        db.rest('outcome_plos?program_code=eq.' + code + '&is_active=eq.true&select=plo_id,plo_code,title,definition,performance_standard_pct&order=plo_code.asc'),
+        db.rest('outcome_plos?program_code=eq.' + code + '&is_active=eq.true&select=plo_id,plo_code,title,definition&order=plo_code.asc'),
+        K.standards(),
         db.rest('outcome_curriculum_map?select=course_base_id,plo_id,levels,outcome_plos!inner(program_code)&outcome_plos.program_code=eq.' + code)
       ]);
-    }).then(([plos, cm]) => {
+    }).then(([plos, std, cm]) => {
+      // one standard of performance for the program, the one in force this term
+      P.std = K.stdFor(P.prog.code); plos.forEach((p) => { p.performance_standard_pct = P.std; });
       P.plos = plos; P.cm = cm;
       P.aCells = cm.filter((c) => /A/.test(c.levels));
       const bases = [...new Set(P.aCells.map((c) => c.course_base_id))].map((b) => '"' + b + '"');

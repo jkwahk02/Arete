@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arete Pro · Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.lbl{font-size:12px;letter-spacing:0.04em;color:#6B6B6B}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid #111111}
+.sh h2{margin:0;font-weight:500;font-size:15px}
+.nav a{padding-bottom:4px;border-bottom:1px solid transparent;white-space:nowrap}
+/* suite header (same as Telos, TaeSylla, Ergon, Paideia) */
+.top{padding:22px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 22px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;border-bottom:1px solid #E6E6E6}
+.nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:12px 26px;font-size:14px}
+.nav a{display:inline-block;transition:transform .15s ease,color .15s ease;transform-origin:center bottom}
+.nav a:hover,.nav a[aria-current="page"]{transform:scale(1.08);color:#502579}
+.me-name{font-size:14px;color:#111111}
+.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#F3EFF7;color:#502579;padding:2px 7px;border-radius:20px}
+@media (max-width:759px){
+  .top{gap:10px 16px;padding-top:12px;padding-bottom:0}
+  .top > a:first-child{margin-right:auto}
+  .nav{order:3;width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px}
+  .nav::-webkit-scrollbar{display:none}
+  .me-name,.anon-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border:none;border-radius:16px;background:transparent;font-family:inherit;font-size:12px;color:#444444;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer;transition:background .15s,color .15s}
+.anon-btn:hover{box-shadow:inset 0 0 0 1px #502579;color:#502579}
+@media (max-width:759px){.anon-t{display:none}}
+.pill{display:none}
+}
+.nav a:hover{color:#502579}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 6px;box-sizing:border-box;font-size:12px;font-weight:600;color:#FFFFFF}
+.seg{display:block;height:100%}
+.xb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:none;background:transparent;font-family:inherit;font-size:13px;color:#111111;box-shadow:inset 0 0 0 1px #CFCFCF;cursor:pointer}
+.xb[aria-disabled="true"]{color:#9A9A9A;cursor:default}
+.tg{padding:8px 14px;border:none;background:transparent;font-size:14px;box-shadow:inset 0 0 0 1px #CFCFCF;min-height:40px}
+.rail{display:block;width:100%;padding:12px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.rail:hover{background:#FAF8FC}
+.stu{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:9px 24px;border:none;background:transparent;text-align:left;font-family:inherit;color:#111111;cursor:pointer}
+.stu:hover{background:#FAF8FC}
+.bar{display:flex;height:14px;background:#F0F0EE}
+.sec{margin-top:48px}
+.cell{padding:9px 12px 9px 0;border-bottom:1px solid #EEEEEE;font-size:13px}
+.cellh{padding:8px 12px 8px 0;border-bottom:1px solid #111111;font-size:12px;letter-spacing:.04em;color:#6B6B6B}
+.pop{display:flex;justify-content:space-between;gap:10px;width:100%;padding:7px 24px;border:none;background:transparent;text-align:left;font-family:inherit;font-size:13px;color:#111111;cursor:pointer}
+.pop:hover{background:#FAF8FC}
+/* course column: full width on wide screens; on narrower ones only the course codes show,
+   and the column opens over the page on hover or keyboard focus */
+.crs{flex:0 0 280px;width:280px;box-sizing:border-box;border-right:1px solid #E6E6E6;position:relative}
+.crs-in{padding:24px 0 40px;background:#FFFFFF}
+.grp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1279px){
+  .crs{flex:0 0 92px;width:92px}
+  .crs-in{position:absolute;top:0;left:0;bottom:0;width:92px;overflow-x:hidden;overflow-y:auto;z-index:6;transition:width .15s ease,box-shadow .15s ease}
+  .crs:hover .crs-in,.crs:focus-within .crs-in{width:280px;box-shadow:inset -1px 0 0 #E6E6E6,8px 0 24px rgba(0,0,0,.10)}
+  .crs:not(:hover):not(:focus-within) .rail-more,.crs:not(:hover):not(:focus-within) .grp-sub{display:none !important}
+  .crs:not(:hover):not(:focus-within) .rail{padding:10px 14px !important}
+  .crs:not(:hover):not(:focus-within) .grp{margin-left:14px !important;margin-right:10px !important;padding-left:0 !important;font-size:11px !important}
+}
+.step{display:flex;flex-direction:column;gap:8px;padding:16px;box-shadow:inset 0 0 0 1px #E0E0E0}
+.ilo-b{padding:12px 8px 12px 0;border:none;border-top:1px solid #DCD3E8;text-align:left;color:#111111;min-height:44px;cursor:pointer;font-family:inherit;background:transparent}
+.set-in{box-sizing:border-box;min-height:40px;padding:0 10px;border:1px solid #D4D4D4;font-family:inherit;font-size:14px;color:#111111;background:#FFFFFF}
+.set-in:focus{outline:2px solid #502579;outline-offset:-1px}
+.set-btn{min-height:40px;padding:0 16px;border:none;background:#2E1648;color:#FFFFFF;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.set-btn[disabled]{background:#B9B0C6;cursor:default}
+.hist{display:grid;grid-template-columns:110px 70px minmax(0,1fr) 190px;font-size:13px}
+.hist span{padding:8px 10px 8px 0;border-bottom:1px solid #EEEEEE}
+@media (max-width:759px){.hist{grid-template-columns:90px 56px minmax(0,1fr)}.hist .who{display:none}}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #111111; background: #FFFFFF">
+
+<header class="top">
+<a href="Overview.dc.html" aria-label="Arete Pro, home" style="display: flex; align-items: center; gap: 12px">
+<svg role="img" aria-label="Arete logo: Corona Borealis" width="34" height="34" viewBox="0 0 76 76" style="flex: none"><rect width="76" height="76" rx="18" fill="#502579"></rect><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"></polyline><g fill="#fff"><circle cx="19" cy="30" r="3.6"></circle><circle cx="26" cy="46" r="3.6"></circle><circle cx="38" cy="52" r="5"></circle><circle cx="50" cy="46" r="3.6"></circle><circle cx="57" cy="30" r="3.6"></circle></g></svg>
+<span style="font-family: Marcellus, Georgia, serif; font-weight: 400; font-size: 25px; letter-spacing: 0.06em; color: #111111">Arete Pro</span>
+</a>
+<nav class="nav" aria-label="Main">
+<a href="Overview.dc.html">Home</a>
+<a href="AL0.dc.html">AL0 Assessment</a>
+<a href="AL1.dc.html">AL1 Student</a>
+<a href="AL2.dc.html">AL2 Course</a>
+<a href="AL3.dc.html">AL3 Program</a>
+<a href="AL4.dc.html">AL4 Institution</a>
+<a href="#">About</a>
+<a href="Settings.dc.html" aria-current="page" style="border-bottom-color: #502579; color: #502579; font-weight: 500">Settings</a>
+</nav>
+<button type="button" class="anon-btn" onClick="{{toggleAnon}}" aria-pressed="{{anon}}" title="Show students as S1, S2 … (for demos and screen sharing)" style="{{anonStyle}}"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2.1 0 3.9.7 5.4 1.7M22 12s-3.5 7-10 7c-2.1 0-3.9-.7-5.4-1.7"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg><span class="anon-t">{{anonLabel}}</span></button>
+<div style="position: relative">
+<button type="button" onClick="{{toggleMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="true" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 6px 0 0; border: none; background: transparent; font-family: inherit; font-size: 13px; color: #444444; cursor: pointer">
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #F4EFF9; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #502579">{{meInitials}}</span><span class="me-name">{{meName}}</span><span class="pill">Faculty</span>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#444444" stroke-width="2" style="{{menuChev}}"><path d="M4 6l4 4 4-4"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}">
+<div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 5; width: 300px; background: #FFFFFF; box-shadow: 0 0 0 1px #E0E0E0, 0 10px 24px rgba(0,0,0,0.08)">
+<div style="padding: 12px 16px 10px; border-bottom: 1px solid #EEEEEE"><div style="font-size: 14px; font-weight: 600">{{meName}}</div><div style="margin-top: 2px; font-size: 12px; color: #444444">{{meRole}}</div><div style="margin-top: 2px; font-size: 12px; color: #6B6B6B">{{meEmail}}</div><div class="lbl" style="margin-top: 10px">View Arete as · {{roleLabel}}</div></div>
+<sc-for list="{{roleItems}}" as="ri">
+<button type="button" role="menuitemradio" aria-checked="{{ri.on}}" onClick="{{ri.pick}}" style="{{ri.style}}"><span style="display: block; font-size: 14px; font-weight: 500">{{ri.t}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B6B6B">{{ri.sub}}</span></button>
+</sc-for>
+<div style="padding: 10px 16px; border-top: 1px solid #EEEEEE; display: flex; gap: 16px; font-size: 13px"><a href="#">Change password</a><a href="SignIn.dc.html">Sign out</a></div>
+</div>
+</sc-if>
+</div>
+</header>
+
+<main style="display: flex; flex-direction: column">
+<sc-if value="{{msg}}">
+<div style="padding: 64px 40px"><div style="max-width: 640px; padding: 24px 28px; box-shadow: inset 0 0 0 1px #E0E0E0; font-size: 15px; line-height: 1.6; color: #444444">{{msg}}</div></div>
+</sc-if>
+<sc-if value="{{ready}}">
+<div style="box-sizing: border-box; width: 100%; max-width: 1040px; padding: 36px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 100px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px))">
+<div class="lbl">Settings</div>
+<h1 style="margin: 8px 0 0; font-weight: 300; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -0.02em">Standard of performance</h1>
+<p style="margin: 14px 0 0; max-width: 760px; font-size: 14px; line-height: 1.65; color: #444444">The share of students expected to reach Proficient or above. One value applies to every PLO of a program, and the institution default applies to the ILOs and to any program without its own value. A change applies from the term you choose; earlier terms keep the value that was in force then, and every change stays in the history.</p>
+<sc-for list="{{blocks}}" as="b">
+<section style="margin-top: 40px">
+<div class="sh"><h2>{{b.title}} <span style="font-weight: 400; font-size: 13px; color: #6B6B6B">{{b.who}}</span></h2><span class="lbl">{{b.badge}}</span></div>
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px"><span style="font-size: 40px; font-weight: 300; line-height: 1">{{b.now}}</span><span style="font-size: 14px; color: #444444">{{b.nowNote}}</span></div>
+<sc-if value="{{b.hasHist}}"><div class="hist" style="margin-top: 16px"><span class="lbl">From</span><span class="lbl">Value</span><span class="lbl">Note</span><span class="lbl who">Set by</span><sc-for list="{{b.hist}}" as="h"><span>{{h.term}}</span><span style="font-weight: 600">{{h.pct}}</span><span style="color: #444444">{{h.note}}</span><span class="who" style="color: #6B6B6B">{{h.by}}</span></sc-for></div></sc-if>
+<sc-if value="{{b.can}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 12px; margin-top: 18px; padding: 16px; background: #FAF8FC">
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">New value (%)<input id="{{b.idPct}}" class="set-in" type="number" min="1" max="100" step="1" style="width: 110px" value="{{b.fPct}}" onInput="{{b.setPct}}"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">From<select class="set-in" onChange="{{b.setTerm}}"><sc-for list="{{b.terms}}" as="t"><option value="{{t.v}}" selected="{{t.on}}">{{t.t}}</option></sc-for></select></label>
+<label style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #6B6B6B">Reason<input id="{{b.idNote}}" class="set-in" type="text" placeholder="Why it changes, for the record" value="{{b.fNote}}" onInput="{{b.setNote}}"></label>
+<button type="button" class="set-btn" onClick="{{b.save}}" disabled="{{b.noSave}}">Save</button>
+</div>
+<sc-if value="{{b.formMsg}}"><p style="margin: 8px 0 0; font-size: 13px; color: {{b.formMsgColor}}">{{b.formMsg}}</p></sc-if>
+</sc-if>
+</section>
+</sc-for>
+</div>
+</sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { role: null, menu: false };
+    this.P = null; this.busy = false; this.err = null; this.form = {}; this.msg = {};
+  }
+
+  // ---------- loading: the standards, the programs, and which of them this person may set ----------
+  load() {
+    const db = ARETE.db, K = ARETE.course;
+    this.busy = true;
+    const P = {};
+    // the person's own programs, and any program that already has a value of its own
+    Promise.all([K.standards(), K.myPrograms().catch(() => [])]).then(([rows, mine]) => {
+      P.rows = rows;
+      P.progs = mine.map((p) => ({ code: p.code, name: p.name }));
+      rows.forEach((r) => { if (r.scope !== 'institution' && !P.progs.some((p) => p.code === r.scope)) P.progs.push({ code: r.scope, name: r.scope }); });
+      const scopes = ['institution'].concat(P.progs.map((p) => p.code));
+      return Promise.all(scopes.map((s) => db.rpc('outcome_can_set_standard', { p_scope: s }).catch(() => false)))
+        .then((can) => { P.can = {}; scopes.forEach((s, i) => { P.can[s] = can[i] === true; }); });
+    }).then(() => { this.P = P; })
+      .catch((e) => { this.err = 'Could not load the settings: ' + e.message; })
+      .then(() => { this.busy = false; this.setState({}); });
+  }
+
+  save(scope) {
+    const db = ARETE.db, K = ARETE.course, f = this.form[scope] || {};
+    const pct = Number(f.pct), t = f.term;
+    if (!(pct > 0 && pct <= 100) || !t) { this.msg[scope] = ['Enter a value between 1 and 100.', '#8A3A0A']; this.setState({}); return; }
+    const [semester, year] = t.split(' ');
+    this.msg[scope] = ['Saving…', '#6B6B6B']; this.setState({});
+    db.post('outcome_performance_standards', { scope: scope, pct: pct, effective_year: Number(year), effective_semester: semester, note: (f.note || '').trim() || null })
+      .then(() => { this.form[scope] = {}; this.msg[scope] = ['Saved: ' + pct + '% from ' + t + '.', '#1F6B35']; K.forgetStandards(); this.P = null; })
+      .catch((e) => { this.msg[scope] = [/duplicate|23505/.test(e.message) ? 'A value is already set from ' + t + '. Choose a later term.' : 'Could not save: ' + e.message, '#8A3A0A']; })
+      .then(() => this.setState({}));
+  }
+
+  // ---------- role menu (same as the other pages) ----------
+  roleMenu(role) {
+    const R = [['Course faculty', 'Your courses'], ['Program chair', 'Courses of your program'], ['Institution · IR / Dean of OAA', 'Taejae University']];
+    const me = ARETE.db.me || { name: '' };
+    return { roleLabel: role, menuOpen: !!this.state.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      menuChev: 'transition: transform 150ms ease; transform: rotate(' + (this.state.menu ? 180 : 0) + 'deg)',
+      meName: me.name, meEmail: me.email || '',
+      meRole: ['Professor', me.isChair ? 'Program Chair' : '', (me.program || [])[0] || ''].filter(Boolean).join(' \u00b7 '),
+      meInitials: me.name.split(/\s+/).map((w) => w[0] || '').join('').slice(0, 2).toUpperCase(),
+      roleItems: R.map((r) => ({ t: r[0], sub: r[1], on: role === r[0], pick: () => this.setState({ role: r[0], menu: false }),
+        style: 'display: block; width: 100%; padding: 10px 16px; border: none; text-align: left; font-family: inherit; color: #111111; cursor: pointer; ' + (role === r[0] ? 'background: #F4EFF9; box-shadow: inset 3px 0 0 #502579' : 'background: #FFFFFF') })) };
+  }
+
+  renderVals() {
+    const role = this.state.role ?? 'Course faculty', RM = this.roleMenu(role);
+    const base = Object.assign(RM, { msg: '', ready: false });
+    if (!ARETE.db.signedIn()) return Object.assign(base, { msg: 'Please sign in.' });
+    if (this.err) return Object.assign(base, { msg: this.err });
+    if (!this.P) { if (!this.busy) this.load(); return Object.assign(base, { msg: 'Loading the settings…' }); }
+    const K = ARETE.course, P = this.P;
+    const termName = (k) => (k % 2 ? 'Fall ' : 'Spring ') + Math.floor(k / 2);
+    const key = (r) => K.termKey({ year: r.effective_year, semester: r.effective_semester });
+    const choices = [0, 1, 2, 3].map((i) => termName(K.curKey() + i));   // from this term on; past terms keep their value
+    const cur = termName(K.curKey());
+    const block = (scope, title) => {
+      const own = P.rows.filter((r) => r.scope === scope).sort((a, b) => key(b) - key(a));
+      const v = K.stdFor(scope), inForce = own.find((r) => key(r) <= K.curKey());
+      const f = this.form[scope] = this.form[scope] || {}; if (!f.term) f.term = choices[0];
+      const m = this.msg[scope];
+      return { title: title, who: scope === 'institution' ? 'ILOs and programs without their own value' : 'every PLO of the program',
+        badge: P.can[scope] ? (scope === 'institution' ? 'You can change this (IR / admin)' : 'You can change this (chair)') : 'View only',
+        now: v == null ? '—' : v + '%',
+        nowNote: scope === 'institution' ? (inForce ? 'in force for ' + cur + ', from ' + termName(key(inForce)) : 'not set') : inForce ? 'own value, from ' + termName(key(inForce)) : 'uses the institution default',
+        hasHist: own.length > 0,
+        hist: own.map((r) => ({ term: termName(key(r)), pct: Number(r.pct) + '%', note: r.note || '', by: (r.set_by || '') + (r.set_at ? ' \u00b7 ' + String(r.set_at).slice(0, 10) : '') })),
+        can: P.can[scope], idPct: 'std-pct-' + scope, idNote: 'std-note-' + scope, fPct: f.pct || '', fNote: f.note || '',
+        terms: choices.map((t) => ({ t: t, v: t, on: f.term === t })),
+        setPct: (e) => { f.pct = e.target.value; this.setState({}); }, setNote: (e) => { f.note = e.target.value; },
+        setTerm: (e) => { f.term = e.target.value; this.setState({}); },
+        save: () => this.save(scope), noSave: !(Number(f.pct) > 0 && Number(f.pct) <= 100),
+        formMsg: m ? m[0] : '', formMsgColor: m ? m[1] : '' };
+    };
+    return Object.assign(base, { ready: true,
+      blocks: [block('institution', 'Institution default')].concat(P.progs.map((p) => block(p.code, p.name))) });
+  }
+}
+</script>
+</body>
+</html>

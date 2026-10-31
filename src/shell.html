@@ -463,12 +463,34 @@ ARETE.db = window.ARETE_DB;
         Object.assign(D, { crits: a[0], pmap: a[1], cpc: a[2], items: a[3], ratings: a[4], hist: a[5] || [] });
         return Promise.all([
           db.rest('outcome_criterion_clo_map?criterion_id=' + I(D.crits.map(function (c) { return c.criterion_id; })) + '&select=criterion_id,clo_id'),
-          db.rest('outcome_plos?plo_id=' + I(Array.from(new Set(D.pmap.map(function (m) { return m.plo_id; })))) + '&select=plo_id,program_code,plo_code,title,definition,performance_standard_pct')
+          db.rest('outcome_plos?plo_id=' + I(Array.from(new Set(D.pmap.map(function (m) { return m.plo_id; })))) + '&select=plo_id,program_code,plo_code,title,definition'),
+          C.standards()
         ]);
       }).then(function (a) {
+        // one standard of performance per program, the one in force in this course's term
+        a[1].forEach(function (p) { p.performance_standard_pct = C.stdFor(p.program_code, o); });
         Object.assign(D, { cmap: a[0], plos: a[1] });
         return C.shape(D);
       });
+    },
+
+    // standards of performance (outcome_performance_standards), once per session; forgetStandards() after a change
+    standards: function () {
+      if (!C._stds) C._stds = ARETE.db.rest('outcome_performance_standards?select=standard_id,scope,pct,effective_year,effective_semester,note,set_by,set_at&order=set_at.asc')
+        .then(function (r) { C._stdRows = r; return r; }).catch(function () { C._stds = null; C._stdRows = []; return []; });
+      return C._stds;
+    },
+    forgetStandards: function () { C._stds = null; C._stdRows = null; C._cache = {}; C.version++; },
+    // the value in force for a program (or 'institution') in a term: the program's latest row on or
+    // before that term, else the institution's; null when none applies (as outcome_standard() in the DB)
+    stdFor: function (scope, term) {
+      var t = term ? termKey(term) : curKey();
+      var key = function (r) { return termKey({ year: r.effective_year, semester: r.effective_semester }); };
+      var pick = function (s) {
+        return (C._stdRows || []).filter(function (r) { return r.scope === s && key(r) <= t; }).sort(function (a, b) { return key(b) - key(a); })[0];
+      };
+      var r = pick(scope) || pick('institution');
+      return r ? Number(r.pct) : null;
     },
 
     shape: function (D) {
