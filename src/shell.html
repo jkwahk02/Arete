@@ -113,7 +113,6 @@ body{margin:0;background:#FFFFFF}
 <label>Password<input id="si-pw" type="password" autocomplete="current-password" required></label>
 <p class="si-err" id="si-err" role="alert"></p>
 <button type="submit" id="si-go">Sign in</button>
-<p class="si-note">AL0, AL2 and AL3 read live data. The other pages still show the design with sample data.</p>
 </form>
 </div>
 </main>
@@ -180,6 +179,8 @@ body{margin:0;background:#FFFFFF}
         if (val.indexOf('{{') < 0) continue;
         var w = WHOLE.exec(val);
         var v = w ? lookup(w[1], scope) : fill(val, scope);
+        // data-html: markup the page built itself (a chart's SVG), never text from users or the database
+        if (lname === 'data-html') { el.removeAttribute(name); el.innerHTML = v == null ? '' : String(v); continue; }
         if (BOOL_PROPS[lname]) { el.removeAttribute(name); el[lname] = !!v; }
         else if (lname === 'value' && (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA')) { el.removeAttribute(name); el.value = v == null ? '' : v; }
         else if (v === false && lname.indexOf('aria-') !== 0) el.removeAttribute(name);
@@ -218,7 +219,7 @@ body{margin:0;background:#FFFFFF}
     if (fid) { var n = document.getElementById(fid); if (n) { n.focus(); try { n.setSelectionRange(s0, s1); } catch (e) {} } }
   }
 
-  var LIVE = { al0: true, al1: true, al2: true, al3: true, al4: true };   // pages that read Supabase and need a signed-in user
+  var LIVE = { home: true, al0: true, al1: true, al2: true, al3: true, al4: true, settings: true };   // pages that read Supabase and need a signed-in user
   function route() {
     var r = (location.hash || '#home').slice(1);
     if (r === 'signout') { ARETE.db.signOut(); location.hash = '#signin'; return; }

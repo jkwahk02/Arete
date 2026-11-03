@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arete Home Glance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+<!-- Design mockup (2026-10-31), sample numbers and anonymised students.
+     Home by the signed-in person's role: a welcome line as in the other suite apps,
+     then At a glance (one KPI chart against the standard of performance and the
+     evidence flow as a Sankey diagram), then Needs attention and a course/program list.
+     Level colours are Arete's fixed E/P/D/NI colours; green and orange are close for
+     protan readers, so every level also carries its letter. -->
+<style>
+:root{--ink:#111111;--mut:#6B6B6B;--line:#EEEEEE;--brand:#502579;--deep:#2E1648;--soft:#F3EFF7;
+  --E:#0077B6;--P:#2EA043;--D:#ED7D31;--NI:#C0504D;--none:#D9D9D9}
+body{margin:0;background:#FFFFFF;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+button{font-family:inherit;cursor:pointer}
+.top{padding:18px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 18px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;border-bottom:1px solid #E6E6E6}
+.logo{display:flex;align-items:center;gap:12px;font-family:Marcellus,Georgia,serif;font-size:25px;letter-spacing:.06em}
+.nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px 24px;font-size:14px}
+.nav span[aria-current]{color:var(--brand);border-bottom:1px solid var(--brand);font-weight:500}
+.pad{padding:28px max(clamp(16px,4vw,80px),env(safe-area-inset-right,0px)) 72px max(clamp(16px,4vw,80px),env(safe-area-inset-left,0px));max-width:1320px}
+.note{margin:0 0 22px;padding:10px 14px;background:#FFF8E6;font-size:13px;color:#5C4A00;line-height:1.5}
+.roles{display:flex;flex-wrap:wrap;margin-bottom:26px}
+.split{display:grid;grid-template-columns:260px minmax(0,1fr);align-items:start;margin-top:26px;border-top:1px solid #E6E6E6}
+.menu{position:sticky;top:0;padding:14px 0 24px;border-right:1px solid #E6E6E6;background:#FAF8FC;min-height:100%}
+.menu .grp{margin:14px 22px 6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.mi{display:flex;align-items:center;gap:11px;width:calc(100% - 18px);margin:2px 9px;padding:12px 13px;border:none;background:transparent;text-align:left;font-size:14px;color:#444444}
+.mi svg{width:20px;height:20px;flex:0 0 20px;opacity:.72}
+.mi:hover{background:#F1ECF6;color:var(--ink)}
+.mi[aria-current="true"]{background:#FFFFFF;color:var(--brand);font-weight:600;box-shadow:inset 3px 0 0 var(--brand),0 1px 3px rgba(46,22,72,.08)}
+.mi[aria-current="true"] svg{opacity:1}
+.mi[disabled]{opacity:.45;cursor:default}
+.mi[disabled]:hover{background:transparent;color:#444444}
+.mi .badge{margin-left:auto;padding:1px 7px;border-radius:9px;background:var(--soft);color:var(--brand);font-size:11px;font-weight:600;letter-spacing:.03em}
+.mi .cnt{margin-left:auto;min-width:20px;padding:1px 6px;border-radius:9px;background:var(--NI);color:#FFFFFF;font-size:11px;font-weight:600;text-align:center}
+.mi .badge + .cnt{margin-left:6px}
+.body{padding:4px 0 0 32px;min-width:0}
+@media (max-width:959px){.split{grid-template-columns:1fr}.menu{position:static;display:flex;flex-wrap:wrap;padding:8px;border-right:0;border-bottom:1px solid #E6E6E6}.menu .grp{display:none}.mi{width:auto;margin:2px}.body{padding:4px 0 0}}
+.roles button{min-height:38px;padding:0 14px;border:none;background:transparent;font-size:13px;box-shadow:inset 0 0 0 1px #CFCFCF}
+.roles button[aria-pressed="true"]{background:var(--ink);color:#FFFFFF;box-shadow:none}
+.lbl{font-size:12px;letter-spacing:.04em;color:var(--mut)}
+.greet-h{margin:0;font-weight:300;font-size:clamp(30px,3.4vw,46px);letter-spacing:-.02em}
+.greet-s{margin:6px 0 0;font-size:14px;color:#444444}
+.headline{margin:18px 0 0;max-width:860px;font-size:18px;font-weight:300;line-height:1.5;color:#222222}
+.headline b{font-weight:600}
+/* at a glance */
+.glance{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:22px;margin-top:26px}
+@media (max-width:1279px){.glance{grid-template-columns:1fr}}
+.panel{padding:20px 22px 18px;background:#FCFBFD;box-shadow:inset 0 0 0 1px #ECE7F2}
+.panel h3{margin:0;font-size:14px;font-weight:600}
+.panel .ps{margin:3px 0 16px;font-size:12px;color:var(--mut);line-height:1.45}
+/* KPI bars: share at Proficient or above, against the standard of performance */
+.kpi{position:relative}
+.kr{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:10px;height:30px}
+.kr b{font-size:12px;font-weight:600}
+.kr .tr{position:relative;height:12px;background:#EEEAF3}
+.kr .fill{position:absolute;left:0;top:0;bottom:0;background:var(--brand);border-radius:0 4px 4px 0}
+.kr .fill.below{background:#9C8FB0}
+.kr em{font-style:normal;font-size:12px;font-weight:600;text-align:right}
+.kr em.na{font-weight:400;color:var(--mut)}
+.std{position:absolute;top:-6px;bottom:24px;border-left:1.5px dashed var(--ink)}
+.std span{position:absolute;bottom:-18px;left:-30px;width:60px;text-align:center;font-size:10px;color:var(--ink)}
+.kr:hover .tr{box-shadow:0 0 0 2px #FFFFFF,0 0 0 3px #CFC3DD}
+/* sankey */
+.sk svg{display:block;width:100%;height:auto;overflow:visible}
+.sk .lk{mix-blend-mode:multiply;transition:opacity .15s}
+.sk svg:hover .lk{opacity:.35}
+.sk svg .lk:hover{opacity:1}
+.key{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:11px;color:#444444}
+.key span{display:inline-flex;align-items:center;gap:5px}
+.key i{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;font-size:8px;font-weight:700;font-style:normal;color:#FFFFFF}
+/* sections below */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:28px 40px;margin-top:40px}
+@media (max-width:959px){.cols{grid-template-columns:1fr}}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px;margin-bottom:6px;border-bottom:1px solid var(--ink)}
+.sh h2{margin:0;font-size:15px;font-weight:500}
+.att{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.att:hover{background:#FAF8FC}
+.att .dot{flex:none;width:8px;height:8px;margin-top:6px;border-radius:50%}
+.att b{display:block;font-size:14px;font-weight:500}
+.att span{display:block;margin-top:2px;font-size:12px;color:var(--mut);line-height:1.45}
+.att .go{margin-left:auto;flex:none;font-size:12px;color:var(--brand);white-space:nowrap;align-self:center}
+.card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.card:hover{background:#FAF8FC}
+.card .t{font-size:14px}
+.card .t b{font-weight:600}
+.card .m{font-size:12px;color:var(--mut)}
+.card .r{grid-row:span 2;display:flex;align-items:center}
+.sqs{display:flex;gap:4px}
+.sq{display:inline-flex;align-items:center;justify-content:center;width:28px;height:24px;font-size:11px;font-weight:600;color:#FFFFFF}
+.sq.none{background:#ECECEC;color:#9A9A9A}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="logo"><svg width="34" height="34" viewBox="0 0 76 76" aria-hidden="true"><rect width="76" height="76" rx="18" fill="#502579"/><polyline points="19,30 26,46 38,52 50,46 57,30" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"/></svg>Arete Pro</span>
+  <nav class="nav" aria-label="Main"><span aria-current="page">Home</span><span>AL0 Assessment</span><span>AL1 Student</span><span>AL2 Course</span><span>AL3 Program</span><span>AL4 Institution</span><span>About</span></nav>
+</header>
+<main class="pad">
+<p class="note">Design mockup with sample numbers. The black buttons stand in for who is signed in. The side menu, as in Telos, groups the Home views by role: Teaching, Program (Chair) and Institution (IR). Every faculty member sees their courses, each program they belong to and the institution; View = read only, Chair and IR = the person who acts on it. The red count is what needs attention there, shown only where the person acts. It is the same switch as View Arete as, so the AL pages open in that view too. At a glance shows where things stand for that role: one KPI against the standard of performance and where the evidence flows. Needs attention lists what to do.</p>
+<div class="roles" role="group" aria-label="Mockup: who is signed in" id="roles"></div>
+<p class="greet-h" id="gh">Welcome, Jiyoung</p>
+<p class="greet-s" id="gs"></p>
+
+<div class="split"><nav class="menu" aria-label="Home views" id="views"></nav><div class="body">
+<p class="headline" id="hl"></p>
+<section class="glance" aria-label="At a glance">
+  <div class="panel kpi" id="kpi"></div>
+  <div class="panel sk" id="sk"></div>
+</section>
+<div class="cols">
+  <section aria-labelledby="att-h"><div class="sh"><h2 id="att-h">Needs attention</h2><span class="lbl" id="att-n"></span></div><div id="att"></div></section>
+  <section aria-labelledby="list-h"><div class="sh"><h2 id="list-h"></h2><span class="lbl" id="list-n"></span></div><div id="list"></div></section>
+</div>
+</div></div>
+</main>
+<script>
+const COL = { E: '#0077B6', P: '#2EA043', D: '#ED7D31', NI: '#C0504D', '': '#D9D9D9' };
+const NAME = { E: 'Exemplary', P: 'Proficient', D: 'Developing', NI: 'Needs Improvement', '': 'no ratings yet' };
+const STD = 70;   // standard of performance: share at Proficient or above
+const ILOT = ['Critical Thinking', 'Creative Thinking', 'Self-directed Learning', 'Communication & Collaboration', 'Diversity & Empathy', 'Global Harmony & Sustainability'];
+
+// ---------- KPI: % at Proficient or above per outcome, against the standard ----------
+function kpi(title, sub, rows) {
+  const box = document.getElementById('kpi');
+  box.innerHTML = `<h3>${title}</h3><p class="ps">${sub}</p><div style="position:relative;padding-bottom:26px">` +
+    rows.map(([o, t, v, n]) => `<div class="kr" title="${o} ${t} · ${v == null ? 'no result yet' : v + '% at Proficient or above (' + n + ' students)'}"><b>${o}</b><div class="tr">` +
+      (v == null ? '' : `<span class="fill${v < STD ? ' below' : ''}" style="width:${v}%"></span>`) + `</div><em class="${v == null ? 'na' : ''}">${v == null ? '—' : v + '%'}</em></div>`).join('') +
+    `<span class="std" style="left:calc(62px + (100% - 116px) * ${STD / 100})"><span>standard ${STD}%</span></span></div>` +
+    `<div class="key"><span><i style="background:var(--brand)"></i>meets the standard</span><span><i style="background:#9C8FB0"></i>below the standard</span><span>— no result yet</span></div>`;
+}
+
+// ---------- Sankey: where the evidence comes from and where it adds up ----------
+// cols: [[{id, label, sub}]], links: [{s, t, v, lv}]; v = ratings (0 = on the map, no ratings yet)
+function sankey(title, sub, cols, links) {
+  const W = 760, H = 360, NW = 10, PAD = 12, top = 22, MIN = 3, NH = 26;
+  const lw = (v) => v > 0 ? v : 0, vis = (v) => Math.max(MIN, v);
+  const nodes = {}; cols.forEach((c, ci) => c.forEach((n) => { nodes[n.id] = Object.assign(n, { ci: ci, inV: 0, outV: 0 }); }));
+  links.forEach((l) => { nodes[l.s].outV += vis(l.v); nodes[l.t].inV += vis(l.v); });
+  const size = (n) => Math.max(n.inV, n.outV, 8);
+  const scale = Math.min(...cols.map((c) => (H - top - PAD * (c.length - 1) - NH * c.length) / c.reduce((a, n) => a + size(n), 0)));
+  const hOf = (n) => Math.max(size(n) * scale, NH);   // small nodes keep room for their label
+  const x0 = 120, x1 = W - 190, colX = (ci) => x0 + (x1 - x0) * ci / (cols.length - 1);
+  cols.forEach((c) => { const tot = c.reduce((a, n) => a + hOf(n), 0) + PAD * (c.length - 1); let y = top + (H - top - tot) / 2;
+    c.forEach((n) => { n.y = y; n.h = hOf(n); n.x = colX(n.ci); n.so = 0; n.to = 0; y += n.h + PAD; }); });
+  const paths = links.map((l) => {
+    const a = nodes[l.s], b = nodes[l.t], w = vis(l.v) * scale;
+    const ya = a.y + (a.h - a.outV * scale) / 2 + a.so + w / 2, yb = b.y + (b.h - b.inV * scale) / 2 + b.to + w / 2; a.so += w; b.to += w;
+    const xa = a.x + NW, xb = b.x, mx = (xa + xb) / 2;
+    return `<path class="lk" d="M${xa},${ya} C${mx},${ya} ${mx},${yb} ${xb},${yb}" fill="none" stroke="${COL[l.lv]}" stroke-opacity="${l.v ? 0.55 : 0.9}" stroke-width="${w}"${l.v ? '' : ' stroke-dasharray="3 3"'}>` +
+      `<title>${a.label} → ${b.label} · ${l.v ? l.v + ' ratings · ' + NAME[l.lv] : 'on the map, no ratings yet'}</title></path>`;
+  }).join('');
+  const nd = Object.values(nodes).map((n) => {
+    const last = n.ci === cols.length - 1, first = n.ci === 0;
+    const lx = first ? n.x - 8 : last ? n.x + NW + 8 : n.x + NW + 6, anc = first ? 'end' : 'start';
+    return `<rect x="${n.x}" y="${n.y}" width="${NW}" height="${Math.max(n.h, 2)}" rx="2" fill="${n.lv ? COL[n.lv] : '#2E1648'}"><title>${n.label}${n.sub ? ' · ' + n.sub : ''}</title></rect>` +
+      `<text x="${lx}" y="${n.y + n.h / 2 + 4}" text-anchor="${anc}" font-size="12" font-weight="600" fill="#111111">${n.label}${n.lv ? ` <tspan font-weight="700" fill="${COL[n.lv]}">${n.lv}</tspan>` : ''}</text>` +
+      (n.sub && (first || last) ? `<text x="${lx}" y="${n.y + n.h / 2 + 17}" text-anchor="${anc}" font-size="10" fill="#6B6B6B">${n.sub}</text>` : '');
+  }).join('');
+  const heads = cols.map((c, ci) => `<text x="${colX(ci) + (ci === 0 ? NW : 0)}" y="10" text-anchor="${ci === 0 ? 'end' : 'start'}" font-size="10" letter-spacing=".05em" fill="#6B6B6B">${c.head}</text>`).join('');
+  document.getElementById('sk').innerHTML = `<h3>${title}</h3><p class="ps">${sub}</p><svg viewBox="0 0 ${W} ${H + 10}" role="img" aria-label="${title}">${heads}${paths}${nd}</svg>` +
+    `<div class="key">${['E', 'P', 'D', 'NI'].map((l) => `<span><i style="background:${COL[l]}">${l}</i>${NAME[l]}</span>`).join('')}<span><i style="background:#D9D9D9"></i>on the map, no ratings yet</span><span>band width = number of ratings</span></div>`;
+}
+const col = (head, list) => Object.assign(list, { head: head });
+const ilos = (lv) => col('ILOS', ILOT.map((t, i) => ({ id: 'I' + (i + 1), label: 'ILO' + (i + 1), sub: t, lv: lv[i] })));
+const plos = (lv) => col('PLOS', ILOT.map((t, i) => ({ id: 'P' + (i + 1), label: 'PLO' + (i + 1), lv: lv[i] })));
+const pi = (vals, lv) => vals.map((v, i) => ({ s: 'P' + (i + 1), t: 'I' + (i + 1), v: v, lv: lv[i] }));
+
+const ROLES = {
+  faculty: { label: 'Course faculty', sub: 'Professor · Data Science and AI',
+    hl: 'This term your courses have rated <b>4 of 6</b> DS&AI PLOs. <b>PLO2</b> is below the standard so far, and <b>PLO5 and PLO6</b> have no ratings yet.',
+    kpi: () => kpi('Your students at Proficient or above', 'Students in your courses this term, latest progress on each DS&AI PLO', [['PLO1', ILOT[0], 80, 15], ['PLO2', ILOT[1], 58, 41], ['PLO3', ILOT[2], 85, 41], ['PLO4', ILOT[3], 73, 15], ['PLO5', ILOT[4], null], ['PLO6', ILOT[5], null]]),
+    sk: () => { const lv = ['P', 'D', 'P', 'P', '', ''];
+      sankey('Where your evidence goes', 'Your courses this term → the PLOs they rate → the ILOs those PLOs link to', [
+        col('YOUR COURSES', [{ id: 'c1', label: 'DA321', sub: '15 students' }, { id: 'c2', label: 'DA200-1', sub: '20 students' }, { id: 'c3', label: 'DA200-2', sub: '6 students' }]), plos(lv), ilos(lv)],
+        [{ s: 'c1', t: 'P1', v: 30, lv: 'P' }, { s: 'c1', t: 'P2', v: 30, lv: 'D' }, { s: 'c1', t: 'P3', v: 15, lv: 'P' }, { s: 'c1', t: 'P4', v: 15, lv: 'P' }, { s: 'c1', t: 'P5', v: 0, lv: '' }, { s: 'c1', t: 'P6', v: 0, lv: '' },
+          { s: 'c2', t: 'P2', v: 20, lv: 'P' }, { s: 'c2', t: 'P3', v: 20, lv: 'P' }, { s: 'c2', t: 'P5', v: 0, lv: '' }, { s: 'c2', t: 'P6', v: 0, lv: '' },
+          { s: 'c3', t: 'P2', v: 6, lv: 'E' }, { s: 'c3', t: 'P3', v: 6, lv: 'P' }, { s: 'c3', t: 'P5', v: 0, lv: '' }].concat(pi([30, 56, 41, 15, 0, 0], lv))); },
+    att: [['var(--NI)', 'DA321 · CP3 Midterm presentation', 'Held 24 Oct · 15 students · no ratings uploaded yet', 'Rate in AL0'],
+      ['var(--NI)', 'DA200-2 · CP1 Learning Journaling', 'Held 23 Oct · 6 students · no ratings uploaded yet', 'Rate in AL0'],
+      ['var(--brand)', '3 checkpoints in the next 2 weeks', 'DA200-1 and DA200-2 Journaling check (6 Nov) · DA321 CP4 Modelling (12 Nov)', 'Open in AL0'],
+      ['var(--D)', 'Student A (advisee)', 'PLO2 Creative Thinking: Developing in progress, from DA321', 'Open in AL1'],
+      ['var(--D)', 'Student B (advisee)', 'PLO4 Communication & Collaboration: Developing in progress, from DA200-1', 'Open in AL1']],
+    listT: 'Your courses this term',
+    list: [['DA321', 'Data Analytics and Visualization', '15 students · 2 of 7 checkpoints rated', ['P', 'D', 'P', 'P', '', '']],
+      ['DA200-1', 'Design of AI and Data-driven Services', '20 students · 1 of 2 checkpoints rated', ['', 'P', 'P', '', 'P', '']],
+      ['DA200-2', 'Design of AI and Data-driven Services', '6 students · 1 of 2 checkpoints rated', ['', 'E', 'P', '', 'P', '']]] },
+  chair: { label: 'Program chair', sub: 'Program Chair · Data Science and AI',
+    hl: '<b>3 of 6</b> DS&AI PLOs meet the standard of performance this term. <b>3 of 5</b> A-point courses have no ratings yet, so PLO5 and PLO6 have no result.',
+    kpi: () => kpi('Majors at Proficient or above', '63 DS&AI majors and minors, latest progress on each PLO', [['PLO1', ILOT[0], 81, 36], ['PLO2', ILOT[1], 65, 34], ['PLO3', ILOT[2], 84, 31], ['PLO4', ILOT[3], 79, 34], ['PLO5', ILOT[4], null], ['PLO6', ILOT[5], null]]),
+    sk: () => { const lv = ['P', 'D', 'P', 'P', '', ''];
+      sankey('Where the program’s evidence comes from', 'A-point courses this term → PLOs → ILOs · grey dashed = A-point, no ratings yet', [
+        col('A-POINT COURSES', [{ id: 'c1', label: 'DA321', sub: 'PLO1–4' }, { id: 'c2', label: 'DA200', sub: '2 sections' }, { id: 'c3', label: 'DA333', sub: 'no checkpoints' }, { id: 'c4', label: 'DA433', sub: 'no ratings' }, { id: 'c5', label: 'DA434', sub: 'no ratings' }]), plos(lv), ilos(lv)],
+        [{ s: 'c1', t: 'P1', v: 30, lv: 'P' }, { s: 'c1', t: 'P2', v: 30, lv: 'D' }, { s: 'c1', t: 'P3', v: 15, lv: 'P' }, { s: 'c1', t: 'P4', v: 15, lv: 'P' },
+          { s: 'c2', t: 'P2', v: 26, lv: 'P' }, { s: 'c2', t: 'P3', v: 26, lv: 'P' }, { s: 'c2', t: 'P5', v: 0, lv: '' }, { s: 'c2', t: 'P6', v: 0, lv: '' },
+          { s: 'c3', t: 'P1', v: 0, lv: '' }, { s: 'c3', t: 'P3', v: 0, lv: '' }, { s: 'c4', t: 'P2', v: 0, lv: '' }, { s: 'c4', t: 'P4', v: 0, lv: '' }, { s: 'c4', t: 'P5', v: 0, lv: '' }, { s: 'c5', t: 'P2', v: 0, lv: '' }]
+          .concat(pi([30, 56, 41, 15, 0, 0], lv))); },
+    att: [['var(--NI)', 'PLO6 Global Harmony & Sustainability', 'No A-point course this term has rated it yet', 'Open in AL3'],
+      ['var(--NI)', 'DA333 · A-point for PLO1, PLO3', 'No checkpoint set up in Arete', 'Open in AL2'],
+      ['var(--D)', 'PLO2 Creative Thinking below the standard', '65% at Proficient or above; DA321 (D) and DA200 (P)', 'Open in AL3'],
+      ['#9C8FB0', '3 self-designed students take DS&AI courses', 'Their DS&AI evidence counts through the ILOs', 'Open in AL1']],
+    listT: 'A-point courses this term',
+    list: [['DA321', 'Data Analytics and Visualization', 'A-point: PLO1–PLO4 · 2 of 7 checkpoints rated', ['P', 'D', 'P', 'P', '', '']],
+      ['DA200', 'Design of AI and Data-driven Services', 'A-point: PLO2, PLO3, PLO5, PLO6 · 2 sections', ['', 'P', 'P', '', 'P', '']],
+      ['DA333', 'Practical Applications of Machine Learning', 'A-point: PLO1, PLO3 · no checkpoints yet', ['', '', '', '', '', '']],
+      ['DA433', 'Affective Computing and Human-Robot Interaction', 'A-point: PLO2, PLO4, PLO5 · no ratings yet', ['', '', '', '', '', '']]] },
+  inst: { label: 'Institution · IR / Dean of OAA', sub: 'Taejae University',
+    hl: '<b>72%</b> of the Class of 2027 are at Proficient or above on the ILOs rated so far. All ILO evidence this term still comes from <b>one program</b>, DS&AI.',
+    kpi: () => kpi('Graduating class at Proficient or above', 'Class of 2027 (58 students), summative results on each ILO', [['ILO1', ILOT[0], 78, 31], ['ILO2', ILOT[1], 61, 29], ['ILO3', ILOT[2], 82, 27], ['ILO4', ILOT[3], 74, 30], ['ILO5', ILOT[4], null], ['ILO6', ILOT[5], null]]),
+    sk: () => { const lv = ['P', 'D', 'P', 'P', '', ''];
+      sankey('Where the institution’s evidence comes from', 'Programs → ILOs, through each program’s PLO → ILO links · programs without PLOs in Arete add nothing yet', [
+        col('PROGRAMS', [{ id: 'g1', label: 'DS&AI', sub: 'PLOs in Arete' }, { id: 'g2', label: 'BI', sub: 'no PLOs yet' }, { id: 'g3', label: 'HS', sub: 'no PLOs yet' }, { id: 'g4', label: 'NS', sub: 'no PLOs yet' }]), ilos(lv)],
+        [{ s: 'g1', t: 'I1', v: 30, lv: 'P' }, { s: 'g1', t: 'I2', v: 56, lv: 'D' }, { s: 'g1', t: 'I3', v: 41, lv: 'P' }, { s: 'g1', t: 'I4', v: 15, lv: 'P' }, { s: 'g1', t: 'I5', v: 0, lv: '' }, { s: 'g1', t: 'I6', v: 0, lv: '' }]); },
+    att: [['var(--NI)', 'ILO5 and ILO6: no result this term', 'No A-point course has rated them yet', 'Open in AL4'],
+      ['var(--NI)', '4 programs without PLOs in Arete', 'Business Innovation, Humanities and Social Sciences, Natural Sciences, Innovation Foundations', 'Open in AL4'],
+      ['var(--D)', 'ILO2 Creative Thinking below the standard', '61% of the graduating class at Proficient or above', 'Open in AL4']],
+    listT: 'Programs',
+    list: [['DS&AI', 'Data Science and Artificial Intelligence', 'PLOs and map in Arete · 5 A-point courses this term', ['P', 'D', 'P', 'P', '', '']],
+      ['BI', 'Business Innovation', 'PLOs not in Arete yet', ['', '', '', '', '', '']],
+      ['HS', 'Humanities and Social Sciences', 'PLOs not in Arete yet', ['', '', '', '', '', '']],
+      ['NS', 'Natural Sciences', 'PLOs not in Arete yet', ['', '', '', '', '', '']]] },
+};
+// a second program whose PLOs are not in Arete yet: its view says so, read only
+const quiet = (id, t, s) => { document.getElementById(id).innerHTML = `<h3>${t}</h3><p class="ps" style="margin-bottom:0">${s}</p>`; };
+const noPlo = (name, code, courses) => ({ hl: `<b>${name}</b>’s PLOs and curriculum map are not in Arete yet, so it has no program results yet.`,
+  kpi: () => quiet('kpi', 'Majors at Proficient or above', `Shown once the ${code} PLOs and curriculum map are in Arete.`),
+  sk: () => quiet('sk', 'Where the program’s evidence comes from', `Shown once ${code} courses are on a curriculum map.`),
+  att: [['#9C8FB0', code + ' PLOs not in Arete yet', 'The ' + code + ' chair adds them in TaeSylla Pro; Arete reads them from there', 'Open in AL3']],
+  listT: code + ' courses this term', list: courses.map(([c, t]) => [c, t, 'Not on a curriculum map yet', ['', '', '', '', '', '']]) });
+ROLES.hs = noPlo('Humanities and Social Sciences', 'HSS', [['HS311', 'Global History II'], ['HS322', 'Problem Solvers II: Global Challenges and Governance']]);
+ROLES.ifn = noPlo('Innovation Foundations', 'IF', [['IF101', 'Innovation Foundation I'], ['IF106', 'Innovation Foundation VI']]);
+// teaching view of a faculty member whose courses are on no map yet
+ROLES.teach2 = { hl: 'Your courses this term are not on a curriculum map in Arete yet, so they add no outcome evidence. Once HSS or IF adds its PLOs and map, ratings in your courses count toward them and the ILOs.',
+  kpi: () => quiet('kpi', 'Your students at Proficient or above', 'Shown once your courses are on a curriculum map.'),
+  sk: () => quiet('sk', 'Where your evidence goes', 'Shown once your courses are on a curriculum map.'),
+  att: [['#9C8FB0', 'Your courses are not on a map yet', 'HS322 and IF106 have no PLO links yet', 'Open in AL2']],
+  listT: 'Your courses this term', list: [['HS322', 'Problem Solvers II: Global Challenges and Governance', '18 students · not on a map yet', ['', '', '', '', '', '']], ['IF106', 'Innovation Foundation VI', '24 students · not on a map yet', ['', '', '', '', '', '']]] };
+// who is signed in (mockup): the views they hold and their badge on each program
+const PEOPLE = {
+  faculty: ['Faculty in DS&AI', ['faculty', 'chair', 'inst'], { chair: 'View', inst: 'View' }],
+  chair: ['DS&AI chair', ['faculty', 'chair', 'inst'], { chair: 'Chair', inst: 'View' }],
+  two: ['Faculty in IF and HSS', ['teach2', 'hs', 'ifn', 'inst'], { hs: 'View', ifn: 'View', inst: 'View' }],
+  all: ['Chair + IR / OAA', ['faculty', 'chair', 'inst'], { chair: 'Chair', inst: 'IR' }] };
+const ICON = {
+  faculty: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5h14v10H3z"/><path d="M7 5.5V3.5h6v2M3 9.5h14"/></svg>',
+  chair: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5l7 3.5-7 3.5-7-3.5z"/><path d="M5.5 8v4.5c1.4 1.3 3 2 4.5 2s3.1-.7 4.5-2V8"/></svg>',
+  inst: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17.5h15M4 8h12M10 2.5L16 8H4z"/><path d="M5.5 8v7M8.5 8v7M11.5 8v7M14.5 8v7"/></svg>' };
+// grouped as in Telos; a view the person does not hold stays in the menu, greyed
+ICON.hs = ICON.ifn = ICON.chair; ICON.teach2 = ICON.faculty;
+// grouped as in Telos: one item per program the person belongs to
+const MENU = [['Teaching', [['faculty', 'My courses'], ['teach2', 'My courses']]], ['Program', [['chair', 'DS&AI'], ['hs', 'Humanities and Social Sciences'], ['ifn', 'Innovation Foundations']]], ['Institution', [['inst', 'Taejae University', 'IR']]]];
+let who = 'chair', cur = 'faculty';
+const sqs = (lv) => `<div class="sqs">${lv.map((l) => `<span class="sq ${l ? '' : 'none'}" style="${l ? 'background:' + COL[l] : ''}">${l || '·'}</span>`).join('')}</div>`;
+function draw() {
+  const held = PEOPLE[who][1], badge = PEOPLE[who][2]; if (!held.includes(cur)) cur = held[0];
+  const R = ROLES[cur];
+  document.getElementById('roles').innerHTML = Object.entries(PEOPLE).map(([k, p]) => `<button type="button" aria-pressed="${k === who}" data-k="${k}">${p[0]}</button>`).join('');
+  document.querySelectorAll('#roles button').forEach((b) => { b.onclick = () => { who = b.dataset.k; draw(); }; });
+  const vs = document.getElementById('views');
+  // programs the person does not belong to are left out; every faculty member sees the institution, read only unless IR / OAA
+  vs.innerHTML = MENU.map(([g, items]) => { const its = items.filter(([k]) => held.includes(k)); if (!its.length) return '';
+    return `<div class="grp">${g}</div>` + its.map(([k, label, b0]) => { const on = held.includes(k), b = badge[k] || b0 || '';
+      const n = b === 'View' ? 0 : ROLES[k].att.filter((a) => a[0] === 'var(--NI)').length;
+      return `<button type="button" class="mi" data-k="${k}" aria-current="${k === cur}"${on ? '' : ' disabled title="Not one of your roles"'}>${ICON[k]}<span>${label}</span>` +
+        (b ? `<span class="badge"${b === 'View' ? ' style="background:#F1F1F1;color:#555555"' : ''}>${b}</span>` : '') + (on && n ? `<span class="cnt" title="${n} need attention">${n}</span>` : '') + '</button>'; }).join(''); }).join('');
+  vs.querySelectorAll('button:not([disabled])').forEach((b) => { b.onclick = () => { cur = b.dataset.k; draw(); }; });
+  document.getElementById('gh').textContent = 'Welcome, ' + (who === 'two' ? 'Sample' : 'Jiyoung');
+  document.getElementById('gs').textContent = 'Saturday, 31 October 2026 · Fall 2026, week 9 · ' + (who === 'two' ? 'Professor · Humanities and Social Sciences · Innovation Foundations' : badge.chair === 'Chair' ? 'Professor · Program Chair, Data Science and AI' : 'Professor · Data Science and AI');
+  document.getElementById('hl').innerHTML = R.hl;
+  R.kpi(); R.sk();
+  document.getElementById('att-n').textContent = R.att.length + (R.att.length === 1 ? ' item' : ' items');
+  document.getElementById('att').innerHTML = R.att.map(([c, b, s, go]) => `<div class="att"><span class="dot" style="background:${c}"></span><div><b>${b}</b><span>${s}</span></div><span class="go">${go} →</span></div>`).join('');
+  document.getElementById('list-h').textContent = R.listT;
+  document.getElementById('list-n').textContent = R.list.length;
+  document.getElementById('list').innerHTML = R.list.map(([c, t, m, lv]) => `<div class="card"><div class="t"><b>${c}</b> ${t}</div><div class="r">${sqs(lv)}</div><div class="m">${m}</div></div>`).join('');
+}
+draw();
+</script>
+</body>
+</html>
