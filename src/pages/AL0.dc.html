@@ -555,6 +555,15 @@ class Component extends DCLogic {
       const defs = (d) => ['E', 'P', 'D', 'NI'].filter((l) => d && d[l]).map((l) => l + '  ' + d[l]).join('\n');
       const title = S.o.course_id + ' ' + (S.o.title || (S.o.courses && S.o.courses.title) || '');
       const any = Object.keys(S.R).length > 0;
+      // a method's checkpoints, plus a planned Final (summative, every criterion) when it has no summative one yet;
+      // the planned one exists only in the workbook until its first ratings are uploaded
+      const cpsOf = (m) => {
+        const cps = m.cps.slice().sort(K.cpOrder);
+        if (!cps.some((k) => k.kind === 'summative')) cps.push({ checkpoint_id: 'final:' + m.rubric_id, label: 'Final', kind: 'summative', reading: 'progress', held_from: null, held_to: null, planned: true });
+        return cps;
+      };
+      const inUseOf = (m, k) => k.planned ? m.crits : S.inUse[k.checkpoint_id];
+      const subsOf = (k) => k.planned ? [] : S.subs[k.checkpoint_id];
 
       // README
       const rd = wb.addWorksheet('README', { properties: { tabColor: { argb: 'FF502579' } } });
@@ -581,11 +590,10 @@ class Component extends DCLogic {
       line('', '');
       line('Checkpoints', '', font({ bold: true }));
       S.methods.forEach((m) => {
-        const cps = m.cps.slice().sort(K.cpOrder);
+        const cps = cpsOf(m);
         line(m.item, '', font({ bold: true, color: { argb: 'FF502579' } }));
-        if (!cps.length) line('', 'no checkpoints set up yet');
         cps.forEach((k) => line('', k.label + ' · ' + when(k) + ' · ' + k.kind + (k.reading === 'own' ? ' · own reading only' : '') + ' · ' +
-          S.inUse[k.checkpoint_id].map((c) => c.code).join(', ')));
+          inUseOf(m, k).map((c) => c.code).join(', ') + (k.planned ? ' · set up in Arete when its ratings are first uploaded (delete the columns it does not use)' : '')));
       });
       line('', '');
       line('Levels', '', font({ bold: true }));
@@ -614,10 +622,10 @@ class Component extends DCLogic {
         while (used.has(name)) name = name.slice(0, 27) + ' ' + used.size;
         used.add(name);
         const ws = wb.addWorksheet(name);
-        const cps = m.cps.slice().sort(K.cpOrder);
+        const cps = cpsOf(m);
         const cols = [];
-        cps.forEach((k) => S.inUse[k.checkpoint_id].forEach((c) => {
-          S.subs[k.checkpoint_id].filter((i) => i.parent_criterion_id === c.criterion_id).forEach((i) => cols.push({ k: k, sub: i, code: i.code, name: i.name, d: i.descriptors, parent: c.code }));
+        cps.forEach((k) => inUseOf(m, k).forEach((c) => {
+          subsOf(k).filter((i) => i.parent_criterion_id === c.criterion_id).forEach((i) => cols.push({ k: k, sub: i, code: i.code, name: i.name, d: i.descriptors, parent: c.code }));
           cols.push({ k: k, crit: c, code: c.code, name: c.name, d: c.descriptors, w: c.w });
         }));
         const shown = cols.length ? cols : m.crits.map((c) => ({ code: c.code, name: c.name, d: c.descriptors, w: c.w }));
@@ -634,7 +642,7 @@ class Component extends DCLogic {
           const has = Object.keys(S.R).some((key) => key.startsWith(k.checkpoint_id + '|'));
           if (n > 1) ws.mergeCells(3, c0, 3, c0 + n - 1);
           const cell = ws.getCell(3, c0);
-          cell.value = k.label + ' · ' + when(k) + ' · ' + k.kind + (k.reading === 'own' ? ' · own reading only' : '');
+          cell.value = k.label + ' · ' + when(k) + ' · ' + k.kind + (k.reading === 'own' ? ' · own reading only' : '') + (k.planned ? ' · not in Arete yet' : '');
           cell.fill = fill(has ? '2E1648' : 'E9E3F0'); cell.font = font({ bold: true, color: { argb: has ? 'FFFFFFFF' : 'FF2E1648' } });
           cell.alignment = { vertical: 'middle', indent: 1 };
           c0 += n;
@@ -645,7 +653,9 @@ class Component extends DCLogic {
         [6, 7].forEach((r) => { ws.getCell(r, 2).font = font({ italic: true, color: { argb: 'FF6B6B6B' } }); });
         shown.forEach((c, j) => {
           const col = 4 + j, first = j === 0 || (cols.length && cols[j - 1].k !== c.k);
-          if (cols.length) ws.getCell(4, col).value = 'checkpoint=' + c.k.label + '; ' + (c.sub ? 'sub-criterion=' : 'criterion=') + c.code;
+          if (cols.length) ws.getCell(4, col).value = ['checkpoint=' + c.k.label, 'reading=' + c.k.reading, 'kind=' + c.k.kind]
+            .concat(c.k.held_from ? ['date=' + c.k.held_from + (c.k.held_to ? '..' + c.k.held_to : '')] : [])
+            .concat(c.sub ? ['sub-criterion=' + c.code, 'parent=' + c.parent] : ['criterion=' + c.code]).join('; ');
           const h = ws.getCell(5, col); h.value = c.code; h.alignment = { horizontal: 'center' };
           h.font = c.sub ? font({ italic: true, color: { argb: 'FF8A8A8A' } }) : font({ bold: true }); h.fill = fill(c.sub ? 'F7F7F5' : 'EDEDED');
           const nm = ws.getCell(6, col); nm.value = c.name + (c.sub ? ' (detail of ' + c.parent + ')' : (c.w ? ' · weight ' + (Math.round(c.w * 10) / 10) : ''));
@@ -712,30 +722,49 @@ class Component extends DCLogic {
       const title = String((rows[0] || [])[0] || '').trim();
       const m = S.methods.find((x) => x.item === title) || S.methods.find((x) => x.name.toLowerCase() === sheet.toLowerCase());
       if (!m) { problems.push('Sheet "' + sheet + '": no matching assessment method in this course.'); return; }
-      // columns -> checkpoint group and criterion
-      const byLabel = {};
+      // columns -> checkpoint group and criterion. The hidden id row holds "key=value; …" pairs:
+      // checkpoint, criterion or sub-criterion, and optionally parent (of a sub-criterion), reading, kind, date
+      const byLabel = {}, SET = ['reading', 'kind', 'date'];
       rows[idRow].forEach((c, j) => {
-        const mm = /^checkpoint=(.*?);\s*(criterion|sub-criterion)=(.*)$/.exec(String(c).trim());
-        if (!mm) return;
-        const g = byLabel[mm[1]] = byLabel[mm[1]] || { label: mm[1], head: '', cols: [], start: j };
-        g.cols.push({ j: j, sub: mm[2] === 'sub-criterion', code: mm[3].trim() });
+        const kv = {};
+        String(c).split(';').forEach((p) => { const e = p.indexOf('='); if (e > 0) kv[p.slice(0, e).trim().toLowerCase()] = p.slice(e + 1).trim(); });
+        const code = kv['sub-criterion'] || kv.criterion;
+        if (!kv.checkpoint || !code) return;
+        const g = byLabel[kv.checkpoint] = byLabel[kv.checkpoint] || { label: kv.checkpoint, head: '', cols: [], start: j, set: {}, clash: [] };
+        SET.forEach((s) => { if (!kv[s]) return; if (g.set[s] && g.set[s] !== kv[s]) g.clash.push(s); else g.set[s] = kv[s]; });
+        g.cols.push({ j: j, sub: !!kv['sub-criterion'], code: code, parent: kv.parent || '' });
       });
+      // a sub-criterion's name: the "Criterion" row of an Arete export, else the sheet's criteria legend, else its code
+      const subName = (j, code) => {
+        const nr = rows[idRow + 2] || [];
+        if (/^Criterion$/i.test(String(nr[1] || '').trim()) && String(nr[j] || '').trim()) return String(nr[j]).replace(/\s*\(detail of [^)]*\)\s*$/i, '').trim();
+        const lg = rows.find((r) => String(r[1] || '').trim() === code && String(r[2] || '').trim() && !String(r[0] || '').trim());
+        return lg ? String(lg[2]).replace(/\s*\((?:sub-criterion|detail) of [^)]*\)\s*$/i, '').trim() : code;
+      };
       Object.values(byLabel).forEach((g) => {
         g.head = String((rows[idRow - 1] || [])[g.start] || '');
+        if (g.clash.length) { problems.push(g.label + ': columns disagree on ' + [...new Set(g.clash)].join(', ') + '. Nothing imported for this checkpoint.'); return; }
         const k = S.cps.find((x) => x.rubric_id === m.rubric_id && norm(x.label) === norm(g.label));
         const inUse = k ? S.inUse[k.checkpoint_id] : null, subs = k ? S.subs[k.checkpoint_id] : [];
-        const cols = [];
-        g.cols.forEach((c) => {
-          if (c.sub) {
-            const it = subs.find((x) => x.code === c.code);
-            if (it) cols.push(Object.assign(c, { item_id: it.item_id }));
-            else problems.push(g.label + ': sub-criterion ' + c.code + ' is not set up for this checkpoint in Arete.');
-            return;
-          }
+        const cols = [], newSubs = [];
+        g.cols.filter((c) => !c.sub).forEach((c) => {
           const cr = m.crits.find((x) => x.code === c.code);
           if (!cr) { problems.push(g.label + ': ' + c.code + ' is not in this rubric. Add it in TaeSylla (Rubrics tab) first.'); return; }
           if (inUse && !inUse.some((x) => x.criterion_id === cr.criterion_id)) { problems.push(g.label + ': ' + c.code + ' is not used at this checkpoint.'); return; }
           cols.push(Object.assign(c, { criterion_id: cr.criterion_id }));
+        });
+        const rated = cols.slice();
+        g.cols.filter((c) => c.sub).forEach((c) => {
+          const it = subs.find((x) => x.code === c.code);
+          if (it) { cols.push(Object.assign(c, { item_id: it.item_id })); return; }
+          // not in Arete yet: created on upload under its parent, which this checkpoint must use
+          const pc = c.parent || (rated.length === 1 ? rated[0].code : '');
+          if (!pc) { problems.push(g.label + ': sub-criterion ' + c.code + ' needs a parent criterion (add "parent=<code>" to its column).'); return; }
+          const pr = m.crits.find((x) => x.code === pc);
+          const used = pr && (rated.some((x) => x.criterion_id === pr.criterion_id) || (inUse && inUse.some((x) => x.criterion_id === pr.criterion_id)));
+          if (!used) { problems.push(g.label + ': sub-criterion ' + c.code + ': parent ' + pc + ' is not ' + (pr ? 'used at this checkpoint' : 'in this rubric') + '.'); return; }
+          newSubs.push({ code: c.code, name: subName(c.j, c.code), parent_criterion_id: pr.criterion_id });
+          cols.push(Object.assign(c, { sub_code: c.code }));
         });
         // values
         const out = [], unknown = new Set(), bad = [];
@@ -749,7 +778,7 @@ class Component extends DCLogic {
             if (!known.has(no)) { unknown.add(no); return; }
             const lv = LV[raw];
             if (!lv) { bad.push(no + ' ' + c.code + ' "' + raw + '"'); return; }
-            out.push(c.sub ? { item_id: c.item_id, student_no: no, level: lv } : { criterion_id: c.criterion_id, student_no: no, level: lv });
+            out.push(c.sub_code ? { sub_code: c.sub_code, student_no: no, level: lv } : c.sub ? { item_id: c.item_id, student_no: no, level: lv } : { criterion_id: c.criterion_id, student_no: no, level: lv });
           });
         });
         if (unknown.size) problems.push(g.label + ': student numbers not on the class list: ' + [...unknown].join(', ') + '.');
@@ -761,12 +790,19 @@ class Component extends DCLogic {
           const cur = {};
           Object.keys(S.R).filter((key) => key.startsWith(k.checkpoint_id + '|')).forEach((key) => S.R[key].forEach((x) => { cur[(x.criterion_id ? 'c' + x.criterion_id : 'i' + x.item_id) + '|' + x.student_no] = x.level; }));
           const seen = new Set();
-          out.forEach((x) => { const key = (x.criterion_id ? 'c' + x.criterion_id : 'i' + x.item_id) + '|' + x.student_no; seen.add(key); if (!(key in cur)) added++; else if (cur[key] !== x.level) changed++; else same++; });
+          out.forEach((x) => { const key = (x.criterion_id ? 'c' + x.criterion_id : x.item_id ? 'i' + x.item_id : 'n' + x.sub_code) + '|' + x.student_no; seen.add(key); if (!(key in cur)) added++; else if (cur[key] !== x.level) changed++; else same++; });
           removed = Object.keys(cur).filter((key) => !seen.has(key)).length;
         } else added = out.length;
-        groups.push({ m: m, k: k, label: g.label, head: g.head, rows: out, codes: cols.filter((c) => !c.sub).map((c) => c.criterion_id),
-          added: added, changed: changed, same: same, removed: removed, when: this.parseWhen(g.head, S.o),
-          todo: !k || added + changed + removed > 0 });   // a checkpoint already up to date is left alone
+        // checkpoint settings: the id row's keys win over the group heading ("· Sep 14 · … · own reading only")
+        const when = this.parseWhen(g.head, S.o), dt = /^(\d{4}-\d{2}-\d{2})(?:\.\.(\d{4}-\d{2}-\d{2}))?$/.exec(g.set.date || '');
+        if (dt) { when.from = dt[1]; when.to = dt[2] || null; }
+        if (/^(formative|summative)$/.test(g.set.kind || '')) when.kind = g.set.kind;
+        if (/^(own|progress)$/.test(g.set.reading || '')) when.reading = g.set.reading;
+        // a new checkpoint uses the criteria that hold ratings, and the parents of its new sub-criteria
+        const codes = [...new Set(out.filter((x) => x.criterion_id).map((x) => x.criterion_id).concat(newSubs.map((s) => s.parent_criterion_id)))];
+        groups.push({ m: m, k: k, label: g.label, head: g.head, rows: out, codes: codes,
+          newSubs: newSubs, added: added, changed: changed, same: same, removed: removed, when: when,
+          todo: !k || newSubs.length > 0 || added + changed + removed > 0 });   // a checkpoint already up to date is left alone
       });
     });
     return { groups: groups, problems: problems };
@@ -795,7 +831,15 @@ class Component extends DCLogic {
             held_from: g.when.from, held_to: g.when.to, kind: g.when.kind, reading: g.when.reading, sort_order: ++sort })
           .then((rows) => { const id = rows[0].checkpoint_id;
             return db.post('outcome_checkpoint_criteria', g.codes.map((c) => ({ checkpoint_id: id, criterion_id: c }))).then(() => id); });
-      return make.then((id) => db.rpc('outcome_upload_checkpoint', Object.assign({ p_checkpoint_id: id, p_rows: g.rows, p_source: 'import' }, uploadId ? { p_upload_id: uploadId } : {})))
+      // sub-criteria the workbook names but Arete does not have yet: created under their parent, then rated
+      const subs = (id) => {
+        if (!g.newSubs.length) return Promise.resolve(g.rows);
+        const base = g.k ? (S.subs[g.k.checkpoint_id] || []).reduce((x, i) => Math.max(x, i.sort_order || 0), 0) : 0;
+        return db.post('outcome_checkpoint_items', g.newSubs.map((s, i) => ({ checkpoint_id: id, parent_criterion_id: s.parent_criterion_id, code: s.code, name: s.name, sort_order: base + i + 1 })))
+          .then((made) => { const ids = {}; made.forEach((i) => { ids[i.code] = i.item_id; });
+            return g.rows.map((x) => x.sub_code ? { item_id: ids[x.sub_code], student_no: x.student_no, level: x.level } : x); });
+      };
+      return make.then((id) => subs(id).then((rows) => db.rpc('outcome_upload_checkpoint', Object.assign({ p_checkpoint_id: id, p_rows: rows, p_source: 'import' }, uploadId ? { p_upload_id: uploadId } : {}))))
         .then((c) => { n += typeof c === 'number' ? c : (c.added || 0) + (c.changed || 0) + (c.removed || 0); });
     });
     steps.reduce((p, f) => p.then(f), Promise.resolve())
@@ -838,7 +882,8 @@ class Component extends DCLogic {
     const close = () => this.setState({ imp: null });
     const titles = { reading: 'Reading the workbook…', preview: 'Import preview', saving: 'Uploading…', done: 'Import finished', error: 'Import' };
     const groups = (imp.groups || []).map((g) => ({ method: g.m.name, label: g.label,
-      status: g.k ? 'Existing checkpoint' : 'New checkpoint · ' + [g.when.from ? g.when.from + (g.when.to ? ' – ' + g.when.to : '') : 'no date', g.when.kind, g.when.reading === 'own' ? 'own reading only' : 'progress'].join(' · '),
+      status: (g.k ? 'Existing checkpoint' : 'New checkpoint · ' + [g.when.from ? g.when.from + (g.when.to ? ' – ' + g.when.to : '') : 'no date', g.when.kind, g.when.reading === 'own' ? 'own reading only' : 'progress'].join(' · '))
+        + (g.newSubs.length ? ' · new sub-criteria ' + g.newSubs.map((s) => s.code + ' (' + s.name + ')').join(', ') : ''),
       counts: g.rows.length + ' ratings' + (!g.todo ? ' · no changes, skipped' : g.k ? ' · ' + g.added + ' new, ' + g.changed + ' changed, ' + g.same + ' unchanged' + (g.removed ? ', ' + g.removed + ' removed' : '') : ''),
       cs: 'padding: 8px 12px 8px 0; border-bottom: 1px solid #EEEEEE' + (g.todo ? '' : '; color: #9A9A9A') }));
     const todo = (imp.groups || []).filter((g) => g.todo);
