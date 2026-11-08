@@ -2425,17 +2425,17 @@ class Component extends DCLogic {
     const sankey = (title, sub, cols, links) => {
       const live = links.length > 0;
       if (!live) return '<h3>' + esc(title) + '</h3><p class="ps" style="margin-bottom:0">' + esc(sub) + ' Nothing to show yet.</p>';
-      const W = 760, H = Math.max(260, 40 * Math.max(...cols.map((c) => c.nodes.length))), NW = 10, PAD = 12, top = 22, MIN = 3, NH = 26;
+      const W = 760, H = Math.max(300, 52 * Math.max(...cols.map((c) => c.nodes.length))), NW = 10, PAD = 12, top = 22, MIN = 3, NH = 26;
       const vis = (v) => Math.max(MIN, v), nodes = {};
       cols.forEach((c, ci) => c.nodes.forEach((n) => { nodes[n.id] = Object.assign({}, n, { ci: ci, inV: 0, outV: 0 }); }));
       links.forEach((l) => { nodes[l.s].outV += vis(l.v); nodes[l.t].inV += vis(l.v); });
       const size = (n) => Math.max(n.inV, n.outV, 8);
       const scale = Math.min(...cols.map((c) => (H - top - PAD * (c.nodes.length - 1) - NH * c.nodes.length) / Math.max(1, c.nodes.reduce((a, n) => a + size(nodes[n.id]), 0))));
-      const hOf = (n) => Math.max(size(n) * Math.max(scale, 0.2), NH);
+      const hOf = (n) => Math.max(size(n) * scale, NH);
       const x0 = 130, x1 = W - 190, colX = (ci) => x0 + (x1 - x0) * ci / Math.max(1, cols.length - 1);
       cols.forEach((c) => { const ns = c.nodes.map((n) => nodes[n.id]); const tot = ns.reduce((a, n) => a + hOf(n), 0) + PAD * (ns.length - 1); let y = top + Math.max(0, (H - top - tot) / 2);
         ns.forEach((n) => { n.y = y; n.h = hOf(n); n.x = colX(n.ci); n.so = 0; n.to = 0; y += n.h + PAD; }); });
-      const sc = Math.max(scale, 0.2);
+      const sc = scale;
       const paths = links.map((l) => {
         const a = nodes[l.s], b = nodes[l.t], w = vis(l.v) * sc;
         const ya = a.y + (a.h - a.outV * sc) / 2 + a.so + w / 2, yb = b.y + (b.h - b.inV * sc) / 2 + b.to + w / 2; a.so += w; b.to += w;
@@ -2450,7 +2450,7 @@ class Component extends DCLogic {
           (n.sub ? '<text x="' + lx + '" y="' + (n.y + n.h / 2 + 17) + '" text-anchor="' + anc + '" font-size="10" fill="#6B6B6B">' + esc(n.sub) + '</text>' : '');
       }).join('');
       const heads = cols.map((c, ci) => '<text x="' + (colX(ci) + (ci === 0 ? NW : 0)) + '" y="10" text-anchor="' + (ci === 0 ? 'end' : 'start') + '" font-size="10" letter-spacing=".05em" fill="#6B6B6B">' + esc(c.head) + '</text>').join('');
-      return '<h3>' + esc(title) + '</h3><p class="ps">' + esc(sub) + '</p><svg viewBox="0 0 ' + W + ' ' + (H + 10) + '" role="img" aria-label="' + esc(title) + '">' + heads + paths + nd + '</svg>' +
+      return '<h3>' + esc(title) + '</h3><p class="ps">' + esc(sub) + '</p><svg viewBox="0 0 ' + W + ' ' + (Math.max(H, ...Object.values(nodes).map((n) => n.y + n.h)) + 10) + '" role="img" aria-label="' + esc(title) + '">' + heads + paths + nd + '</svg>' +
         '<div class="key">' + ['E', 'P', 'D', 'NI'].map((l) => '<span><i style="background:' + COL[l] + '">' + l + '</i>' + NAME[l] + '</span>').join('') + '<span><i style="background:#D9D9D9"></i>on the map, no ratings yet</span><span>band width = student results</span></div>';
     };
     // PLO and ILO columns, coloured by the median of what flows in
