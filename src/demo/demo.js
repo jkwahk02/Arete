@@ -15,9 +15,10 @@
   var ILO_T = ['Critical Thinking', 'Creative Thinking', 'Self-directed Learning', 'Communication & Collaboration', 'Diversity & Empathy', 'Global Harmony & Sustainability'];
   var PROGRAMS = [
     { code: 'DA', name: 'Data Science and Artificial Intelligence', field: 'data and AI' },
-    { code: 'BI', name: 'Business Innovation', field: 'business and management' },
+    { code: 'IF', name: 'Innovation Foundations', field: 'interdisciplinary inquiry' },
     { code: 'HS', name: 'Humanities and Social Sciences', field: 'the humanities and social sciences' },
     { code: 'NS', name: 'Natural Sciences', field: 'the natural sciences' }];
+  var NO_PLO = [{ code: 'BI', name: 'Business Innovation' }];   // a major with no PLOs in Arete yet
   // course, title, year level, curriculum map {PLO number: levels}
   var COURSES = {
     DA: [['DA200', 'Design of AI and Data-driven Services', 2, { 1: 'I', 2: 'IA', 3: 'IA', 4: 'I', 5: 'IA', 6: 'IA' }], ['DA201', 'Computational Thinking and Data Literacy', 2, { 1: 'IA', 2: 'I', 3: 'I', 4: 'IA' }],
@@ -31,7 +32,7 @@
     NS: [['NS200', 'Physics in Modern Society', 2], ['NS211', 'Chemistry of Life', 2], ['NS221', 'Biology Fundamentals', 2], ['NS311', 'Environmental Systems', 3],
       ['NS322', 'Molecular Biology', 3], ['NS331', 'Quantitative Methods in Science', 3], ['NS411', 'Climate Science', 4], ['NS422', 'Systems Biology', 4]] };
   // maps for the other programs: introduced early, assessed (A) on two PLOs per advanced course, every PLO assessed at least twice
-  ['BI', 'HS', 'NS'].forEach(function (pc) {
+  ['HS', 'NS'].forEach(function (pc) {
     COURSES[pc].forEach(function (c, k) {
       var m = {}, y = c[2];
       if (y === 2) { m[(k % 6) + 1] = 'IA'; m[((k + 2) % 6) + 1] = 'I'; m[((k + 4) % 6) + 1] = 'I'; }
@@ -40,6 +41,8 @@
     });
   });
   var IF_COURSES = [['IF101', 'Innovation Foundation I'], ['IF102', 'Innovation Foundation II'], ['IF103', 'Innovation Foundation III'], ['IF104', 'Innovation Foundation IV'], ['IF105', 'Innovation Foundation V'], ['IF106', 'Innovation Foundation VI']];
+  // the six first-year IF courses: each term's three courses assess all six IF PLOs between them
+  COURSES.IF = IF_COURSES.map(function (c, k) { var m = {}, j = k % 3; m[j + 1] = 'IA'; m[j + 4] = 'IA'; m[((j + 1) % 3) + 1] = 'I'; return [c[0], c[1], 1, m]; });
   var FACULTY = { DA: ['Sora Lim', 'Daniel Novak'], BI: ['Hyun Choi', 'Maria Ortega', 'Kenji Mori'], HS: ['Elena Petrova', 'Joon Han', 'Grace Wu'], NS: ['Tomas Weber', 'Mina Seo', 'Priya Rao'], IF: ['Lucas Grant', 'Yuna Kang'] };
   var femail = function (n) { return n.toLowerCase().replace(/[^a-z]+/g, '.') + '@taejae.ac.kr'; };
 
@@ -61,7 +64,7 @@
       Object.keys(c[3]).forEach(function (n) { T.outcome_curriculum_map.push({ course_base_id: c[0], plo_id: ploOf[p.code + n], levels: c[3][n] }); });
     });
   });
-  IF_COURSES.forEach(function (c) { T.courses.push({ course_id: c[0], title: c[1] }); });
+  COURSES.BI.forEach(function (c) { T.courses.push({ course_id: c[0], title: c[1] }); });
 
   // ---------- students: four cohorts, majors, a few self-designed, and their abilities ----------
   var FIRST = ['Minseo', 'Jiwoo', 'Haeun', 'Seojun', 'Yejin', 'Dohyun', 'Ara', 'Taeyang', 'Sumin', 'Hyunwoo', 'Nari', 'Junho', 'Chaeyoung', 'Woojin', 'Eunbi', 'Siwoo', 'Dana', 'Leo', 'Amira', 'Kai', 'Noah', 'Lina', 'Mateo', 'Sofia', 'Ravi', 'Hana', 'Yuto', 'Elif', 'Omar', 'Mei'];
@@ -69,7 +72,7 @@
   var used = {};
   function name() { for (;;) { var n = pick(FIRST) + ' ' + pick(LAST); if (!used[n]) { used[n] = 1; return n; } } }
   var pcodes = ['DA', 'DA', 'DA', 'BI', 'BI', 'HS', 'HS', 'NS'];
-  var progName = {}; PROGRAMS.forEach(function (p) { progName[p.code] = p.name; });
+  var progName = {}; PROGRAMS.concat(NO_PLO).forEach(function (p) { progName[p.code] = p.name; });
   T.students = []; var ability = {}, studentProg = {};
   [2023, 2024, 2025, 2026].forEach(function (cy, ci) {
     for (var i = 1; i <= 50; i++) {
@@ -87,7 +90,7 @@
       T.students.push({ id: id, name_en: nm, email: nm.toLowerCase().replace(' ', '.') + id % 1000 + '@taejae.ac.kr', cohort: 'Cohort ' + (ci + 1) + ' (' + cy + ')', status: 'Enrolled',
         major1: m1, major2: m2, minor: mi, advisor1_email: adv, advisor2_email: null });
       studentProg[id] = { p1: p1, p2: p2, pm: pm, cy: cy };
-      var base = gauss() * 0.7; ability[id] = ILO_T.map(function () { return base + gauss() * 0.5; });
+      var base = gauss() * 0.6; ability[id] = ILO_T.map(function () { return base + gauss() * 0.4; });
     }
   });
 
@@ -130,7 +133,7 @@
     T.course_offerings.push(o); return o;
   };
   var mine = { DA200: 1, DA321: 1, DA411: 1 };
-  PROGRAMS.forEach(function (p) {
+  [{ code: 'DA' }, { code: 'BI' }, { code: 'HS' }, { code: 'NS' }].forEach(function (p) {
     COURSES[p.code].forEach(function (c, k) {
       if (!T.student_course_history.some(function (h) { return cur(h) && h.course_id === c[0]; })) return;
       var prof = mine[c[0]] ? ME.name : FACULTY[p.code][k % FACULTY[p.code].length], pe = mine[c[0]] ? ME.email : femail(prof);
@@ -157,7 +160,7 @@
     D: 'Shows ' + what + ' in part; key elements are missing or unclear.', NI: 'Little evidence of ' + what + ' yet.' }; };
   var CLO_T = ['analyse the course problems and judge the evidence behind each claim', 'design and test an original approach to an open problem', 'plan their own learning and adopt new tools without step-by-step guidance',
     'present results clearly and work effectively in a team', 'take account of different users and perspectives in their work', 'weigh the social and environmental impact of their solutions'];
-  var levelOf = function (z) { return z > 1.05 ? 'E' : z > -0.15 ? 'P' : z > -1.05 ? 'D' : 'NI'; };
+  var levelOf = function (z) { return z > 1.1 ? 'E' : z > -0.2 ? 'P' : z > -1.45 ? 'D' : 'NI'; };   // NI is rare, about 4%
   var ploBias = { 1: 0.15, 2: -0.35, 3: 0.1, 4: 0.2, 5: 0, 6: -0.1 };   // PLO2 sits below the standard, as a demo talking point
   T.course_offerings.forEach(function (o) {
     var map = T.outcome_curriculum_map.filter(function (m) { return m.course_base_id === o.course_base_id; });
@@ -186,7 +189,7 @@
       cps.forEach(function (k, ki) {
         ids.cp++;
         T.outcome_checkpoints.push({ checkpoint_id: ids.cp, rubric_id: rid, offering_id: o.offering_id, label: k[0], held_from: k[3], held_to: null, kind: k[1], reading: k[2], sort_order: ki + 1, created_at: '2026-09-01T00:00:00Z' });
-        var growth = (ki - (cps.length - 1)) * 0.3 + (o.course_base_id.charAt(2) === '4' ? 0.15 : 0);
+        var growth = (ki - (cps.length - 1)) * 0.3 + (o.course_base_id.charAt(2) === '4' ? 0.15 : 0) + (o.course_base_id.indexOf('IF') === 0 ? 0.3 : 0);
         roster.forEach(function (r) {
           crits.forEach(function (c) {
             if (rnd() < 0.015) return;   // a missing rating now and then
@@ -221,7 +224,7 @@
   });
   T.outcome_performance_standards = [
     { standard_id: 1, scope: 'institution', pct: 75, effective_year: 2026, effective_semester: 'Fall', note: 'One standard for every PLO and ILO.', set_by: ME.email, set_at: '2026-10-31T02:00:00Z' },
-    { standard_id: 2, scope: 'BI', pct: 70, effective_year: 2026, effective_semester: 'Fall', note: 'Set by the BI chair for the first measured term.', set_by: femail('Hyun Choi'), set_at: '2026-11-02T05:00:00Z' }];
+    { standard_id: 2, scope: 'HS', pct: 70, effective_year: 2026, effective_semester: 'Fall', note: 'Set by the HSS chair for the first measured term.', set_by: femail('Elena Petrova'), set_at: '2026-11-02T05:00:00Z' }];
   T.faculty_profiles = [{ email: ME.email, name_en: ME.name, program: [PROGRAMS[0].name], is_chair: true }];
 
   // ---------- PostgREST-style reads over the tables ----------
@@ -286,7 +289,7 @@
 
   // ---------- the data layer the pages use, signed in as the demo chair ----------
   var db = window.ARETE_DB;
-  db.me = { email: ME.email, name: ME.name, isFaculty: true, isChair: true, program: [PROGRAMS[0].name] };
+  db.me = { email: ME.email, name: ME.name, isFaculty: true, isChair: true, program: PROGRAMS.map(function (p) { return p.name; }) };
   db.signedIn = function () { return true; };
   db.restore = function () { return Promise.resolve(); };
   db.signIn = function () { return Promise.resolve(); };
@@ -299,7 +302,8 @@
       .map(function (r) { Object.assign(r, body); return JSON.parse(JSON.stringify(r)); }));
   };
   db.rpc = function (fn, args) {
-    if (fn === 'outcome_my_programs') return later([{ code: 'DA', name: PROGRAMS[0].name, is_chair: true }]);
+    // the demo user chairs DS&AI and teaches in IF, HSS and NS (read only there)
+    if (fn === 'outcome_my_programs') return later(PROGRAMS.map(function (p) { return { code: p.code, name: p.name, is_chair: p.code === 'DA' }; }));
     if (fn === 'outcome_can_set_standard') return later(args.p_scope === 'institution' || args.p_scope === 'DA');
     if (fn === 'outcome_upload_checkpoint') {
       T.outcome_ratings = T.outcome_ratings.filter(function (r) { return r.checkpoint_id !== args.p_checkpoint_id; });

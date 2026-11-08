@@ -375,8 +375,11 @@ class Component extends DCLogic {
         kpi: kpi('Majors at Proficient or above', 'Shown once the ' + name + ' PLOs and curriculum map are in Arete.', [], null),
         sk: sankey('Where the program\u2019s evidence comes from', 'Shown once ' + name + ' courses are on a curriculum map.', [], []),
         att: [], listT: 'A-point courses this term', list: [], noList: 'No curriculum map in Arete yet.' };
-      const std = K.stdFor(pc), majors = P.students.filter((s) => s.major1 === name || s.major2 === name || s.minor === name);
       const isA = (o, id) => /A/.test((mapAt(o) || {})[id] || '');
+      // a program no student declares (Innovation Foundations) is read through every student who took one of its courses
+      const declared = P.students.filter((s) => s.major1 === name || s.major2 === name || s.minor === name);
+      const took = new Set(P.S.filter((S) => mapAt(S.o) && plos.some((p) => mapAt(S.o)[p.plo_id] != null)).flatMap((S) => S.students.map((x) => x.no)));
+      const undeclared = !declared.length, std = K.stdFor(pc), majors = undeclared ? P.students.filter((s) => took.has(String(s.id))) : declared;
       // a major's PLO level: the median of their A-point course results (progress), one vote per course
       const level = (no, id) => vote(P.S.filter((S) => isA(S.o, id) && S.students.some((s) => s.no === String(no))).map((S) => res(S, String(no), id)).filter(Boolean));
       const rows = plos.map((p) => { const lv = majors.map((s) => level(s.id, p.plo_id)).filter(Boolean); return { code: p.plo_code, title: p.title, pp: ppOf(lv), n: lv.length }; });
@@ -386,13 +389,13 @@ class Component extends DCLogic {
       const oc = outcomeCols(plos.map((p) => p.plo_id), linksCP);
       const crs = { head: 'A-POINT COURSES', nodes: aThis.map((o) => ({ id: 'c' + o.offering_id, label: code(o), sub: SbyOff[o.offering_id] ? '' : 'no checkpoints' })) };
       const att = [];
-      rows.filter((r) => r.pp == null).forEach((r) => att.push({ c: 'red', t: r.code + ' ' + r.title, s: 'No major has an A-point result on it yet', go: goTo('al3'), goT: 'Open in AL3' }));
+      rows.filter((r) => r.pp == null).forEach((r) => att.push({ c: 'red', t: r.code + ' ' + r.title, s: 'No ' + (undeclared ? 'student' : 'major') + ' has an A-point result on it yet', go: goTo('al3'), goT: 'Open in AL3' }));
       aThis.filter((o) => !P.withCps.has(o.offering_id)).forEach((o) => att.push({ c: 'red', t: code(o) + ' \u00b7 A-point for ' + plos.filter((p) => isA(o, p.plo_id)).map((p) => p.plo_code).join(', '), s: 'No checkpoint set up in Arete this term', go: goTo('al2', o.offering_id), goT: 'Open in AL2' }));
       rows.filter((r) => r.pp != null && std != null && r.pp < std).forEach((r) => att.push({ c: 'orange', t: r.code + ' ' + r.title + ' below the standard', s: r.pp + '% at Proficient or above (standard ' + std + '%)', go: goTo('al3'), goT: 'Open in AL3' }));
       const meet = rows.filter((r) => r.pp != null && std != null && r.pp >= std).length, none = rows.filter((r) => r.pp == null).length, noCp = aThis.filter((o) => !P.withCps.has(o.offering_id)).length;
       return { hl: '<b>' + meet + ' of ' + rows.length + '</b> ' + esc(it.label) + ' PLOs meet the standard of performance so far.' + (none ? ' <b>' + none + '</b> ' + (none > 1 ? 'have' : 'has') + ' no result yet.' : '') + (noCp ? ' <b>' + noCp + ' of ' + aThis.length + '</b> A-point courses this term have no checkpoints in Arete.' : ''),
         att: att, mine: it.chair,
-        kpi: kpi('Majors at Proficient or above', majors.length + ' ' + it.label + ' majors and minors, latest progress on each PLO from A-point courses', rows, std),
+        kpi: kpi(undeclared ? 'Students at Proficient or above' : 'Majors at Proficient or above', majors.length + ' ' + (undeclared ? 'students who took ' + it.label + ' courses' : it.label + ' majors and minors') + ', latest progress on each PLO from A-point courses', rows, std),
         sk: sankey('Where the program\u2019s evidence comes from', 'A-point courses this term \u2192 PLOs \u2192 ILOs \u00b7 dashed = A-point, no ratings yet.', [crs, oc.plosCol, oc.iloCol], linksCP.concat(oc.pi)),
         listT: 'A-point courses this term', noList: aThis.length ? '' : 'No A-point course runs this term.',
         list: aThis.map((o) => { const S = SbyOff[o.offering_id], n = S ? S.cps.filter((k) => cpRated(S, k)).length : 0;

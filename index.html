@@ -774,11 +774,12 @@ body{margin:0;background:#FFFFFF}
 <div class="pad" style="padding: 18px 40px; border-bottom: 1px solid #111111; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px">
 <span class="lbl">AL3 · Program</span>
 <h1 style="margin: 0; font-weight: 300; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em">{{prog.name}}</h1>
+<template data-if="hasProgs"><span role="group" aria-label="Program" style="display: flex; flex-wrap: wrap; gap: 6px"><template data-for="progBtns" data-as="b"><button type="button" onClick="{{b.pick}}" aria-pressed="{{b.on}}" style="{{b.s}}">{{b.t}}</button></template></span></template>
 <span style="margin-left: auto; padding: 3px 10px; font-size: 12px; box-shadow: inset 0 0 0 1px #CFCFCF; color: #444444">{{prog.mode}}</span>
 </div>
 <div class="lay2" style="display: flex; flex-wrap: wrap; align-items: stretch">
 <aside aria-label="Students of the program" class="pop-col" style="flex: 0 0 280px; box-sizing: border-box; padding: 20px 0 40px; border-right: 1px solid #E6E6E6; box-shadow: inset 3px 0 0 #502579">
-<div style="padding: 0 24px 4px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; color: #6B6B6B">· {{pop.total}} declared</span></div>
+<div style="padding: 0 24px 4px; font-size: 15px; font-weight: 500">Students <span style="font-weight: 400; color: #6B6B6B">· {{pop.total}} {{pop.what}}</span></div>
 <p class="lbl" style="margin: 0 24px 10px; line-height: 1.5">enrolled, each counted once</p>
 <template data-for="pop.groups" data-as="g">
 <button type="button" class="pop" onClick="{{g.toggle}}" aria-expanded="{{g.open}}" style="{{g.s}}"><span>{{g.label}}</span><span style="font-variant-numeric: tabular-nums">{{g.n}}</span></button>
@@ -800,10 +801,10 @@ body{margin:0;background:#FFFFFF}
 
 <section aria-labelledby="res-h" style="margin-top: 28px">
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 14px; background: #2E1648; color: #FFFFFF">
-<span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">Program PLO results · majors</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
+<span style="font-size: 12px; opacity: 0.8">Result</span><h2 id="res-h" style="margin: 0; font-size: 16px; font-weight: 600">Program PLO results · {{whoP}}</h2><span style="font-size: 13px; opacity: 0.85">{{resSub}}</span>
 </div>
 <div style="overflow-x: auto"><div style="display: grid; grid-template-columns: minmax(200px, 1.3fr) minmax(220px, 2fr) 70px 110px 90px minmax(130px, 1fr); align-items: center; min-width: 820px">
-<span class="cellh">PLO</span><span class="cellh">Majors by result</span><span class="cellh" style="text-align: right">% P+</span><span class="cellh" style="text-align: right">With evidence</span><span class="cellh" style="text-align: right">Standard</span><span class="cellh">{{judgeHead}}</span>
+<span class="cellh">PLO</span><span class="cellh">{{whoT}} by result</span><span class="cellh" style="text-align: right">% P+</span><span class="cellh" style="text-align: right">With evidence</span><span class="cellh" style="text-align: right">Standard</span><span class="cellh">{{judgeHead}}</span>
 <template data-for="resRows" data-as="r">
 <span class="cell" title="{{r.tip}}"><span style="font-weight: 600">{{r.code}}</span> <span style="color: #6B6B6B">{{r.title}}</span></span>
 <span class="cell"><span class="bar"><template data-for="r.segs" data-as="g"><span title="{{g.tip}}" style="{{g.s}}">{{g.t}}</span></template></span></span>
@@ -2190,8 +2191,11 @@ class Component extends DCLogic {
         kpi: kpi('Majors at Proficient or above', 'Shown once the ' + name + ' PLOs and curriculum map are in Arete.', [], null),
         sk: sankey('Where the program\u2019s evidence comes from', 'Shown once ' + name + ' courses are on a curriculum map.', [], []),
         att: [], listT: 'A-point courses this term', list: [], noList: 'No curriculum map in Arete yet.' };
-      const std = K.stdFor(pc), majors = P.students.filter((s) => s.major1 === name || s.major2 === name || s.minor === name);
       const isA = (o, id) => /A/.test((mapAt(o) || {})[id] || '');
+      // a program no student declares (Innovation Foundations) is read through every student who took one of its courses
+      const declared = P.students.filter((s) => s.major1 === name || s.major2 === name || s.minor === name);
+      const took = new Set(P.S.filter((S) => mapAt(S.o) && plos.some((p) => mapAt(S.o)[p.plo_id] != null)).flatMap((S) => S.students.map((x) => x.no)));
+      const undeclared = !declared.length, std = K.stdFor(pc), majors = undeclared ? P.students.filter((s) => took.has(String(s.id))) : declared;
       // a major's PLO level: the median of their A-point course results (progress), one vote per course
       const level = (no, id) => vote(P.S.filter((S) => isA(S.o, id) && S.students.some((s) => s.no === String(no))).map((S) => res(S, String(no), id)).filter(Boolean));
       const rows = plos.map((p) => { const lv = majors.map((s) => level(s.id, p.plo_id)).filter(Boolean); return { code: p.plo_code, title: p.title, pp: ppOf(lv), n: lv.length }; });
@@ -2201,13 +2205,13 @@ class Component extends DCLogic {
       const oc = outcomeCols(plos.map((p) => p.plo_id), linksCP);
       const crs = { head: 'A-POINT COURSES', nodes: aThis.map((o) => ({ id: 'c' + o.offering_id, label: code(o), sub: SbyOff[o.offering_id] ? '' : 'no checkpoints' })) };
       const att = [];
-      rows.filter((r) => r.pp == null).forEach((r) => att.push({ c: 'red', t: r.code + ' ' + r.title, s: 'No major has an A-point result on it yet', go: goTo('al3'), goT: 'Open in AL3' }));
+      rows.filter((r) => r.pp == null).forEach((r) => att.push({ c: 'red', t: r.code + ' ' + r.title, s: 'No ' + (undeclared ? 'student' : 'major') + ' has an A-point result on it yet', go: goTo('al3'), goT: 'Open in AL3' }));
       aThis.filter((o) => !P.withCps.has(o.offering_id)).forEach((o) => att.push({ c: 'red', t: code(o) + ' \u00b7 A-point for ' + plos.filter((p) => isA(o, p.plo_id)).map((p) => p.plo_code).join(', '), s: 'No checkpoint set up in Arete this term', go: goTo('al2', o.offering_id), goT: 'Open in AL2' }));
       rows.filter((r) => r.pp != null && std != null && r.pp < std).forEach((r) => att.push({ c: 'orange', t: r.code + ' ' + r.title + ' below the standard', s: r.pp + '% at Proficient or above (standard ' + std + '%)', go: goTo('al3'), goT: 'Open in AL3' }));
       const meet = rows.filter((r) => r.pp != null && std != null && r.pp >= std).length, none = rows.filter((r) => r.pp == null).length, noCp = aThis.filter((o) => !P.withCps.has(o.offering_id)).length;
       return { hl: '<b>' + meet + ' of ' + rows.length + '</b> ' + esc(it.label) + ' PLOs meet the standard of performance so far.' + (none ? ' <b>' + none + '</b> ' + (none > 1 ? 'have' : 'has') + ' no result yet.' : '') + (noCp ? ' <b>' + noCp + ' of ' + aThis.length + '</b> A-point courses this term have no checkpoints in Arete.' : ''),
         att: att, mine: it.chair,
-        kpi: kpi('Majors at Proficient or above', majors.length + ' ' + it.label + ' majors and minors, latest progress on each PLO from A-point courses', rows, std),
+        kpi: kpi(undeclared ? 'Students at Proficient or above' : 'Majors at Proficient or above', majors.length + ' ' + (undeclared ? 'students who took ' + it.label + ' courses' : it.label + ' majors and minors') + ', latest progress on each PLO from A-point courses', rows, std),
         sk: sankey('Where the program\u2019s evidence comes from', 'A-point courses this term \u2192 PLOs \u2192 ILOs \u00b7 dashed = A-point, no ratings yet.', [crs, oc.plosCol, oc.iloCol], linksCP.concat(oc.pi)),
         listT: 'A-point courses this term', noList: aThis.length ? '' : 'No A-point course runs this term.',
         list: aThis.map((o) => { const S = SbyOff[o.offering_id], n = S ? S.cps.filter((k) => cpRated(S, k)).length : 0;
@@ -3466,7 +3470,8 @@ class Component extends DCLogic {
     step(0);
     // the program and the students in parallel (students do not depend on the program)
     Promise.all([K.myPrograms(), db.rest('students?status=eq.Enrolled&select=id,name_en,cohort,major1,major2,minor')]).then(([progs, students]) => {
-      P.prog = progs.find((p) => p.is_chair) || progs[0];
+      P.progs = progs; P.all = students;
+      P.prog = progs.find((p) => p.code === this.state.prog) || progs.find((p) => p.is_chair) || progs[0];
       if (!P.prog) throw new Error('You are not in a program in faculty_profiles.');
       const name = P.prog.name;
       P.students = students.filter((s) => !/\(test\)/i.test(s.name_en || '') && (s.major1 === name || s.major2 === name || s.minor === name))
@@ -3501,6 +3506,12 @@ class Component extends DCLogic {
       return Promise.all(withCp.map((o) => K.offering(o).catch(() => null)));
     }).then((list) => {
       P.S = list.filter(Boolean);
+      // a program no student declares (Innovation Foundations): its population is every student who took one of its courses
+      if (!P.students.length) {
+        const took = new Set(P.S.flatMap((S) => S.students.map((x) => x.no)));
+        P.undeclared = true;
+        P.students = P.all.filter((s) => !/\(test\)/i.test(s.name_en || '') && took.has(String(s.id))).map((s) => ({ no: String(s.id), name: s.name_en, cohort: s.cohort, role: 'course' }));
+      }
       step(4);
       this.P = P;
     }).catch((e) => { this.err = 'Could not load the program: ' + e.message; })
@@ -3584,7 +3595,7 @@ class Component extends DCLogic {
 
     // population (left column): first major, second major, minor, each by year of study
     const groups = [];
-    [['first', 'First major'], ['second', 'Second major'], ['minor', 'Minor']].forEach(([k, label]) => {
+    (P.undeclared ? [['course', 'Students taking its courses']] : [['first', 'First major'], ['second', 'Second major'], ['minor', 'Minor']]).forEach(([k, label]) => {
       const list = P.students.filter((s) => s.role === k);
       const open = !!this.state.open[k];
       groups.push({ label: label, n: list.length, open: open, names: [], note: '', s: 'font-weight: 600',
@@ -3614,11 +3625,16 @@ class Component extends DCLogic {
     return {
       ready: true, legend: [ARETE.LEG.levels('no result yet'), { t: 'A-point courses this term', items: evKey.map((k) => ({ s: k.s.replace('width: 18px', 'width: 18px; flex: none'), t: k.t })) }],
       prog: { name: P.prog.name, mode: role === 'Program chair' && P.prog.is_chair ? 'Program chair · read only for now' : 'Read only' },
-      pop: { total: P.students.length, groups: groups },
+      pop: { total: P.students.length, what: P.undeclared ? 'taking its courses' : 'declared', groups: groups },
+      whoP: P.undeclared ? 'students' : 'majors', whoT: P.undeclared ? 'Students' : 'Majors',
+      hasProgs: P.progs.length > 1,
+      progBtns: P.progs.map((p) => ({ t: p.code === 'DA' ? 'DS&AI' : p.name, on: p.code === P.prog.code,
+        s: 'min-height: 32px; padding: 0 12px; border: none; font-family: inherit; font-size: 12px; cursor: pointer; ' + (p.code === P.prog.code ? 'background: #2E1648; color: #FFFFFF; font-weight: 600' : 'background: transparent; color: #111111; box-shadow: inset 0 0 0 1px #CFCFCF'),
+        pick: () => { if (p.code === P.prog.code) return; this.P = null; this.setState({ prog: p.code, open: {} }); } })),
       readings: readings, judgeHead: record ? 'Judgement' : 'Reading (formative)',
-      resSub: (record ? 'Judgement to date: summative A-point results' : 'Progress: formative A-point results') + ' · each major once · one vote per course',
+      resSub: (record ? 'Judgement to date: summative A-point results' : 'Progress: formative A-point results') + (P.undeclared ? ' · each student once' : ' · each major once') + ' · one vote per course',
       resRows: resRows,
-      resNote: majors.length + ' majors (' + P.students.filter((s) => s.role === 'first').length + ' first, ' + P.students.filter((s) => s.role === 'second').length + ' second). ' +
+      resNote: (P.undeclared ? majors.length + ' students took its courses; no student declares this program, so they are its population. ' : majors.length + ' majors (' + P.students.filter((s) => s.role === 'first').length + ' first, ' + P.students.filter((s) => s.role === 'second').length + ' second). ') +
         'A major\u2019s PLO level is the median of their A-point course results; % P+ is the share of majors with evidence at Proficient or above. ' + nCourses + (nCourses === 1 ? ' course has' : ' courses have') + ' ratings so far.',
       evNote: 'curriculum-map A-points by PLO, state this term',
       ev: ev, evKey: evKey, grad: grad,
